@@ -24,47 +24,67 @@ goog.require('goog.dom.classlist');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
- * @return {Element} The new password input.
+ * @return {!Element} The new password input.
  * @this {goog.ui.Component}
  */
 element.newPassword.getNewPasswordElement = function() {
-  return this.getElementByClass('firebaseui-id-new-password');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-new-password')));
 };
 
 
 /**
- * @return {Element} The toggle button to show or hide the password text.
+ * @return {!Element} The toggle button to show or hide the password text.
  * @this {goog.ui.Component}
  */
 element.newPassword.getPasswordToggleElement = function() {
-  return this.getElementByClass('firebaseui-id-password-toggle');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-password-toggle')));
 };
 
 
-/** @private {string} The CSS class for the "visiblility on" eye icon. */
-var CLASS_TOGGLE_ON_ = 'firebaseui-input-toggle-on';
-
-
-/** @private {string} The CSS class for the "visiblility off" eye icon. */
-var CLASS_TOGGLE_OFF_ = 'firebaseui-input-toggle-off';
+/**
+ * The CSS class for the "visiblility on" eye icon.
+ *
+ * @private
+ * @const
+ * @type {string}
+ **/
+const CLASS_TOGGLE_ON_ = goog.getCssName('firebaseui-input-toggle-on');
 
 
 /**
- * @private {string} The CSS class for the eye icon when the input is
- *     focused.
+ * The CSS class for the "visiblility off" eye icon.
+ *
+ * @private
+ * @const
+ * @type {string}
  */
-var CLASS_TOGGLE_FOCUS_ = 'firebaseui-input-toggle-focus';
+const CLASS_TOGGLE_OFF_ = goog.getCssName('firebaseui-input-toggle-off');
 
 
 /**
- * @private {string} The CSS class for the eye icon when the input is not
- *     focused.
+ * The CSS class for the eye icon when the input is focused.
+ *
+ * @private
+ * @const
+ * @type {string}
  */
-var CLASS_TOGGLE_BLUR_ = 'firebaseui-input-toggle-blur';
+const CLASS_TOGGLE_FOCUS_ = goog.getCssName('firebaseui-input-toggle-focus');
+
+
+/**
+ * The CSS class for the eye icon when the input is not focused.
+ *
+ * @private
+ * @const
+ * @type {string}
+ */
+const CLASS_TOGGLE_BLUR_ = goog.getCssName('firebaseui-input-toggle-blur');
 
 
 /**
@@ -74,8 +94,8 @@ var CLASS_TOGGLE_BLUR_ = 'firebaseui-input-toggle-blur';
 element.newPassword.togglePasswordVisible = function() {
   this.isPasswordVisible_ = !this.isPasswordVisible_;
 
-  var toggleElement = element.newPassword.getPasswordToggleElement.call(this);
-  var newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
+  const toggleElement = element.newPassword.getPasswordToggleElement.call(this);
+  const newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
 
   if (this.isPasswordVisible_) {
     newPasswordElement['type'] = 'text';
@@ -91,23 +111,24 @@ element.newPassword.togglePasswordVisible = function() {
 
 
 /**
- * @return {Element} The error panel.
+ * @return {!Element} The error panel.
  * @this {goog.ui.Component}
  */
 element.newPassword.getNewPasswordErrorElement = function() {
-  return this.getElementByClass('firebaseui-id-new-password-error');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-new-password-error')));
 };
 
 
 /**
  * Validates the password field and shows/clears the error message if necessary.
- * @param {Element} newPasswordElement The new password input.
- * @param {Element} errorElement The error panel.
+ * @param {!Element} newPasswordElement The new password input.
+ * @param {!Element} errorElement The error panel.
  * @return {boolean} True if fields are valid.
  * @private
  */
 element.newPassword.validate_ = function(newPasswordElement, errorElement) {
-  var password = element.getInputValue(newPasswordElement) || '';
+  const password = element.getInputValue(newPasswordElement) || '';
   if (!password) {
     element.setValid(newPasswordElement, false);
     element.show(errorElement,
@@ -126,12 +147,16 @@ element.newPassword.validate_ = function(newPasswordElement, errorElement) {
  * @this {goog.ui.Component}
  */
 element.newPassword.initNewPasswordElement = function() {
+  /**
+   * @type {boolean}
+   * @private
+   */
   this.isPasswordVisible_ = false;
 
-  var newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
+  const newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
   newPasswordElement['type'] = 'password';
 
-  var errorElement = element.newPassword.getNewPasswordErrorElement.call(this);
+  const errorElement = element.newPassword.getNewPasswordErrorElement.call(this);
 
   element.listenForInputEvent(this, newPasswordElement, function(e) {
     // Clear but not show error on-the-fly.
@@ -141,7 +166,7 @@ element.newPassword.initNewPasswordElement = function() {
     }
   });
 
-  var toggleElement = element.newPassword.getPasswordToggleElement.call(this);
+  const toggleElement = element.newPassword.getPasswordToggleElement.call(this);
   goog.dom.classlist.add(toggleElement, CLASS_TOGGLE_ON_);
   goog.dom.classlist.remove(toggleElement, CLASS_TOGGLE_OFF_);
 
@@ -167,8 +192,8 @@ element.newPassword.initNewPasswordElement = function() {
  * @this {goog.ui.Component}
  */
 element.newPassword.checkAndGetNewPassword = function() {
-  var newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
-  var errorElement = element.newPassword.getNewPasswordErrorElement.call(this);
+  const newPasswordElement = element.newPassword.getNewPasswordElement.call(this);
+  const errorElement = element.newPassword.getNewPasswordErrorElement.call(this);
   if (element.newPassword.validate_(newPasswordElement, errorElement)) {
     return element.getInputValue(newPasswordElement);
   }
