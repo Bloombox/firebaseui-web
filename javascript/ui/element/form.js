@@ -23,24 +23,26 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
- * @return {Element} The submit button.
+ * @return {!Element} The submit button.
  * @this {goog.ui.Component}
  */
 element.form.getSubmitElement = function() {
-  return this.getElementByClass('firebaseui-id-submit');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-submit')));
 };
 
 
 /**
- * @return {Element} The secondary link.
+ * @return {!Element} The secondary link.
  * @this {goog.ui.Component}
  */
 element.form.getSecondaryLinkElement = function() {
-  return this.getElementByClass('firebaseui-id-secondary-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-secondary-link')));
 };
 
 
@@ -53,11 +55,11 @@ element.form.getSecondaryLinkElement = function() {
  * @this {goog.ui.Component}
  */
 element.form.initFormElement = function(onSubmit, opt_onLinkClick) {
-  var submitElement = element.form.getSubmitElement.call(this);
+  const submitElement = element.form.getSubmitElement.call(this);
   element.listenForActionEvent(this, submitElement, function(e) {
     onSubmit(e);
   });
-  var linkElement = element.form.getSecondaryLinkElement.call(this);
+  const linkElement = element.form.getSecondaryLinkElement.call(this);
   if (linkElement && opt_onLinkClick) {
     element.listenForActionEvent(this, linkElement, function(e) {
       opt_onLinkClick(e);
