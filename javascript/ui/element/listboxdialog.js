@@ -32,8 +32,8 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var listBoxDialog = firebaseui.auth.ui.element.listBoxDialog;
-var element = firebaseui.auth.ui.element;
+const listBoxDialog = firebaseui.auth.ui.element.listBoxDialog;
+const element = firebaseui.auth.ui.element;
 
 
 /**
@@ -46,16 +46,16 @@ var element = firebaseui.auth.ui.element;
  * @this {goog.ui.Component}
  */
 listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
-  var dialogElement = goog.soy.renderAsElement(
+  const dialogElement = goog.soy.renderAsElement(
       firebaseui.auth.soy2.element.listBoxDialog,
       {items: items},
       null,
       this.getDomHelper());
-  element.dialog.showDialog.call(this, dialogElement, true, true);
+  element.dialog.showDialog.call(this, /** @type {!HTMLDialogElement} */ (dialogElement), true, true);
 
   if (opt_selectedId) {
     // Select and scroll to the pre-selected button.
-    var button = listBoxDialog.findButtonByListBoxId_(dialogElement,
+    const button = listBoxDialog.findButtonByListBoxId_(dialogElement,
         opt_selectedId);
     if (button) {
       button.focus();
@@ -63,11 +63,16 @@ listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
     }
   }
 
-  // Listen for clicks on the list box buttons.
-  element.listenForActionEvent(this, dialogElement, function(event) {
-    var pressedButton = goog.dom.getAncestorByClass(
-        event.target, 'firebaseui-id-list-box-dialog-button');
-    var listBoxId = pressedButton &&
+  /**
+   * @private
+   * @param {!MouseEvent} event Click event from the browser.
+   * @this {goog.ui.Component}
+   */
+  function clickListener_(event) {
+    const pressedButton = goog.dom.getAncestorByClass(
+        /** @type {!Node} */ (event.target),
+        goog.getCssName('firebaseui-id-list-box-dialog-button'));
+    const listBoxId = pressedButton &&
         listBoxDialog.getListBoxIdOfButton_(pressedButton);
     if (listBoxId) {
       firebaseui.auth.ui.element.dialog.dismissDialog();
@@ -76,7 +81,10 @@ listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
       // focus() within the callback does not work.
       onSelect(listBoxId);
     }
-  });
+  }
+
+  // Listen for clicks on the list box buttons.
+  element.listenForActionEvent(this, dialogElement, clickListener_);
 };
 
 
@@ -105,9 +113,9 @@ listBoxDialog.Item;
  * @private
  */
 listBoxDialog.findButtonByListBoxId_ = function(dialogElement, id) {
-  var buttons = goog.dom.getElementsByTagName(goog.dom.TagName.BUTTON,
+  const buttons = goog.dom.getElementsByTagName(goog.dom.TagName.BUTTON,
       dialogElement);
-  for (var i = 0; i < buttons.length; i++) {
+  for (let i = 0; i < buttons.length; i++) {
     if (listBoxDialog.getListBoxIdOfButton_(buttons[i]) === id) {
       return buttons[i];
     }
