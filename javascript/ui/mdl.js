@@ -48,10 +48,10 @@ firebaseui.auth.ui.mdl.downgrade = function(element) {
  * @private @const {!Array<string>}
  */
 firebaseui.auth.ui.mdl.MDL_COMPONENT_CLASSES_ = [
-  'mdl-js-textfield',
-  'mdl-js-progress',
-  'mdl-js-spinner',
-  'mdl-js-button'
+  goog.getCssName('mdl-js-textfield'),
+  goog.getCssName('mdl-js-progress'),
+  goog.getCssName('mdl-js-spinner'),
+  goog.getCssName('mdl-js-button')
 ];
 
 
