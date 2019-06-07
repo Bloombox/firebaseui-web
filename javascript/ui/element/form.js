@@ -56,14 +56,28 @@ element.form.getSecondaryLinkElement = function() {
  */
 element.form.initFormElement = function(onSubmit, opt_onLinkClick) {
   const submitElement = element.form.getSubmitElement.call(this);
-  element.listenForActionEvent(this, submitElement, function(e) {
-    onSubmit(e);
-  });
+
+  /**
+   * @private
+   * @param {!Event} event Submit event for a form.
+   */
+  function submitEventHandler_(event) {
+    onSubmit(event);
+  }
+
+  element.listenForActionEvent(this, submitElement, submitEventHandler_);
+
   const linkElement = element.form.getSecondaryLinkElement.call(this);
   if (linkElement && opt_onLinkClick) {
-    element.listenForActionEvent(this, linkElement, function(e) {
-      opt_onLinkClick(e);
-    });
+    /**
+     * @private
+     * @param {!Event} event Link click event.
+     */
+    function linkClickHandler_(event) {
+      opt_onLinkClick(event);
+    }
+
+    element.listenForActionEvent(this, linkElement, linkClickHandler_);
   }
 };
 });
