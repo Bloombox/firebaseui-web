@@ -25,7 +25,7 @@ goog.require('goog.dom');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
@@ -70,10 +70,10 @@ element.dialog.showDialog = function(
   // Check whether to center relative to document body. That is the default.
   if (!opt_centerRelativeToDocument) {
     // If not, center the dialog relative to the container if provided.
-    var container = this.getElement().parentElement || /** @type {!Element} */ (
+    const container = this.getElement().parentElement || /** @type {!Element} */ (
         this.getElement().parentNode);
     if (container) {
-      var self = this;
+      const self = this;
       /**
        * @private {function()} The realign dialog callback to adjust the
        *     location of the dialog relative to the container on screen size
@@ -85,17 +85,17 @@ element.dialog.showDialog = function(
           window.removeEventListener('resize', self.realignDialog_);
           return;
         }
-        var dialogHeight = dialog.getBoundingClientRect().height;
-        var containerHeight = container.getBoundingClientRect().height;
-        var containerTop = container.getBoundingClientRect().top -
+        const dialogHeight = dialog.getBoundingClientRect().height;
+        const containerHeight = container.getBoundingClientRect().height;
+        const containerTop = container.getBoundingClientRect().top -
             document.body.getBoundingClientRect().top;
-        var containerLeft = container.getBoundingClientRect().left -
+            const containerLeft = container.getBoundingClientRect().left -
             document.body.getBoundingClientRect().left;
-        var dialogWidth = dialog.getBoundingClientRect().width;
-        var containerWidth = container.getBoundingClientRect().width;
+            const dialogWidth = dialog.getBoundingClientRect().width;
+        const containerWidth = container.getBoundingClientRect().width;
         dialog.style.top = (containerTop +
             (containerHeight - dialogHeight) / 2).toString() + 'px';
-        var dialogLeft = containerLeft + (containerWidth - dialogWidth) / 2;
+        const dialogLeft = containerLeft + (containerWidth - dialogWidth) / 2;
         dialog.style.left = dialogLeft.toString() + 'px';
         dialog.style.right = (document.body.getBoundingClientRect().width -
             dialogLeft - dialogWidth).toString() + 'px';
@@ -116,7 +116,7 @@ element.dialog.showDialog = function(
  * @private
  */
 element.dialog.isClickOnBackdrop_ = function(clickEvent, dialog) {
-  var dialogBounds = dialog.getBoundingClientRect();
+  const dialogBounds = dialog.getBoundingClientRect();
   return (clickEvent.clientX < dialogBounds.left ||
       dialogBounds.left + dialogBounds.width < clickEvent.clientX ||
       clickEvent.clientY < dialogBounds.top ||
@@ -152,6 +152,6 @@ element.dialog.dismissDialog = function() {
  * @this {!goog.ui.Component}
  */
 element.dialog.getDialogElement = function() {
-  return /** @type {?HTMLDialogElement} */ (goog.dom.getElementByClass('firebaseui-id-dialog'));
+  return /** @type {?HTMLDialogElement} */ (goog.dom.getElementByClass(goog.getCssName('firebaseui-id-dialog')));
 };
 });
