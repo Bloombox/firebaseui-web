@@ -18,5 +18,13 @@
  * @externs
  */
 
-var define;
-var module;
+/**
+ * @namespace
+ */
+var dialogPolyfill;
+
+/**
+ * @param {!HTMLDialogElement} dialog Dialog element to register with the polyfill.
+ * @modifies arguments
+ */
+dialogPolyfill.registerDialog = function(dialog) {};
