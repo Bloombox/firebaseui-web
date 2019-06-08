@@ -40,7 +40,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  *     Privacy Policy link is clicked.
  * @param {boolean=} opt_displayFullTosPpMessage Whether to display the full
  *     message of Term of Service and Privacy Policy.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -52,6 +52,9 @@ firebaseui.auth.ui.page.PasswordSignIn = function(
     opt_privacyPolicyCallback,
     opt_displayFullTosPpMessage,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.PasswordSignIn.base(
       this,
       'constructor',
@@ -62,11 +65,16 @@ firebaseui.auth.ui.page.PasswordSignIn = function(
       },
       opt_domHelper,
       'passwordSignIn',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
+  /**
+   * @private
+   */
   this.onSubmitClick_ = onSubmitClick;
+
+  /**
+   * @private
+   */
   this.onForgotClick_ = onForgotClick;
 };
 goog.inherits(firebaseui.auth.ui.page.PasswordSignIn,
