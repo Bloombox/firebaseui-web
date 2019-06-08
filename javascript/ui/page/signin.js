@@ -40,7 +40,7 @@ goog.require('goog.dom.selection');
  *     Privacy Policy link is clicked.
  * @param {boolean=} opt_displayFullTosPpMessage Whether to display the full
  *     message of Term of Service and Privacy Policy.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -52,6 +52,9 @@ firebaseui.auth.ui.page.SignIn = function(
     opt_privacyPolicyCallback,
     opt_displayFullTosPpMessage,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.SignIn.base(
       this,
       'constructor',
@@ -63,11 +66,16 @@ firebaseui.auth.ui.page.SignIn = function(
       },
       opt_domHelper,
       'signIn',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
+  /**
+   * @private
+   */
   this.onEmailEnter_ = onEmailEnter;
+
+  /**
+   * @private
+   */
   this.onCancelClick_ = opt_onCancelClick;
 };
 goog.inherits(firebaseui.auth.ui.page.SignIn, firebaseui.auth.ui.page.Base);
@@ -97,9 +105,10 @@ firebaseui.auth.ui.page.SignIn.prototype.disposeInternal = function() {
  */
 firebaseui.auth.ui.page.SignIn.prototype.setupFocus_ = function() {
   // Auto focus the email input and put the cursor at the end.
-  this.getEmailElement().focus();
-  goog.dom.selection.setCursorPosition(
-      this.getEmailElement(), (this.getEmailElement().value || '').length);
+  const element = /** @type {!HTMLInputElement} */ (this.getEmailElement());
+  const value = /** @type {!string} */ (element.value || '');
+  element.focus();
+  goog.dom.selection.setCursorPosition(element, value.length);
 };
 
 
