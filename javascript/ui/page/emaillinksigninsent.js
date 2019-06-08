@@ -47,6 +47,10 @@ firebaseui.auth.ui.page.EmailLinkSignInSent = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+
   // Extend base page class and render email link sign in sent soy template.
   firebaseui.auth.ui.page.EmailLinkSignInSent.base(
       this,
@@ -57,10 +61,7 @@ firebaseui.auth.ui.page.EmailLinkSignInSent = function(
       },
       opt_domHelper,
       'emailLinkSignInSent',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
   this.onTroubleGetingEmailLinkClick_ = onTroubleGetingEmailLinkClick;
   this.onCancelClick_ = onCancelClick;
 };
@@ -71,7 +72,7 @@ goog.inherits(firebaseui.auth.ui.page.EmailLinkSignInSent,
 /** @override */
 firebaseui.auth.ui.page.EmailLinkSignInSent.prototype.enterDocument =
     function() {
-  var self = this;
+  const self = this;
   // Handle action event for cancel button.
   firebaseui.auth.ui.element.listenForActionEvent(
       this, this.getSecondaryLinkElement(), function(e) {
@@ -89,11 +90,12 @@ firebaseui.auth.ui.page.EmailLinkSignInSent.prototype.enterDocument =
 
 
 /**
- * @return {?Element} The trouble getting email link.
+ * @return {!Element} The trouble getting email link.
  */
 firebaseui.auth.ui.page.EmailLinkSignInSent.prototype
     .getTroubleGettingEmailLink = function() {
-  return this.getElementByClass('firebaseui-id-trouble-getting-email-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-trouble-getting-email-link')));
 };
 
 
