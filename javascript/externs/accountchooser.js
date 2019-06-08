@@ -19,6 +19,9 @@
 
 /**
  * Namespace for accountchooser.com API.
+ *
+ * @namespace
+ * @suppress {strictMissingProperties}
  */
 var accountchooser = {};
 
