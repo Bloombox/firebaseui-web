@@ -283,7 +283,7 @@ firebaseui.auth.ui.page.Base.prototype.startProcessing_ = function() {
   // Check whether component uses default progress bar or spinner for busy
   // indicator.
   const useSpinner =
-      goog.dom.classlist.contains(self.getElement(), 'firebaseui-use-spinner');
+      goog.dom.classlist.contains(self.getElement(), goog.getCssName('firebaseui-use-spinner'));
   this.showProcessingTimeout_ = window.setTimeout(function() {
     if (!self.getElement() || self.busyIndicator_ !== null) {
       return;
