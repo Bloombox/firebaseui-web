@@ -24,7 +24,7 @@ goog.provide('firebaseui.auth.sni');
 
 /**
  * RE for matching MSIE's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_MSIE_UA_ = /MSIE ([\d.]+).*Windows NT ([\d.]+)/;
@@ -32,7 +32,7 @@ firebaseui.auth.sni.REGEX_MSIE_UA_ = /MSIE ([\d.]+).*Windows NT ([\d.]+)/;
 
 /**
  * RE for matching Firefox's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_FIREFOX_UA_ = /Firefox\/([\d.]+)/;
@@ -40,7 +40,7 @@ firebaseui.auth.sni.REGEX_FIREFOX_UA_ = /Firefox\/([\d.]+)/;
 
 /**
  * RE for matching Opera's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_OPERA_UA_ =
@@ -49,7 +49,7 @@ firebaseui.auth.sni.REGEX_OPERA_UA_ =
 
 /**
  * RE for matching Chrome's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_CHROME_UA_ = /Chrome\/([\d.]+)/;
@@ -57,7 +57,7 @@ firebaseui.auth.sni.REGEX_CHROME_UA_ = /Chrome\/([\d.]+)/;
 
 /**
  * RE for matching Safari's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_SAFARI_UA_ =
@@ -66,7 +66,7 @@ firebaseui.auth.sni.REGEX_SAFARI_UA_ =
 
 /**
  * RE for matching old Safari's user agent (Sarafi 1 & 2).
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_OLD_SAFARI_UA_ = /Mac OS X;.*(?!(Version)).*Safari/;
@@ -74,7 +74,7 @@ firebaseui.auth.sni.REGEX_OLD_SAFARI_UA_ = /Mac OS X;.*(?!(Version)).*Safari/;
 
 /**
  * RE for matching Android default browser's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_ANDROID_UA_ = /Android ([\d.]+).*Safari/;
@@ -82,7 +82,7 @@ firebaseui.auth.sni.REGEX_ANDROID_UA_ = /Android ([\d.]+).*Safari/;
 
 /**
  * RE for matching Mobile Safari's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_MOBILE_SAFARI_UA_ =
@@ -91,7 +91,7 @@ firebaseui.auth.sni.REGEX_MOBILE_SAFARI_UA_ =
 
 /**
  * RE for matching Konqueror's user agent.
- * @const {RegExp}
+ * @const {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_KONQUEROR_UA_ = /Konqueror\/([\d.]+)/;
@@ -99,6 +99,7 @@ firebaseui.auth.sni.REGEX_KONQUEROR_UA_ = /Konqueror\/([\d.]+)/;
 
 /**
  * RE for matching Mobile MSIE's user agent.
+ * @type {!RegExp}
  * @private
  */
 firebaseui.auth.sni.REGEX_MOBILE_MSIE_UA_ =
@@ -109,16 +110,16 @@ firebaseui.auth.sni.REGEX_MOBILE_MSIE_UA_ =
 /**
  * Represents a version number for the user agent and platform.
  *
- * @param {string} version The version string.
- * @param {string=} opt_delimiter The delimiter which separates each components
+ * @param {!string} version The version string.
+ * @param {!string=} opt_delimiter The delimiter which separates each components
  * of the version. Default is a dot '.'.
  * @constructor
  */
 firebaseui.auth.sni.Version = function(version, opt_delimiter) {
   this.version_ = version;
-  var parts = version.split(opt_delimiter || '.');
+  const parts = version.split(opt_delimiter || '.');
   this.components_ = [];
-  for (var i = 0; i < parts.length; i++) {
+  for (let i = 0; i < parts.length; i++) {
     this.components_.push(parseInt(parts[i], 10));
   }
 };
@@ -127,7 +128,7 @@ firebaseui.auth.sni.Version = function(version, opt_delimiter) {
 /**
  * Compares the version with another one.
  *
- * @param {firebaseui.auth.sni.Version|string} version The version to compare.
+ * @param {!firebaseui.auth.sni.Version|!string} version The version to compare.
  * @return {number} -1, 0 or 1 if it's less than, equal to or greater than the
  *     other.
  */
@@ -135,10 +136,10 @@ firebaseui.auth.sni.Version.prototype.compare = function(version) {
   if (!(version instanceof firebaseui.auth.sni.Version)) {
     version = new firebaseui.auth.sni.Version(String(version));
   }
-  var maxLength = Math.max(this.components_.length, version.components_.length);
-  for (var i = 0; i < maxLength; i++) {
-    var num1 = this.components_[i];
-    var num2 = version.components_[i];
+  const maxLength = Math.max(this.components_.length, version.components_.length);
+  for (let i = 0; i < maxLength; i++) {
+    const num1 = /** @type {number|undefined} */ (this.components_[i]);
+    const num2 = /** @type {number|undefined} */ (version.components_[i]);
     if (num1 !== undefined && num2 !== undefined && num1 !== num2) {
       return num1 - num2;
     } else if (num1 === undefined) {
@@ -154,7 +155,7 @@ firebaseui.auth.sni.Version.prototype.compare = function(version) {
 /**
  * Checks the version is equal to or greater than another one.
  *
- * @param {firebaseui.auth.sni.Version|string} version The version to compare.
+ * @param {!firebaseui.auth.sni.Version|!string} version The version to compare.
  * @return {boolean} `true` if it's equal to or greater than the other.
  */
 firebaseui.auth.sni.Version.prototype.ge = function(version) {
@@ -165,16 +166,16 @@ firebaseui.auth.sni.Version.prototype.ge = function(version) {
 /**
  * Checks whether or not the user agent supports SNI.
  *
- * @param {string=} opt_userAgent The user agent string. If not provided,
+ * @param {!string=} opt_userAgent The user agent string. If not provided,
  *     window.navigator.userAgent.
  * @return {boolean} `true` if SNI is supported.
  */
 firebaseui.auth.sni.isSupported = function(opt_userAgent) {
-  var ua = opt_userAgent || (window.navigator && window.navigator.userAgent);
+  const ua = opt_userAgent || (window.navigator && window.navigator.userAgent);
   if (ua) {
-    var result;
+    let result;
     if (result = ua.match(firebaseui.auth.sni.REGEX_OPERA_UA_)) {
-      var version = new firebaseui.auth.sni.Version(result[3] || result[1]);
+      const version = new firebaseui.auth.sni.Version(result[3] || result[1]);
       // Opera Mini, No.
       if (ua.indexOf('Opera Mini') >= 0) {
         return false;
@@ -194,11 +195,11 @@ firebaseui.auth.sni.isSupported = function(opt_userAgent) {
     } else if (result = ua.match(firebaseui.auth.sni.REGEX_SAFARI_UA_)) {
       // Safari 2.1 or later on OS X 10.5.6 or higher and Windows Vista or
       // higher supports SNI.
-      var version = new firebaseui.auth.sni.Version(result[6]);
-      var winVersion = result[3] && new firebaseui.auth.sni.Version(result[3]);
-      var osxVersion = result[5] &&
+      const version = new firebaseui.auth.sni.Version(result[6]);
+      const winVersion = result[3] && new firebaseui.auth.sni.Version(result[3]);
+      const osxVersion = result[5] &&
           new firebaseui.auth.sni.Version(result[5], '_');
-      var platSupport = !!(winVersion && winVersion.ge('6.0')) ||
+      const platSupport = !!(winVersion && winVersion.ge('6.0')) ||
           !!(osxVersion && osxVersion.ge('10.5.6'));
       return platSupport && version.ge('3.0');
     } else if (result = ua.match(firebaseui.auth.sni.REGEX_ANDROID_UA_)) {
@@ -212,13 +213,13 @@ firebaseui.auth.sni.isSupported = function(opt_userAgent) {
       return new firebaseui.auth.sni.Version(result[1]).ge('4.7');
     } else if (result = ua.match(firebaseui.auth.sni.REGEX_MOBILE_MSIE_UA_)) {
       // Mobile IE on WP7 supports SNI.
-      var version = new firebaseui.auth.sni.Version(result[1]);
-      var winVersion = new firebaseui.auth.sni.Version(result[2]);
+      const version = new firebaseui.auth.sni.Version(result[1]);
+      const winVersion = new firebaseui.auth.sni.Version(result[2]);
       return version.ge('7.0') && winVersion.ge('7.0');
     } else if (result = ua.match(firebaseui.auth.sni.REGEX_MSIE_UA_)) {
       // Only IE7 or later on Windows Vista or higher supports SNI.
-      var version = new firebaseui.auth.sni.Version(result[1]);
-      var winVersion = new firebaseui.auth.sni.Version(result[2]);
+      const version = new firebaseui.auth.sni.Version(result[1]);
+      const winVersion = new firebaseui.auth.sni.Version(result[2]);
       return version.ge('7.0') && winVersion.ge('6.0');
     } else if (result = ua.match(firebaseui.auth.sni.REGEX_OLD_SAFARI_UA_)) {
       // Old version Safari doesn't support SNI.

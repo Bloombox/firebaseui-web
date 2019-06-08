@@ -65,7 +65,3 @@ firebaseui.auth.PhoneAuthResult.prototype.confirm = function(verificationCode) {
 firebaseui.auth.PhoneAuthResult.prototype.getConfirmationResult = function() {
   return this.confirmationResult_;
 };
-
-
-
-

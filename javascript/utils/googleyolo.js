@@ -36,12 +36,20 @@ goog.require('goog.string.Const');
  * @constructor
  */
 firebaseui.auth.GoogleYolo = function(opt_googleyolo) {
+  /** @type {?SmartLockApi} */
+  const existingInstance = /** @type {?SmartLockApi} */ (
+    goog.global[firebaseui.auth.GoogleYolo.NAMESPACE_]);
+
+  /** @type {?SmartLockApi} */
+  const resolvedInstanceIfAny = /** @type {?SmartLockApi} */ (
+    opt_googleyolo || existingInstance);
+
   /**
    * @private {?SmartLockApi|undefined} The One-Tap instance reference. If no
    *     reference is available, googleyolo will be lazy loaded dynamically.
    */
-  this.googleyolo_ = opt_googleyolo ||
-      goog.global[firebaseui.auth.GoogleYolo.NAMESPACE_];
+  this.googleyolo_ = resolvedInstanceIfAny;
+
   /** @private {?Promise} The last cancellation promise. */
   this.lastCancel_ = null;
   /** @private {boolean} Whether googleyolo UI has already been initialized. */
@@ -124,77 +132,107 @@ firebaseui.auth.GoogleYolo.prototype.cancel = function() {
  */
 firebaseui.auth.GoogleYolo.prototype.show =
     function(config, autoSignInDisabled) {
-  var self = this;
+  const self = this;
   // Configuration available and googleyolo is available.
   if (this.googleyolo_ && config) {
-    // One-Tap UI renderer.
-    var render = function() {
+    /**
+     * One-tap UI renderer.
+     * @private
+     * @returns {!Promise<?SmartLockCredential>} Promise for a credential, if available.
+     */
+    function render_() {
       // UI initialized, it is OK to cancel last operation.
       self.initialized_ = true;
       // retrieve is only called if auto sign-in is enabled. Otherwise, it will
       // get skipped.
-      var retrieveCredential = Promise.resolve(null);
+      let retrieveCredential = Promise.resolve(null);
       if (!autoSignInDisabled) {
+        /**
+         * Handle a sign-in error.
+         * @private
+         * @param {{type: !string}} error Error object.
+         * @return {null|undefined}
+         */
+        function errorHandler_(error) {
+          // For user cancellation or concurrent request pass down.
+          // Otherwise suppress and run hint.
+          if (error.type ===
+              firebaseui.auth.GoogleYolo.Error.USER_CANCELED ||
+              error.type ===
+              firebaseui.auth.GoogleYolo.Error.CONCURRENT_REQUEST) {
+            throw error;
+          }
+          // Ignore all other errors to give hint a chance to run next.
+          return null;
+        }
+
         retrieveCredential =
             self.googleyolo_.retrieve(
                 /** @type {!SmartLockRequestOptions} */ (config))
-                .catch(function(error) {
-                  // For user cancellation or concurrent request pass down.
-                  // Otherwise suppress and run hint.
-                  if (error.type ===
-                      firebaseui.auth.GoogleYolo.Error.USER_CANCELED ||
-                      error.type ===
-                      firebaseui.auth.GoogleYolo.Error.CONCURRENT_REQUEST) {
-                    throw error;
-                  }
-                  // Ignore all other errors to give hint a chance to run next.
-                  return null;
-                });
+                .catch(/** @type {!function(*): ?} */ (errorHandler_));
       }
+
+      /**
+       * Callback to retrieve a credential.
+       *
+       * @param {?SmartLockCredential} credential
+       * @returns {!SmartLockCredential|!Promise<?SmartLockCredential>}
+       */
+      function retrieveCredentialCallback_(credential) {
+        if (!credential) {
+          // Auto sign-in not complete.
+          // Show account selector.
+          return self.googleyolo_.hint(
+              /** @type {!SmartLockHintOptions} */ (config));
+        }
+        // Credential already available from the retrieve call. Pass it
+        // through.
+        return credential;
+      }
+
+      /**
+       * Handle a credential retrieval error.
+       * @private
+       * @param {{type: !string}} error Error object.
+       * @return {null|undefined|!Promise<?SmartLockCredential>}
+       */
+      function retrieveCredentialErr_(error) {
+        // When user cancels the flow, reset the lastCancel promise and
+        // resolve with false.
+        if (error.type === firebaseui.auth.GoogleYolo.Error.USER_CANCELED) {
+          self.lastCancel_ = Promise.resolve();
+        } else if (error.type ===
+                   firebaseui.auth.GoogleYolo.Error.CONCURRENT_REQUEST) {
+          // Only one UI can be rendered at a time, cancel existing UI
+          // and try again.
+          self.cancel();
+          return self.show(config, autoSignInDisabled);
+        }
+        // Return null as no credential is available.
+        return null;
+      }
+
       // Check if a credential is already available (previously signed in with).
       return retrieveCredential
-          .then(function(credential) {
-            if (!credential) {
-              // Auto sign-in not complete.
-              // Show account selector.
-              return self.googleyolo_.hint(
-                  /** @type {!SmartLockHintOptions} */ (config));
-            }
-            // Credential already available from the retrieve call. Pass it
-            // through.
-            return credential;
-          })
-          .catch(function(error) {
-            // When user cancels the flow, reset the lastCancel promise and
-            // resolve with false.
-            if (error.type === firebaseui.auth.GoogleYolo.Error.USER_CANCELED) {
-              self.lastCancel_ = Promise.resolve();
-            } else if (error.type ===
-                       firebaseui.auth.GoogleYolo.Error.CONCURRENT_REQUEST) {
-              // Only one UI can be rendered at a time, cancel existing UI
-              // and try again.
-              self.cancel();
-              return self.show(config, autoSignInDisabled);
-            }
-            // Return null as no credential is available.
-            return null;
-          });
-    };
+          .then(retrieveCredentialCallback_)
+          .catch(/** @type {!function(*): ?} */ (retrieveCredentialErr_));
+    }
+
     // If there is a pending cancel operation, wait for it to complete.
     // Otherwise, an error will be thrown.
     if (this.lastCancel_) {
       // render always catches the error.
-      return this.lastCancel_.then(render);
+      return this.lastCancel_.then(render_);
     } else {
       // No pending cancel operation. Render UI directly.
-      return render();
+      return render_();
     }
   } else if (config) {
     // Try to dynamically load googleyolo dependencies.
     // If multiple calls of show are triggered successively, they would all
     // share the same loader pending promise. They would then cancel each other
     // successively due to concurrent requests. Only the last call will succeed.
-    var p = firebaseui.auth.GoogleYolo.Loader.getInstance().load()
+    const p = firebaseui.auth.GoogleYolo.Loader.getInstance().load()
         .then(function() {
           // Set googleyolo to prevent reloading again for future show calls.
           self.googleyolo_ = goog.global[firebaseui.auth.GoogleYolo.NAMESPACE_];
@@ -238,12 +276,12 @@ goog.addSingletonGetter(firebaseui.auth.GoogleYolo.Loader);
  *     loaded.
  */
 firebaseui.auth.GoogleYolo.Loader.prototype.load = function() {
-  var self = this;
+  const self = this;
   // Return any pending or resolved loader promise.
   if (this.loader_) {
     return this.loader_;
   }
-  var url = goog.html.TrustedResourceUrl.fromConstant(
+  const url = goog.html.TrustedResourceUrl.fromConstant(
      firebaseui.auth.GoogleYolo.GOOGLE_YOLO_SRC_);
   if (!goog.global[firebaseui.auth.GoogleYolo.NAMESPACE_]) {
     // Wait for DOM to be ready.
@@ -256,7 +294,7 @@ firebaseui.auth.GoogleYolo.Loader.prototype.load = function() {
           }
           return new goog.Promise(function(resolve, reject) {
             // Timeout after a certain delay.
-            var timer = setTimeout(function() {
+            const timer = setTimeout(function() {
               // On error, nullify loader to allow retrial.
               self.loader_ = null;
               reject(new Error('Network error!'));
@@ -281,4 +319,3 @@ firebaseui.auth.GoogleYolo.Loader.prototype.load = function() {
   // Already available, resolve immediately.
   return goog.Promise.resolve();
 };
-

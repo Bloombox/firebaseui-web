@@ -25,7 +25,7 @@ goog.require('goog.asserts');
 
 
 /**
- * @type {accountchooser.Api}
+ * @type {?accountchooser.Api}
  * @private
  */
 firebaseui.auth.acClient.api_ = null;
@@ -40,7 +40,7 @@ firebaseui.auth.acClient.isInitialized = function() {
 
 
 /**
- * @param {Object=} opt_error The error returned by the accountchooser.com
+ * @param {?Object=} opt_error The error returned by the accountchooser.com
  *     client.
  * @return {boolean} Whether accountchooser.com is unavailable (true) or
  *     available (false).
@@ -57,18 +57,19 @@ firebaseui.auth.acClient.isUnavailable_ = function(opt_error) {
  * Initializes the accountchooser.com API object. Only the first call
  * initializes the client and subsequent calls return immediately.
  *
- * @param {function()=} opt_onEmptyResponse The callback function that is
+ * @param {!function()=} opt_onEmptyResponse The callback function that is
  *     invoked when there is no response from accountchooser.com.
- * @param {function(firebaseui.auth.Account)=} opt_onAccountSelected The
+ * @param {!function(?firebaseui.auth.Account)=} opt_onAccountSelected The
  *     callback function invoked when an account is selected from
  *     accountchooser.com.
- * @param {function(boolean)=} opt_onAddAccount The callback function invoked
+ * @param {!function(boolean)=} opt_onAddAccount The callback function invoked
  *     when add account button is clicked in accountchooser.com. A boolean
  *     availability flag is passed. It is true if accountchooser.com is
  *     available, false otherwise.
- * @param {Array<string>=} opt_providers The accepted IdP list.
+ * @param {!Array<!string>=} opt_providers The accepted IdP list.
  * @param {?string=} opt_language The display language for accountchooser.com.
- * @param {Object=} opt_uiConfig The UI configuration for accountchooser.com.
+ * @param {!Object=} opt_uiConfig The UI configuration for accountchooser.com.
+ * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.acClient.init = function(
     opt_onEmptyResponse,
@@ -83,22 +84,31 @@ firebaseui.auth.acClient.init = function(
   }
 
   // Save the add account callback for later use.
-  var selectCallback = function(resp, opt_error) {
-    if (resp && resp['account'] && opt_onAccountSelected) {
+
+  /**
+   * Save the add account callback for later use.
+   *
+   * @private
+   * @param {!Object} resp Response with a selection.
+   * @param {!Object=} opt_error Error, if any.
+   */
+  function selectCallback_(resp, opt_error) {
+    if (!!resp && !!resp['account'] && opt_onAccountSelected) {
       opt_onAccountSelected(
-          firebaseui.auth.Account.fromPlainObject(resp['account']));
+          firebaseui.auth.Account.fromPlainObject(
+            /** @type {!Object} */ (resp['account'])));
     } else if (opt_onAddAccount) {
       // Check if accountchooser.com is available and pass to add account.
-      var isUnavailable = firebaseui.auth.acClient.isUnavailable_(opt_error);
+      const isUnavailable = firebaseui.auth.acClient.isUnavailable_(opt_error);
       // Either an error happened or user clicked the add account button.
       opt_onAddAccount(!isUnavailable);
     }
-  };
+  }
 
-  var config = {
+  const config = {
     'callbacks': {
       'empty': opt_onEmptyResponse,
-      'select': selectCallback,
+      'select': selectCallback_,
       // Discard the result of store and update which we don't care. Instead it
       // should act like there is no response, hence the opt_onEmptyResponse.
       'store': opt_onEmptyResponse,
@@ -108,10 +118,9 @@ firebaseui.auth.acClient.init = function(
     'providers': opt_providers,
     'ui': opt_uiConfig
   };
-  if (typeof accountchooser != 'undefined' &&
-      accountchooser.Api &&
-      accountchooser.Api.init) {
-    firebaseui.auth.acClient.api_ = accountchooser.Api.init(config);
+  if (!!window['accountchooser']) {
+    const acapi = window['accountchooser']['Api']['init'](config);
+    firebaseui.auth.acClient.api_ = /** @type {!accountchooser.Api} */ (acapi);
   } else {
     firebaseui.auth.acClient.api_ = new firebaseui.auth.acClient.DummyApi(
         config);
@@ -125,10 +134,10 @@ firebaseui.auth.acClient.init = function(
  * It first checks whether accountchooser.com has accounts. If not,
  * `onSkipSelect` is called instead of redirecting to accountchooser.com.
  *
- * @param {function(boolean)} onSkipSelect The callback function invoked when
+ * @param {!function(boolean)} onSkipSelect The callback function invoked when
  *     the account selection can be skipped. A boolean availability flag is
  *     passed. It is true if accountchooser.com is available, false otherwise.
- * @param {Array<firebaseui.auth.Account>=} opt_localAccounts The local account
+ * @param {!Array<!firebaseui.auth.Account>=} opt_localAccounts The local account
  *     list to pass to accountchooser.com.
  * @param {string=} opt_callbackUrl The URL to return to when the flow finishes.
  *     The default is current URL.
@@ -136,13 +145,23 @@ firebaseui.auth.acClient.init = function(
 firebaseui.auth.acClient.trySelectAccount = function(
     onSkipSelect, opt_localAccounts, opt_callbackUrl) {
   goog.asserts.assert(firebaseui.auth.acClient.isInitialized());
-  var select = function() {
-    var callbackUrl =
+  const select = function() {
+    const callbackUrl =
         goog.Uri.resolve(window.location.href, opt_callbackUrl).toString();
+
+    /**
+     * Convert an account to a plain object.
+     *
+     * @private
+     * @param {!firebaseui.auth.Account} account Account to convert to an object.
+     * @return {!Object} Object representing the given account.
+     */
+    function convertAccountToObject_(account) {
+      return account.toPlainObject();
+    }
+
     firebaseui.auth.acClient.api_.select(
-        goog.array.map(opt_localAccounts || [], function(account) {
-          return account.toPlainObject();
-        }),
+        goog.array.map(opt_localAccounts || [], convertAccountToObject_),
         {'clientCallbackUrl': callbackUrl});
   };
   if (opt_localAccounts && opt_localAccounts.length) {
@@ -152,7 +171,7 @@ firebaseui.auth.acClient.trySelectAccount = function(
       if (!empty && !error) {
         select();
       } else {
-        var isUnavailable = firebaseui.auth.acClient.isUnavailable_(error);
+        const isUnavailable = firebaseui.auth.acClient.isUnavailable_(error);
         onSkipSelect(!isUnavailable);
       }
     });
@@ -166,22 +185,22 @@ firebaseui.auth.acClient.trySelectAccount = function(
  * the `onSkipStore` is called instead of redirecting to
  * accountchooser.com.
  *
- * @param {firebaseui.auth.Account} account The account to add.
- * @param {function(boolean)} onSkipStore The callback function invoked when the
+ * @param {!firebaseui.auth.Account} account The account to add.
+ * @param {!function(boolean)} onSkipStore The callback function invoked when the
  *     account storing can be skipped. A boolean availability flag is passed. It
  *     is true if accountchooser.com is available, false otherwise.
- * @param {string=} opt_callbackUrl The URL to return to when the flow finishes.
+ * @param {!string=} opt_callbackUrl The URL to return to when the flow finishes.
  *     If not provided, the current one is used.
  */
 firebaseui.auth.acClient.tryStoreAccount =
     function(account, onSkipStore, opt_callbackUrl) {
   goog.asserts.assert(firebaseui.auth.acClient.isInitialized());
-  var options = {};
+  const options = {};
   if (opt_callbackUrl) {
     options['clientCallbackUrl'] =
       goog.Uri.resolve(window.location.href, opt_callbackUrl).toString();
   }
-  var acAccount = account.toPlainObject();
+  const acAccount = account.toPlainObject();
   firebaseui.auth.acClient.api_.checkAccountExist(acAccount,
       function(exist, error) {
     if (!exist && !error) {
@@ -198,13 +217,13 @@ firebaseui.auth.acClient.tryStoreAccount =
                   account.toPlainObject(),
                   options);
             } else {
-              var isUnavailable = firebaseui.auth.acClient.isUnavailable_(
+              const isUnavailable = firebaseui.auth.acClient.isUnavailable_(
                   error);
               onSkipStore(!isUnavailable);
             }
           });
     } else {
-      var isUnavailable = firebaseui.auth.acClient.isUnavailable_(error);
+      const isUnavailable = firebaseui.auth.acClient.isUnavailable_(error);
       onSkipStore(!isUnavailable);
     }
   });
@@ -216,9 +235,10 @@ firebaseui.auth.acClient.tryStoreAccount =
  * accountchooser.com is not available, for instance, the user agent doesn't
  * support SNI.
  *
- * @param {Object} config The configuration.
+ * @param {!Object} config The configuration.
  * @constructor
  * @implements {accountchooser.Api}
+ * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.acClient.DummyApi = function(config) {
   this.config_ = config;
@@ -238,7 +258,7 @@ firebaseui.auth.acClient.DummyApi.prototype.fireOnEmpty = function() {
 
 /**
  * The accountchooser.com service unavailable error.
- * @const {Object}
+ * @const {!Object}
  * @private
  */
 firebaseui.auth.acClient.DummyApi.UNAVAILABLE_ERROR_ = {
@@ -252,8 +272,9 @@ firebaseui.auth.acClient.DummyApi.UNAVAILABLE_ERROR_ = {
  * Stores the accounts. The callback is always invoked with a service
  * unavailable error.
  *
- * @param {Array<Object>} accounts The accounts to store.
- * @param {Object=} opt_config The optional client configuration.
+ * @override
+ * @param {!Array<!Object>} accounts The accounts to store.
+ * @param {?Object=} opt_config The optional client configuration.
  */
 firebaseui.auth.acClient.DummyApi.prototype.store =
     function(accounts, opt_config) {
@@ -268,8 +289,9 @@ firebaseui.auth.acClient.DummyApi.prototype.store =
  * Selects account. The callback is always invoked with a service unavailable
  * error.
  *
- * @param {Array<Object>} accounts The local accounts to select.
- * @param {Object=} opt_config The optional client configuration.
+ * @override
+ * @param {!Array<!Object>} accounts The local accounts to select.
+ * @param {?Object=} opt_config The optional client configuration.
  */
 firebaseui.auth.acClient.DummyApi.prototype.select =
     function(accounts, opt_config) {
@@ -284,8 +306,9 @@ firebaseui.auth.acClient.DummyApi.prototype.select =
  * Updates the account. The callback is always invoked with a service
  * unavailable error.
  *
- * @param {Object} account The account to update.
- * @param {Object=} opt_config The optional client configuration.
+ * @override
+ * @param {!Object} account The account to update.
+ * @param {?Object=} opt_config The optional client configuration.
  */
 firebaseui.auth.acClient.DummyApi.prototype.update =
     function(account, opt_config) {
@@ -297,10 +320,11 @@ firebaseui.auth.acClient.DummyApi.prototype.update =
 
 
 /**
- * Checkes if accountchooser.com is disabled. The callback is always invoked
+ * Checks if accountchooser.com is disabled. The callback is always invoked
  * with a `true`.
  *
- * @param {function(boolean=, Object=)} callback The callback function.
+ * @override
+ * @param {!function(boolean=, !Object=)} callback The callback function.
  */
 firebaseui.auth.acClient.DummyApi.prototype.checkDisabled = function(callback) {
   callback(true);
@@ -308,10 +332,11 @@ firebaseui.auth.acClient.DummyApi.prototype.checkDisabled = function(callback) {
 
 
 /**
- * Checkes if the accountchooser.com is empty. The callback is always invoked
+ * Checks if the accountchooser.com is empty. The callback is always invoked
  * with a service unavailable error.
  *
- * @param {function(boolean=, Object=)} callback The callback function.
+ * @override
+ * @param {!function(boolean=, !Object=)} callback The callback function.
  */
 firebaseui.auth.acClient.DummyApi.prototype.checkEmpty = function(callback) {
   callback(undefined, firebaseui.auth.acClient.DummyApi.UNAVAILABLE_ERROR_);
@@ -319,11 +344,12 @@ firebaseui.auth.acClient.DummyApi.prototype.checkEmpty = function(callback) {
 
 
 /**
- * Checkes if the account is in accountchooser.com. The callback is always
+ * Checks if the account is in accountchooser.com. The callback is always
  * invoked with a service unavailable error.
  *
- * @param {Object} account The account to check.
- * @param {function(boolean=, Object=)} callback The callback function.
+ * @override
+ * @param {!Object} account The account to check.
+ * @param {!function(boolean=, !Object=)} callback The callback function.
  */
 firebaseui.auth.acClient.DummyApi.prototype.checkAccountExist =
     function(account, callback) {
@@ -332,11 +358,12 @@ firebaseui.auth.acClient.DummyApi.prototype.checkAccountExist =
 
 
 /**
- * Checkes if the account should be updated. The callback is always invoked with
+ * Checks if the account should be updated. The callback is always invoked with
  * a service unavailable error.
  *
- * @param {Object} account The account to check.
- * @param {function(boolean=, Object=)} callback The callback function.
+ * @override
+ * @param {!Object} account The account to check.
+ * @param {!function(boolean=, !Object=)} callback The callback function.
  */
 firebaseui.auth.acClient.DummyApi.prototype.checkShouldUpdate =
     function(account, callback) {

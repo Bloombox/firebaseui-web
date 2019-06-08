@@ -18,8 +18,6 @@
 
 goog.provide('firebaseui.auth.Config');
 
-goog.require('goog.Uri');
-
 
 /**
  * Structure for defining and manipulating configuration fields.
@@ -28,15 +26,16 @@ goog.require('goog.Uri');
 firebaseui.auth.Config = function() {
   /**
    * The instance for storing all configurations.
-   * @type {Object}
+   * @type {!Object}
    * @private
+   * @const
    */
   this.instance_ = {};
 };
 
 
 /**
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @return {boolean} Whether the configuration is defined.
  * @private
  */
@@ -46,7 +45,7 @@ firebaseui.auth.Config.prototype.has_ = function(name) {
 
 
 /**
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @return {*|undefined} The configuration value.
  * @private
  */
@@ -58,7 +57,7 @@ firebaseui.auth.Config.prototype.get_ = function(name) {
 /**
  * Sets the information for a configuration.
  *
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @param {*|undefined} value The configuration value.
  * @private
  */
@@ -70,7 +69,7 @@ firebaseui.auth.Config.prototype.set_ = function(name, value) {
 /**
  * Defines a configuration with the given name and value.
  *
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @param {*=} opt_value The value of the configuration.
  */
 firebaseui.auth.Config.prototype.define = function(name, opt_value) {
@@ -84,7 +83,7 @@ firebaseui.auth.Config.prototype.define = function(name, opt_value) {
 /**
  * Updates the configuration and its descendants with the given value.
  *
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @param {*} value The value of the configuration.
  */
 firebaseui.auth.Config.prototype.update = function(name, value) {
@@ -99,7 +98,7 @@ firebaseui.auth.Config.prototype.update = function(name, value) {
  * Gets the configuration value for the given name. If an unrecognized name is
  * specified, an `Error` is thrown.
  *
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @return {*|undefined} The configuration value.
  */
 firebaseui.auth.Config.prototype.get = function(name) {
@@ -114,11 +113,11 @@ firebaseui.auth.Config.prototype.get = function(name) {
  * Gets the configuration value for the given name. If an unrecognized name is
  * specified or the value is not provided, an `Error` is thrown.
  *
- * @param {string} name The name of the configuration.
+ * @param {!string} name The name of the configuration.
  * @return {*} The configuration value.
  */
 firebaseui.auth.Config.prototype.getRequired = function(name) {
-  var value = this.get(name);
+  const value = this.get(name);
   if (!value) {
     throw new Error('Configuration ' + name + ' is required.');
   }
