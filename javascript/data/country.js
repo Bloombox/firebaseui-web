@@ -34,16 +34,19 @@ goog.require('goog.structs.Trie');
  */
 firebaseui.auth.data.country.LookupTree = function(countries) {
   /**
+   * @const
    * @private {!Array<!firebaseui.auth.data.country.Country>} The list of
    *     countries to construct a prefix tree for.
    */
   this.countries_ = countries;
   /**
+   * @const
    * @private {
    * !goog.structs.Trie<!Array<!firebaseui.auth.data.country.Country>>} The
    *     prefix tree.
    */
   this.trie_ = new goog.structs.Trie();
+
   // Initialize prefix tree like structure.
   this.init_();
 };
