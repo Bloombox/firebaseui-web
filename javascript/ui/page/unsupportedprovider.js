@@ -46,6 +46,9 @@ firebaseui.auth.ui.page.UnsupportedProvider = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.UnsupportedProvider.base(
       this,
       'constructor',
@@ -55,11 +58,16 @@ firebaseui.auth.ui.page.UnsupportedProvider = function(
       },
       opt_domHelper,
       'unsupportedProvider',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
+  /**
+   * @private
+   */
   this.onSubmitClick_ = onSubmitClick;
+
+  /**
+   * @private
+   */
   this.onCancelClick_ = onCancelClick;
 };
 goog.inherits(firebaseui.auth.ui.page.UnsupportedProvider,
