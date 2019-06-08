@@ -20,6 +20,7 @@
 goog.provide('firebaseui.auth.EventDispatcher');
 goog.provide('firebaseui.auth.EventRegister');
 
+goog.require('goog.array');
 goog.require('goog.events.EventTarget');
 
 
