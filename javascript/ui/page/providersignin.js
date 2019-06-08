@@ -44,6 +44,9 @@ firebaseui.auth.ui.page.ProviderSignIn = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.ProviderSignIn.base(
       this,
       'constructor',
@@ -53,10 +56,11 @@ firebaseui.auth.ui.page.ProviderSignIn = function(
       },
       opt_domHelper,
       'providerSignIn',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
+  /**
+   * @private
+   */
   this.onIdpClick_ = onIdpClick;
 };
 goog.inherits(firebaseui.auth.ui.page.ProviderSignIn,
