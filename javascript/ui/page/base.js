@@ -36,7 +36,7 @@ goog.require('goog.ui.Component');
 
 
 /**
- * @define {string} The base URL of images.
+ * @define {!string} The base URL of images.
  */
 goog.define('firebaseui.auth.ui.page.IMAGE_BASE',
     'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/');
@@ -50,7 +50,7 @@ firebaseui.auth.ui.page.SHOW_PROCESSING_DELAY_ = 500;
 
 
 /**
- * @const {Object}
+ * @const
  * @private
  */
 firebaseui.auth.ui.page.IJ_DATA_ = {
@@ -67,9 +67,9 @@ firebaseui.auth.ui.page.IJ_DATA_ = {
 
 /**
  * Base page custom event.
- * @param {string} type The event type.
+ * @param {!string} type The event type.
  * @param {!Element} target The target element where the event was triggered.
- * @param {Object=} opt_properties The optional properties to set to the custom
+ * @param {!Object=} opt_properties The optional properties to set to the custom
  *     event using same keys as object provided.
  * @constructor
  * @extends {goog.events.Event}
@@ -78,22 +78,44 @@ firebaseui.auth.ui.page.CustomEvent = function(type, target, opt_properties) {
   goog.events.Event.call(this, type, target);
   // If optional properties provided.
   // Add each property to custom event.
-  for (var key in opt_properties) {
+  for (let key in opt_properties) {
     this[key] = opt_properties[key];
   }
 };
 goog.inherits(firebaseui.auth.ui.page.CustomEvent, goog.events.Event);
 
 
+/**
+ * @typedef {{
+ *    privacyPolicyCallback: (function(): void|undefined),
+ *    tosCallback: (function(): void|undefined)}}
+ */
+let BaseInjectedData;
+
+
+/**
+  * @typedef {{
+  *    privacyPolicyCallback: (function(): void|undefined),
+  *    tosCallback: (function(): void|undefined),
+  *    googleLogo: !string,
+  *    githubLogo: !string,
+  *    facebookLogo: !string,
+  *    twitterLogo: !string,
+  *    passwordLogo: !string,
+  *    phoneLogo: !string,
+  *    anonymousLogo: !string}}
+  */
+let PageInjectedData;
 
 /**
  * Base UI component.
- * @param {function(ARG_TYPES, null=, Object.<string, *>=):*} template The Soy
+ *
+ * @param {function(ARG_TYPES, null=, !Object.<string, *>=):*} template The Soy
  *     template for the component.
  * @param {ARG_TYPES=} opt_templateData The data for the template.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @param {string=} opt_pageId Optional page ID used to identify the page.
- * @param {?Object=} opt_injectedData Optional injected data.
+ * @param {?BaseInjectedData=} opt_injectedData Optional injected data.
  * @constructor
  * @extends {goog.ui.Component}
  * @template ARG_TYPES
@@ -101,22 +123,61 @@ goog.inherits(firebaseui.auth.ui.page.CustomEvent, goog.events.Event);
 firebaseui.auth.ui.page.Base = function(
     template, opt_templateData, opt_domHelper, opt_pageId, opt_injectedData) {
   firebaseui.auth.ui.page.Base.base(this, 'constructor', opt_domHelper);
+
+  /**
+   * @private
+   * @type {?function(ARG_TYPES, null=, !Object.<string, *>=):*}
+   */
   this.template_ = template;
-  this.templateData_ = opt_templateData;
+
+  /**
+   * @private
+   * @type {ARG_TYPES}
+   */
+  this.templateData_ = opt_templateData || null;
+
+  /**
+   * @private
+   * @type {boolean}
+   */
   this.inProcessing_ = false;
+
+  /**
+   * @private
+   * @const
+   * @type {?string}
+   */
   this.pageId_ = opt_pageId || null;
+
+  /**
+   * @private
+   * @type {?number}
+   */
   this.showProcessingTimeout_ = null;
+
+  /**
+   * @private
+   * @type {?Element}
+   */
   this.busyIndicator_ = null;
-  this.injectedData_ = goog.object.clone(firebaseui.auth.ui.page.IJ_DATA_);
+
+  const ijData_ = {};
   goog.object.extend(
-      this.injectedData_, opt_injectedData || {});
+      ijData_, opt_injectedData || {}, firebaseui.auth.ui.page.IJ_DATA_);
+
+  /**
+   * @private
+   * @const
+   * @type {!PageInjectedData}
+   */
+  this.injectedData_ = /** @type {!PageInjectedData} */ (ijData_);
 };
 goog.inherits(firebaseui.auth.ui.page.Base, goog.ui.Component);
 
 
 /**
  * Events dispatched by pages on containers.
- * @enum {string}
+ * @enum {!string}
  */
 firebaseui.auth.ui.page.Base.EventType = {
   /** Dispatched after page enters document. */
@@ -137,7 +198,7 @@ firebaseui.auth.ui.page.Base.prototype.getPageId = function() {
 
 /** @override */
 firebaseui.auth.ui.page.Base.prototype.createDom = function() {
-  var element = goog.soy.renderAsElement(
+  const element = goog.soy.renderAsElement(
       this.template_,
       this.templateData_,
       this.injectedData_,
@@ -163,7 +224,7 @@ firebaseui.auth.ui.page.Base.prototype.enterDocument = function() {
   // If tos/pp element is available, sets the onClick handler when onClick
   // callbacks are provided.
   if (this.getTosLinkElement() && this.injectedData_.tosCallback) {
-    var tosCallback =
+    const tosCallback =
         /** @type {function()} */ (this.injectedData_.tosCallback);
     firebaseui.auth.ui.element.listenForActionEvent(
         this, this.getTosLinkElement(), function(e) {
@@ -171,7 +232,7 @@ firebaseui.auth.ui.page.Base.prototype.enterDocument = function() {
         });
   }
   if (this.getPpLinkElement() && this.injectedData_.privacyPolicyCallback) {
-    var privacyPolicyCallback =
+    const privacyPolicyCallback =
         /** @type {function()} */ (this.injectedData_.privacyPolicyCallback);
     firebaseui.auth.ui.element.listenForActionEvent(
         this, this.getPpLinkElement(), function(e) {
@@ -217,11 +278,11 @@ firebaseui.auth.ui.page.Base.prototype.disposeInternal = function() {
 firebaseui.auth.ui.page.Base.prototype.startProcessing_ = function() {
   // After a short delay, show the busy indicator. The delay is there so that
   // pages that load quickly do not display the indicator.
-  var self = this;
+  const self = this;
   this.inProcessing_ = true;
   // Check whether component uses default progress bar or spinner for busy
   // indicator.
-  var useSpinner =
+  const useSpinner =
       goog.dom.classlist.contains(self.getElement(), 'firebaseui-use-spinner');
   this.showProcessingTimeout_ = window.setTimeout(function() {
     if (!self.getElement() || self.busyIndicator_ !== null) {
@@ -277,14 +338,14 @@ firebaseui.auth.ui.page.Base.prototype.clearProcessingTimeout_ = function() {
  */
 firebaseui.auth.ui.page.Base.prototype.executePromiseRequest =
     function(executor, parameters, onSuccess, onError) {
-  var self = this;
+  const self = this;
   // One request at a time.
   if (self.inProcessing_) {
     return null;
   }
   self.startProcessing_();
 
-  var onCompletion = function() {
+  const onCompletion = function() {
     // Ignore it if the component is destroyed before getting a response.
     if (self.isDisposed()) {
       return null;
@@ -298,19 +359,19 @@ firebaseui.auth.ui.page.Base.prototype.executePromiseRequest =
 
 
 /**
- * @return {Element} The container element.
+ * @return {!Element} The container element.
  */
 firebaseui.auth.ui.page.Base.prototype.getContainer = function() {
   // Use parentNode for Firefox 7. (parentElement was added in Firefox 9).
-  return this.getElement().parentElement || /** @type {Element} */ (
+  return this.getElement().parentElement || /** @type {!Element} */ (
       this.getElement().parentNode);
 };
 
 
 /**
  * Moves the focus from the current to the next element when ENTER is pressed.
- * @param {Element} element The current element.
- * @param {Element} nextElement The next element to focus.
+ * @param {!Element} element The current element.
+ * @param {!Element} nextElement The next element to focus.
  * @protected
  */
 firebaseui.auth.ui.page.Base.prototype.focusToNextOnEnter = function(
@@ -323,7 +384,7 @@ firebaseui.auth.ui.page.Base.prototype.focusToNextOnEnter = function(
 
 /**
  * Submits the form when ENTER is pressed on the element.
- * @param {Element} element The current focused element.
+ * @param {!Element} element The current focused element.
  * @param {function()} onSubmit Callback to invoke when the form is submitted.
  * @protected
  */
@@ -338,8 +399,8 @@ firebaseui.auth.ui.page.Base.prototype.submitOnEnter =
 /**
  * Checks that the next element is hidden when ENTER is pressed in the current
  * element. If so, the form is submitted, otherwise no action is taken.
- * @param {Element} element The current element.
- * @param {Element} nextElement The next element to check for visibility status.
+ * @param {!Element} element The current element.
+ * @param {!Element} nextElement The next element to check for visibility status.
  * @param {function()} onSubmit Callback to invoke when the form is submitted.
  * @protected
  */
@@ -357,8 +418,8 @@ firebaseui.auth.ui.page.Base.prototype.submitIfNextHiddenOnEnter = function(
 /**
  * Moves the focus from the current to the next element when ENTER is pressed
  * and the next one is focusable. Otherwise the form is submitted.
- * @param {Element} element The current element.
- * @param {Element} nextElement The next element to focus.
+ * @param {!Element} element The current element.
+ * @param {!Element} nextElement The next element to focus.
  * @param {function()} onSubmit Callback to invoke when the form is submitted.
  * @protected
  */
