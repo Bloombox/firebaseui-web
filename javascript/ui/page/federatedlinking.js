@@ -47,6 +47,9 @@ firebaseui.auth.ui.page.FederatedLinking = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.FederatedLinking.base(
       this,
       'constructor',
@@ -57,10 +60,7 @@ firebaseui.auth.ui.page.FederatedLinking = function(
       },
       opt_domHelper,
       'federatedLinking',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_);
   this.onSubmitClick_ = onSubmitClick;
 };
 goog.inherits(firebaseui.auth.ui.page.FederatedLinking,
