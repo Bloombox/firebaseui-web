@@ -38,7 +38,7 @@ goog.require('goog.asserts');
  *     is clicked.
  * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
  *     Privacy Policy link is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -49,6 +49,9 @@ firebaseui.auth.ui.page.PasswordLinking = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.PasswordLinking.base(
       this,
       'constructor',
@@ -58,10 +61,7 @@ firebaseui.auth.ui.page.PasswordLinking = function(
       },
       opt_domHelper,
       'passwordLinking',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
   this.onSubmitClick_ = onSubmitClick;
   this.onForgotClick_ = onForgotClick;
 };
@@ -93,7 +93,8 @@ firebaseui.auth.ui.page.PasswordLinking.prototype.disposeInternal = function() {
 firebaseui.auth.ui.page.PasswordLinking.prototype.checkAndGetEmail =
     function() {
   return goog.asserts.assertString(firebaseui.auth.ui.element.getInputValue(
-      this.getElementByClass('firebaseui-id-email')));
+      /** @type {!Element} */ (
+        this.getElementByClass(goog.getCssName('firebaseui-id-email')))));
 };
 
 
