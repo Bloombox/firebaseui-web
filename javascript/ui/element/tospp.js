@@ -24,41 +24,45 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 /**
- * @return {?Element} The Terms of Service and Privacy Policy element.
+ * @return {!Element} The Terms of Service and Privacy Policy element.
  * @this {goog.ui.Component}
  */
 element.tospp.getTosPpElement = function() {
-  return this.getElementByClass('firebaseui-tos');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-tos')));
 };
 
 
 /**
- * @return {?Element} The Terms of Service hyperlink element.
+ * @return {!Element} The Terms of Service hyperlink element.
  * @this {goog.ui.Component}
  */
 element.tospp.getTosLinkElement = function() {
-  return this.getElementByClass('firebaseui-tos-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-tos-link')));
 };
 
 
 /**
- * @return {?Element} The Privacy Policy hyperlink element.
+ * @return {!Element} The Privacy Policy hyperlink element.
  * @this {goog.ui.Component}
  */
 element.tospp.getPpLinkElement = function() {
-  return this.getElementByClass('firebaseui-pp-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-pp-link')));
 };
 
 
 /**
- * @return {?Element} The ToS Privacy Policy list element.
+ * @return {!Element} The ToS Privacy Policy list element.
  * @this {goog.ui.Component}
  */
 element.tospp.getTosPpListElement = function() {
-  return this.getElementByClass('firebaseui-tos-list');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-tos-list')));
 };
 
 });
