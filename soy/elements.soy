@@ -593,6 +593,8 @@
         {msg desc="Display name of the identity provider for Facebook sign-in."}Facebook{/msg}
       {case 'twitter.com'}
         {msg desc="Display name of the identity provider for Twitter sign-in."}Twitter{/msg}
+      {case 'microsoft.com'}
+        {msg desc="Display name of the identity provider for Microsoft sign-in."}Microsoft{/msg}
       {case 'anonymous'}
         {msg desc="Display name of the identity provider for anonymous sign-in."}Guest{/msg}
       {default}
@@ -618,6 +620,8 @@
       {css('firebaseui-idp-facebook')}
     {case 'twitter.com'}
       {css('firebaseui-idp-twitter')}
+    {case 'microsoft.com'}
+      {css('firebaseui-idp-microsoft')}
     {case 'phone'}
       {css('firebaseui-idp-phone')}
     {case 'anonymous'}
