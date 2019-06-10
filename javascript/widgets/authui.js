@@ -101,7 +101,7 @@ firebaseui.auth.AuthUI = function(auth, opt_appId) {
   // Check if an instance with the same key exists. If so, throw an error,
   // otherwise, save that instance.
   // Get the instance get.
-  var key = firebaseui.auth.AuthUI.getInstanceKey_(opt_appId);
+  const key = firebaseui.auth.AuthUI.getInstanceKey_(opt_appId);
   if (firebaseui.auth.AuthUI.instances_[key]) {
     // An instance exists for this key. Throw an error.
     throw new Error(
@@ -118,7 +118,7 @@ firebaseui.auth.AuthUI = function(auth, opt_appId) {
   this.languageCodePendingRevert_ = false;
   // Log FirebaseUI on external Auth instance.
   firebaseui.auth.AuthUI.logFirebaseUI_(this.auth_);
-  var tempApp = firebase.initializeApp({
+  const tempApp = firebase.initializeApp({
     'apiKey': auth['app']['options']['apiKey'],
     'authDomain': auth['app']['options']['authDomain']
   }, auth['app']['name'] + firebaseui.auth.AuthUI.TEMP_APP_NAME_SUFFIX_);
@@ -233,7 +233,7 @@ firebaseui.auth.AuthUI.getInstanceKey_ = function(opt_appId) {
  *     app ID provided.
  */
 firebaseui.auth.AuthUI.getInstance = function(opt_appId) {
-  var key = firebaseui.auth.AuthUI.getInstanceKey_(opt_appId);
+  const key = firebaseui.auth.AuthUI.getInstanceKey_(opt_appId);
   if (firebaseui.auth.AuthUI.instances_[key]) {
     return firebaseui.auth.AuthUI.instances_[key];
   }
@@ -287,8 +287,8 @@ firebaseui.auth.AuthUI.prototype.getRedirectResult = function() {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
   if (!this.getRedirectResult_) {
-    var self = this;
-    var cb = function(user) {
+    const self = this;
+    const cb = function(user) {
       if (user &&
           // If email already exists, user must first be signed in it to the
           // existing account on the internal Auth instance before the
@@ -457,7 +457,7 @@ firebaseui.auth.AuthUI.prototype.isPendingRedirect = function() {
  * @private
  */
 firebaseui.auth.AuthUI.prototype.isEmailLinkSignInUrl_ = function(url) {
-  var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(url);
+  const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(url);
   return urlBuilder.getMode() === 'signIn' && !!urlBuilder.getOobCode();
 };
 
@@ -473,14 +473,14 @@ firebaseui.auth.AuthUI.prototype.isEmailLinkSignInUrl_ = function(url) {
 firebaseui.auth.AuthUI.prototype.start = function(element, config) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
 
   // Save the original language code of external Auth instance.
   if (typeof this.auth_.languageCode !== 'undefined') {
     this.originalAuthLanguageCode_ = this.auth_.languageCode;
   }
   // Make sure the locale uses hyphens instead of underscores.
-  var unicodeLocale = firebaseui.auth.util.getUnicodeLocale();
+  const unicodeLocale = firebaseui.auth.util.getUnicodeLocale();
   // Sync the language code of Auth instance with widget.
   this.auth_.languageCode = unicodeLocale;
   this.tempAuth_.languageCode = unicodeLocale;
@@ -494,7 +494,7 @@ firebaseui.auth.AuthUI.prototype.start = function(element, config) {
   this.setConfig(config);
   // Checks if there is pending internal Auth signOut promise. If yes, wait
   // until it resolved and then initElement.
-  var doc = goog.global.document;
+  const doc = goog.global.document;
   if (this.pendingInternalAuthSignOut_) {
     this.pendingInternalAuthSignOut_.then(function() {
       // Wrap it in a onload callback to wait for the DOM element is rendered.
@@ -530,7 +530,7 @@ firebaseui.auth.AuthUI.prototype.start = function(element, config) {
  */
 firebaseui.auth.AuthUI.prototype.initElement_ = function(element) {
   // Confirm element exists.
-  var container = firebaseui.auth.util.getElement(
+  const container = firebaseui.auth.util.getElement(
       element, firebaseui.auth.AuthUI.ELEMENT_NOT_FOUND_);
 
   // Set the "lang" attribute; without this, there are subtle rendering errors
@@ -547,7 +547,7 @@ firebaseui.auth.AuthUI.prototype.initElement_ = function(element) {
     // First check if there is a pending operation on that widget, if so,
     // log a reset warning to the console.
     if (firebaseui.auth.AuthUI.widgetAuthUi_.isPending()) {
-      var resetWarning = 'UI Widget is already rendered on the page and is ' +
+      const resetWarning = 'UI Widget is already rendered on the page and is ' +
           'pending some user interaction. Only one widget instance can be ' +
           'rendered per page. The previous instance has been automatically ' +
           'reset.';
@@ -585,7 +585,7 @@ firebaseui.auth.AuthUI.prototype.initializeForAutoUpgrade_ = function(cb) {
   // applied depending on the autoUpgradeAnonymousUsers flag. This keeps the
   // anonymous user check only when needed minimizing the foot print size on the
   // non-anonymous upgrade flow.
-  var self = this;
+  const self = this;
   // If initial state already determined, run callback with the current
   // upgradeable user and return its result.
   if (this.initialStateReady_) {
@@ -598,7 +598,7 @@ firebaseui.auth.AuthUI.prototype.initializeForAutoUpgrade_ = function(cb) {
   });
   // onAuthStateChanged can be slow. Use it only when needed.
   if (this.getConfig().autoUpgradeAnonymousUsers()) {
-    var p = new goog.Promise(function(resolve, reject) {
+    const p = new goog.Promise(function(resolve, reject) {
       self.registerPending(self.auth_.onAuthStateChanged(function(user) {
         // Update currentUser reference whenever there is a state change.
         self.currentUser_ = user;
@@ -650,10 +650,10 @@ firebaseui.auth.AuthUI.prototype.getUpgradableUser_ = function() {
 firebaseui.auth.AuthUI.prototype.registerPending = function(p) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   if (p) {
     this.pending_.push(p);
-    var remove = function() {
+    const remove = function() {
       goog.array.removeAllIf(self.pending_, function(ele) {
         return ele == p;
       });
@@ -721,7 +721,7 @@ firebaseui.auth.AuthUI.prototype.revertLanguageCode = function() {
 firebaseui.auth.AuthUI.prototype.reset = function() {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   // Remove the "lang" attribute that we set in start().
   if (this.widgetElement_) {
     this.widgetElement_.removeAttribute('lang');
@@ -753,7 +753,7 @@ firebaseui.auth.AuthUI.prototype.reset = function() {
   }
   this.widgetElement_ = null;
   // Cancel all pending promises or run reset functions.
-  for (var i = 0; i < this.pending_.length; i++) {
+  for (let i = 0; i < this.pending_.length; i++) {
     if (typeof this.pending_[i] == 'function') {
       /** @type{function()} */ (this.pending_[i])();
     } else {
@@ -795,7 +795,7 @@ firebaseui.auth.AuthUI.prototype.reset = function() {
  * @private
  */
 firebaseui.auth.AuthUI.prototype.initPageChangeListener_ = function(element) {
-  var self = this;
+  const self = this;
   /** @private {?string} Current page ID. */
   this.currentPageId_ = null;
   // Initialize the event dispatcher on the widget element.
@@ -808,11 +808,11 @@ firebaseui.auth.AuthUI.prototype.initPageChangeListener_ = function(element) {
       'pageEnter',
       function(event) {
         // Get new page ID.
-        var newPageId = event && event['pageId'];
+        const newPageId = event && event['pageId'];
         // If page change detected.
         if (self.currentPageId_ != newPageId) {
           // Get UI changed callback.
-          var uiChangedCallback = self.getConfig().getUiChangedCallback();
+          const uiChangedCallback = self.getConfig().getUiChangedCallback();
           if (uiChangedCallback) {
             // If UI changed callback provided, trigger it.
             uiChangedCallback(self.currentPageId_, newPageId);
@@ -857,7 +857,7 @@ firebaseui.auth.AuthUI.prototype.setConfig = function(config) {
 firebaseui.auth.AuthUI.prototype.checkForDeprecation_ = function() {
   if (!this.warningShown_ &&
       this.getConfig().getSignInSuccessCallback()) {
-    var deprecateWarning = 'signInSuccess callback is deprecated. Please use ' +
+    const deprecateWarning = 'signInSuccess callback is deprecated. Please use ' +
         'signInSuccessWithAuthResult callback instead.';
     firebaseui.auth.log.warning(deprecateWarning);
     this.warningShown_ = true;
@@ -902,13 +902,13 @@ firebaseui.auth.AuthUI.prototype.checkIfDestroyed_ = function() {
  *     is successfully deleted.
  */
 firebaseui.auth.AuthUI.prototype.delete = function() {
-  var self = this;
+  const self = this;
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
   // Delete the temporary app instance.
   return this.tempAuth_.app.delete().then(function() {
     // Get instance key.
-    var key = firebaseui.auth.AuthUI.getInstanceKey_(self.getAppId());
+    const key = firebaseui.auth.AuthUI.getInstanceKey_(self.getAppId());
     // Delete any saved AuthUI instance.
     delete firebaseui.auth.AuthUI.instances_[key];
     // Reset current instance.
@@ -937,7 +937,7 @@ firebaseui.auth.AuthUI.prototype.cancelOneTapSignIn = function() {
  *     handler The One-Tap credential handler.
  */
 firebaseui.auth.AuthUI.prototype.showOneTapSignIn = function(handler) {
-  var self = this;
+  const self = this;
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
   try {
@@ -969,17 +969,17 @@ firebaseui.auth.AuthUI.prototype.sendSignInLinkToEmail =
     function(email, opt_pendingCredential) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   // Generate random 32 byte key.
-  var sid = firebaseui.auth.util.generateRandomAlphaNumericString(32);
+  const sid = firebaseui.auth.util.generateRandomAlphaNumericString(32);
   // Assert email link sign-in allowed.
   if (!this.getConfig().isEmailLinkSignInAllowed()) {
     throw new Error(
         'Email link sign-in should be enabled to trigger email sending.');
   }
-  var actionCodeSettings =/** @type {!firebase.auth.ActionCodeSettings} */ (
+  const actionCodeSettings =/** @type {!firebase.auth.ActionCodeSettings} */ (
       this.getConfig().getEmailLinkSignInActionCodeSettings());
-  var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(
+  const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(
       actionCodeSettings['url']);
   urlBuilder.setSessionId(sid);
   if (opt_pendingCredential && opt_pendingCredential.getCredential()) {
@@ -993,7 +993,7 @@ firebaseui.auth.AuthUI.prototype.sendSignInLinkToEmail =
         opt_pendingCredential.getCredential()['providerId']);
   }
   urlBuilder.setForceSameDevice(this.getConfig().isEmailLinkSameDeviceForced());
-  var cb = function(user) {
+  const cb = function(user) {
     if (user) {
       // Pass anonymous user UID.
       urlBuilder.setAnonymousUid(user['uid']);
@@ -1024,16 +1024,16 @@ firebaseui.auth.AuthUI.prototype.sendSignInLinkToEmail =
  *     available and if that user's uid matches the uid in email link.
  */
 firebaseui.auth.AuthUI.prototype.getUpgradeableEmailLinkUser = function(link) {
-  var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
-  var anonymousUid = urlBuilder.getAnonymousUid();
-  var self = this;
+  const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
+  const anonymousUid = urlBuilder.getAnonymousUid();
+  const self = this;
   // No anonymous user is required for email link sign-in flow.
   if (!anonymousUid) {
     return goog.Promise.resolve(null);
   }
   // Anonymous user upgrade required.
-  var p = new goog.Promise(function(resolve, reject) {
-    var unsubscribe = self.getExternalAuth().onAuthStateChanged(function(user) {
+  const p = new goog.Promise(function(resolve, reject) {
+    const unsubscribe = self.getExternalAuth().onAuthStateChanged(function(user) {
       unsubscribe();
       // User found and matches uid.
       if (user && user['isAnonymous'] && user['uid'] === anonymousUid) {
@@ -1072,11 +1072,11 @@ firebaseui.auth.AuthUI.prototype.upgradeWithEmailLink = function(
     user, email, link, opt_pendingCredential) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var pendingCredential = opt_pendingCredential || null;
-  var credential = firebase.auth.EmailAuthProvider.credentialWithLink(
+  const self = this;
+  const pendingCredential = opt_pendingCredential || null;
+  const credential = firebase.auth.EmailAuthProvider.credentialWithLink(
       email, link);
-  var p;
+  let p;
   // Linking is required which means a merge conflict will occur. Email
   // account already exists.
   if (pendingCredential) {
@@ -1134,11 +1134,11 @@ firebaseui.auth.AuthUI.prototype.signInWithEmailLink = function(
     email, link, opt_pendingCredential) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var pendingCredential = opt_pendingCredential || null;
-  var authResult;
-  var self = this;
+  const pendingCredential = opt_pendingCredential || null;
+  let authResult;
+  const self = this;
   // Sign in with email link credential on internal instance.
-  var p = this.getAuth().signInWithEmailLink(email, link)
+  const p = this.getAuth().signInWithEmailLink(email, link)
       .then(function(userCredential) {
         authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
           'user': userCredential['user'],
@@ -1197,9 +1197,9 @@ firebaseui.auth.AuthUI.prototype.signInWithEmailLink = function(
  *     current URL is used instead.
  */
 firebaseui.auth.AuthUI.prototype.clearEmailSignInState = function(opt_url) {
-  var currentUrl = opt_url || firebaseui.auth.util.getCurrentUrl();
+  const currentUrl = opt_url || firebaseui.auth.util.getCurrentUrl();
   if (this.isEmailLinkSignInUrl_(currentUrl)) {
-    var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(currentUrl);
+    const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(currentUrl);
     urlBuilder.clearState();
     // Note this will update the URL without reloading the page.
     firebaseui.auth.util.replaceHistoryState(
@@ -1227,7 +1227,7 @@ firebaseui.auth.AuthUI.prototype.startSignInWithEmailAndPassword =
     function(email, password) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   // Start sign in with existing email and password. This always runs on the
   // internal Auth instance as an existing email/password account linking will
   // always fail when upgrading an anonymous user. For the non-anonymous upgrade
@@ -1236,7 +1236,7 @@ firebaseui.auth.AuthUI.prototype.startSignInWithEmailAndPassword =
   return /** @type {!firebase.Promise<!firebase.auth.UserCredential>} */ (
       this.getAuth().signInWithEmailAndPassword(email, password)
       .then(function(result) {
-        var cb = function(user) {
+        const cb = function(user) {
           if (user) {
             // signOut the user.
             return self.clearTempAuthState().then(function() {
@@ -1269,10 +1269,10 @@ firebaseui.auth.AuthUI.prototype.startCreateUserWithEmailAndPassword =
     function(email, password) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var cb = function(user) {
+  const self = this;
+  const cb = function(user) {
     if (user) {
-      var credential =
+      const credential =
           firebase.auth.EmailAuthProvider.credential(email, password);
       // For anonymous user upgrade, call link with credential on the external
       // Auth user. Otherwise merge conflict will always occur when linking the
@@ -1303,8 +1303,8 @@ firebaseui.auth.AuthUI.prototype.startSignInWithCredential =
     function(credential) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var cb = function(user) {
+  const self = this;
+  const cb = function(user) {
     if (user) {
       // For anonymous user upgrade, call link with credential on the external
       // Auth user. Otherwise merge conflict will always occur when linking the
@@ -1350,8 +1350,8 @@ firebaseui.auth.AuthUI.prototype.startSignInWithCredential =
 firebaseui.auth.AuthUI.prototype.startSignInWithPopup = function(provider) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var cb = function(user) {
+  const self = this;
+  const cb = function(user) {
     if (user &&
         // If email already exists, user must first be signed in to the
         // existing account on the internal Auth instance before the credential
@@ -1400,15 +1400,15 @@ firebaseui.auth.AuthUI.prototype.startSignInWithPopup = function(provider) {
 firebaseui.auth.AuthUI.prototype.startSignInWithRedirect = function(provider) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   // Save cached redirect result.
-  var cachedRedirectResult = this.getRedirectResult_;
+  const cachedRedirectResult = this.getRedirectResult_;
   // Each time a redirect operation is triggered, clear cached redirect result.
   // This is important for Cordova apps where no page redirect may occur and
   // getRedirectResult will update with the result after the redirect operation
   // resolves.
   this.getRedirectResult_ = null;
-  var cb = function(user) {
+  const cb = function(user) {
     if (user &&
         // If email already exists, user must first be signed in to the
         // existing account on the internal Auth instance before the credential
@@ -1458,8 +1458,8 @@ firebaseui.auth.AuthUI.prototype.startSignInWithPhoneNumber =
     function(phoneNumber, appVerifier) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var cb = function(user) {
+  const self = this;
+  const cb = function(user) {
     if (user) {
       // For anonymous user upgrade, call link with phone number on the external
       // user.
@@ -1510,8 +1510,8 @@ firebaseui.auth.AuthUI.prototype.finishSignInAndRetrieveDataWithAuthResult =
     function(authResult) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
-  var cb = function(user) {
+  const self = this;
+  const cb = function(user) {
     if (self.currentUser_ &&
         !self.currentUser_['isAnonymous'] &&
         self.getConfig().autoUpgradeAnonymousUsers() &&
@@ -1637,14 +1637,14 @@ firebaseui.auth.AuthUI.prototype.onUpgradeError =
     function(error, opt_credential) {
   // Check if instance is already destroyed.
   this.checkIfDestroyed_();
-  var self = this;
+  const self = this;
   if (error && error['code'] &&
       // Password sign in.
       (error['code'] == 'auth/email-already-in-use' ||
       // Federated or phone number sign in.
        error['code'] == 'auth/credential-already-in-use')) {
     // Get signInFailure callback.
-    var signInFailureCallback = this.getConfig().getSignInFailureCallback();
+    const signInFailureCallback = this.getConfig().getSignInFailureCallback();
     // Wrap in promise in case no promise returned by callback.
     return goog.Promise.resolve().then(function() {
       // Pass merge conflict error to callback and wait for resolution.
