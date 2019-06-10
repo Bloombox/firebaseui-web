@@ -38,7 +38,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  * or invisible) challenge before the verification code is sent.
  * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {?firebaseui.auth.PhoneNumber=} opt_phoneNumberValue
  *     The value of the phone number input to prefill.
  * @param {string=} opt_infoBarMessage The message to show on info bar.
@@ -46,7 +46,7 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handlePhoneSignInStart = function(
     app, container, opt_phoneNumberValue, opt_infoBarMessage) {
   // Get the developer's reCAPTCHA configuration.
-  var recaptchaParameters = app.getConfig().getRecaptchaParameters() || {};
+  const recaptchaParameters = app.getConfig().getRecaptchaParameters() || {};
   /** @private {?string} The reCAPTCHA response token. */
   firebaseui.auth.widget.handler.recaptchaToken_ = null;
   /**
@@ -55,21 +55,21 @@ firebaseui.auth.widget.handler.handlePhoneSignInStart = function(
   firebaseui.auth.widget.handler.enableVisibleRecaptcha_ =
       !(recaptchaParameters && recaptchaParameters['size'] === 'invisible');
 
-  var isPhoneProviderOnly =
+  const isPhoneProviderOnly =
       firebaseui.auth.widget.handler.common.isPhoneProviderOnly(app);
   // Set the default values for the phone number input, getting it first from
   // the passed in parameters and second from the config.
-  var defaultCountry = app.getConfig().getPhoneAuthDefaultCountry();
+  const defaultCountry = app.getConfig().getPhoneAuthDefaultCountry();
   // Get default national number only if phone auth is the only provider.
   // This will be overridden by opt_phoneNumberValue if available as it has
   // higher priority.
-  var defaultNationalNumber = isPhoneProviderOnly ?
+  const defaultNationalNumber = isPhoneProviderOnly ?
       app.getConfig().getPhoneAuthDefaultNationalNumber() : null;
-  var countryId = (opt_phoneNumberValue && opt_phoneNumberValue.countryId) ||
+  const countryId = (opt_phoneNumberValue && opt_phoneNumberValue.countryId) ||
       (defaultCountry && defaultCountry.e164_key) || null;
-  var nationalNumber = (opt_phoneNumberValue &&
+  const nationalNumber = (opt_phoneNumberValue &&
       opt_phoneNumberValue.nationalNumber) || defaultNationalNumber;
-  var availableCountries = app.getConfig().getPhoneAuthAvailableCountries();
+  const availableCountries = app.getConfig().getPhoneAuthAvailableCountries();
   if (availableCountries) {
      firebaseui.auth.data.country.sortCountryListForLocale(
          availableCountries, goog.LOCALE);
@@ -84,7 +84,7 @@ firebaseui.auth.widget.handler.handlePhoneSignInStart = function(
           (app.getConfig().getPhoneAuthAvailableCountries())) :
       firebaseui.auth.data.country.LOOKUP_TREE;
   // Render the phone sign in start page component.
-  var component = new firebaseui.auth.ui.page.PhoneSignInStart(
+  const component = new firebaseui.auth.ui.page.PhoneSignInStart(
       // On submit.
       function(e) {
         firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_(
@@ -142,7 +142,7 @@ firebaseui.auth.widget.handler.handlePhoneSignInStart = function(
     firebaseui.auth.widget.handler.recaptchaToken_ = null;
   };
   // Initialize a reCAPTCHA verifier instance.
-  var recaptchaVerifier = new firebase.auth['RecaptchaVerifier'](
+  const recaptchaVerifier = new firebase.auth['RecaptchaVerifier'](
       // reCAPTCHA container: either the visible reCAPTCHA element or the submit
       // button for the invisible one.
       firebaseui.auth.widget.handler.enableVisibleRecaptcha_ ?
@@ -174,7 +174,7 @@ firebaseui.auth.widget.handler.handlePhoneSignInStart = function(
         // to go back to the previous page.
         // This could happen in a bad network situation. The user will try again
         // on network availability and the reCAPTCHA would render this time.
-        var errorMessage =
+        let errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         component.dispose();
         firebaseui.auth.widget.handler.common.handleSignInStart(
@@ -268,13 +268,13 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
       // On success a phone Auth result is returned.
       function(phoneAuthResult) {
         // Display the dialog that the code was sent.
-        var container = component.getContainer();
+        const container = component.getContainer();
         component.showProgressDialog(
             firebaseui.auth.ui.element.progressDialog.State.DONE,
             firebaseui.auth.soy2.strings.dialogCodeSent().toString());
         // Keep the dialog long enough to be seen before redirecting to code
         // entry page.
-        var codeVerificationTimer = setTimeout(function() {
+        const codeVerificationTimer = setTimeout(function() {
           component.dismissDialog();
           // Handle sign in with phone number code verification.
           component.dispose();
@@ -317,7 +317,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
         grecaptcha.reset(firebaseui.auth.widget.handler.recaptchaWidgetId_);
         // Reset reCAPTCHA token.
         firebaseui.auth.widget.handler.recaptchaToken_ = null;
-        var errorMessage = (error && error['message']) || '';
+        let errorMessage = (error && error['message']) || '';
         if (error['code']) {
           // Firebase auth error.
           switch (error['code']) {
@@ -350,5 +350,5 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PHONE_SIGN_IN_START,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePhoneSignInStart));

@@ -38,7 +38,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  * sign in operation.
  * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {!firebaseui.auth.PhoneNumber} phoneNumberValue
  *     The value of the phone number input.
  * @param {number} resendDelay The resend delay.
@@ -51,7 +51,7 @@ firebaseui.auth.widget.handler.handlePhoneSignInFinish = function(
     opt_infoBarMessage) {
   // This is a placeholder for now.
   // Render the phone sign in start page component.
-  var component = new firebaseui.auth.ui.page.PhoneSignInFinish(
+  const component = new firebaseui.auth.ui.page.PhoneSignInFinish(
       // On change phone number click.
       function() {
         component.dispose();
@@ -108,11 +108,12 @@ firebaseui.auth.widget.handler.CODE_SUCCESS_DIALOG_DELAY = 1000;
  *     The value of the phone number input.
  * @param {!Object} phoneAuthResult The phone Auth result used to verify
  *     the code on.
+ * @suppress {strictMissingProperties}
  * @private
  */
 firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
     app, component, phoneNumberValue, phoneAuthResult) {
-  var showInvalidCode = function(errorMessage) {
+  const showInvalidCode = function(errorMessage) {
     // No code provided.
     component.getPhoneConfirmationCodeElement().focus();
     firebaseui.auth.ui.element.setValid(
@@ -121,7 +122,7 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
         component.getPhoneConfirmationCodeErrorElement(), errorMessage);
   };
   // Get code.
-  var verificationCode = component.checkAndGetPhoneConfirmationCode();
+  const verificationCode = component.checkAndGetPhoneConfirmationCode();
   // If missing, focus code element, show the relevant error and exit.
   if (!verificationCode) {
     showInvalidCode(
@@ -145,11 +146,11 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
             firebaseui.auth.ui.element.progressDialog.State.DONE,
             firebaseui.auth.soy2.strings.dialogCodeVerified().toString());
         // Keep on display for long enough to be seen.
-        var codeVerifiedTimer = setTimeout(function() {
+        const codeVerifiedTimer = setTimeout(function() {
           // Dismiss dialog and dispose of component before completing sign-in.
           component.dismissDialog();
           component.dispose();
-          var authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
+          const authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
             // User already signed on external instance.
             'user': app.getExternalAuth().currentUser,
             // Phone Auth operations do not return a credential.
@@ -177,7 +178,7 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
           return;
         }
         // Get error message.
-        var errorMessage =
+        const errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         // Some errors are recoverable while others require resending the code.
         switch (error['code']) {
@@ -190,7 +191,7 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
             // Expired code requires sending another request.
             // Render previous phone sign in start page and display error in
             // the info bar.
-            var container = component.getContainer();
+            const container = component.getContainer();
             // Close dialog.
             component.dismissDialog();
             component.dispose();
@@ -221,5 +222,5 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PHONE_SIGN_IN_FINISH,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePhoneSignInFinish));
