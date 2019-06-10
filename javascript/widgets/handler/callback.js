@@ -35,7 +35,7 @@ goog.require('goog.array');
  *
  * @param {!firebaseui.auth.AuthUI} app The current FirebaseUI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {?goog.Promise<!firebase.auth.UserCredential>=} opt_result
  *     UserCredential from a redirect or popup sign in attempt.
  */
@@ -133,7 +133,7 @@ firebaseui.auth.widget.handler.handleCallback =
 firebaseui.auth.widget.handler.handleCallbackResult_ =
     function(app, component, result) {
   if (result['user']) {
-    const authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
+    let authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
       'user': result['user'],
       'credential': result['credential'],
       'operationType': result['operationType'],
@@ -384,5 +384,5 @@ firebaseui.auth.widget.handler.hasUserEmailAddress_ = function(user, email) {
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.CALLBACK,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleCallback));

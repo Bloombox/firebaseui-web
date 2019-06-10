@@ -76,8 +76,8 @@ firebaseui.auth.widget.handlers_ = {};
 
 /**
  * Registers a handler.
- * @param {firebaseui.auth.widget.HandlerName} name The handler name.
- * @param {firebaseui.auth.widget.Handler} handler The handler function.
+ * @param {!firebaseui.auth.widget.HandlerName} name The handler name.
+ * @param {!firebaseui.auth.widget.Handler} handler The handler function.
  * @package
  */
 firebaseui.auth.widget.handler.register = function(name, handler) {
@@ -87,8 +87,8 @@ firebaseui.auth.widget.handler.register = function(name, handler) {
 
 /**
  * Invokes a handler by the given name.
- * @param {firebaseui.auth.widget.HandlerName} name The handler name.
- * @param {firebaseui.auth.AuthUI} app The Firebase UI instance.
+ * @param {!firebaseui.auth.widget.HandlerName} name The handler name.
+ * @param {!firebaseui.auth.AuthUI} app The Firebase UI instance.
  * @param {!Element} container The container DOM element for the handler.
  * @param {...*} var_args The handler-specific arguments.
  */

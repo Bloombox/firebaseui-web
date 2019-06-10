@@ -398,7 +398,7 @@ firebaseui.auth.widget.handler.common.selectFromAccountChooser = function(
       // Firebase doesn't need the provider meta info from accountchooser.
       undefined,
       goog.LOCALE,
-      getApp() && getApp().getConfig().getAcUiConfig());
+      (getApp() && getApp().getConfig().getAcUiConfig()));
 };
 
 

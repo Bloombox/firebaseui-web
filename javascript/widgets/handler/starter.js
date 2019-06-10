@@ -27,7 +27,7 @@ goog.require('firebaseui.auth.widget.handler');
 /**
  * Triggers the sign in flow.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
  */
 firebaseui.auth.widget.handler.startSignIn = function(app) {

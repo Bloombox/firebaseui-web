@@ -68,7 +68,7 @@ firebaseui.auth.acClient.isUnavailable_ = function(opt_error) {
  *     available, false otherwise.
  * @param {!Array<!string>=} opt_providers The accepted IdP list.
  * @param {?string=} opt_language The display language for accountchooser.com.
- * @param {!Object=} opt_uiConfig The UI configuration for accountchooser.com.
+ * @param {?Object=} opt_uiConfig The UI configuration for accountchooser.com.
  * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.acClient.init = function(
@@ -116,7 +116,7 @@ firebaseui.auth.acClient.init = function(
     },
     'language': opt_language || '',
     'providers': opt_providers,
-    'ui': opt_uiConfig
+    'ui': opt_uiConfig || undefined
   };
   if (!!window['accountchooser']) {
     const acapi = window['accountchooser']['Api']['init'](config);
