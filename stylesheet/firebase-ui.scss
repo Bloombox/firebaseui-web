@@ -322,9 +322,6 @@ input.firebaseui-input-invalid {
 	&:hover {
 		background-color: $idp-microsoft-bg-color;
 	}
-	>.firebaseui-idp-text {
-		color: $gray-color;
-	}
 }
 .mdl-button.firebaseui-idp-microsoft {
 	&:active {
