@@ -317,6 +317,23 @@ input.firebaseui-input-invalid {
 		background-color: $idp-phone-bg-color;
 	}
 }
+.firebaseui-idp-microsoft {
+	background-color: $idp-microsoft-bg-color;
+	&:hover {
+		background-color: $idp-microsoft-bg-color;
+	}
+	>.firebaseui-idp-text {
+		color: $gray-color;
+	}
+}
+.mdl-button.firebaseui-idp-microsoft {
+	&:active {
+		background-color: $idp-microsoft-bg-color;
+	}
+	&:focus {
+		background-color: $idp-microsoft-bg-color;
+	}
+}
 .firebaseui-idp-google {
 	background-color: $idp-google-bg-color;
 	&:hover {
