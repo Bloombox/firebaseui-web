@@ -28,24 +28,24 @@ goog.require('firebaseui.auth.widget.handler.common');
 /**
  * Handles start sign in.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string=} opt_email The email to prefill.
  * @param {string=} opt_infoBarMessage The message to show on info bar.
  */
 firebaseui.auth.widget.handler.handleSignIn = function(
     app, container, opt_email, opt_infoBarMessage) {
-  var isPasswordProviderOnly =
+  const isPasswordProviderOnly =
       firebaseui.auth.widget.handler.common.isPasswordProviderOnly(app);
   // Whether to hide or show the cancel button.
-  var hideCancelButton =
+  const hideCancelButton =
       // Email auth provider only.
       isPasswordProviderOnly &&
       // accountchooser.com disabled.
       !app.getConfig().isAccountChooserEnabled();
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.SignIn(
+  const component = new firebaseui.auth.ui.page.SignIn(
       // On submit.
       function() {
         firebaseui.auth.widget.handler.onSignInEmailEnter_(app, component);
@@ -75,13 +75,13 @@ firebaseui.auth.widget.handler.handleSignIn = function(
 
 
 /**
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {firebaseui.auth.ui.page.SignIn} component The UI component.
+ * @param {!firebaseui.auth.ui.page.SignIn} component The UI component.
  * @private
  */
 firebaseui.auth.widget.handler.onSignInEmailEnter_ = function(app, component) {
-  var email = component.checkAndGetEmail() || '';
+  const email = component.checkAndGetEmail() || '';
   if (!email) {
     return;
   }
@@ -93,5 +93,5 @@ firebaseui.auth.widget.handler.onSignInEmailEnter_ = function(app, component) {
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.SIGN_IN,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleSignIn));
