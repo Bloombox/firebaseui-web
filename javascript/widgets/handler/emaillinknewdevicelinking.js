@@ -41,8 +41,8 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handleEmailLinkNewDeviceLinking = function(
     app, container, link, onContinue) {
   // Get provider ID initially intended to be linked.
-  var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
-  var providerId = urlBuilder.getProviderId();
+  const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
+  const providerId = urlBuilder.getProviderId();
   // Modify URL to exclude provider ID. This will be used to continue the flow
   // without linking.
   urlBuilder.setProviderId(null);
@@ -51,7 +51,7 @@ firebaseui.auth.widget.handler.handleEmailLinkNewDeviceLinking = function(
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
     return;
   }
-  var component =
+  const component =
       new firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice(
           app.getConfig().getConfigForProvider(providerId),
           // On continue, go back to callback page with URL not requiring

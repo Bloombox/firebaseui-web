@@ -42,12 +42,12 @@ goog.require('goog.array');
 firebaseui.auth.widget.handler.handleCallback =
     function(app, container, opt_result) {
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.Callback();
+  const component = new firebaseui.auth.ui.page.Callback();
   component.render(container);
   // Set current UI component.
   app.setCurrentComponent(component);
   // Get result either from passed result or from app's getRedirectResult.
-  var resultObtainer = opt_result || app.getRedirectResult();
+  const resultObtainer = opt_result || app.getRedirectResult();
   app.registerPending(resultObtainer.then(function(result) {
     firebaseui.auth.widget.handler.handleCallbackResult_(app, component,
         result);
@@ -73,9 +73,9 @@ firebaseui.auth.widget.handler.handleCallback =
     } else if (error && error['code'] == 'auth/user-cancelled') {
       // Should go back to the previous linking screen. A pending email
       // should be present, otherwise there's an error.
-      var pendingCredential =
+      const pendingCredential =
           firebaseui.auth.storage.getPendingEmailCredential(app.getAppId());
-      var message =
+      const message =
           firebaseui.auth.widget.handler.common.getErrorMessage(error);
       // If there is a credential too, then the previous screen was federated
       // linking so we process the error as a linking flow.
@@ -133,17 +133,17 @@ firebaseui.auth.widget.handler.handleCallback =
 firebaseui.auth.widget.handler.handleCallbackResult_ =
     function(app, component, result) {
   if (result['user']) {
-    var authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
+    const authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
       'user': result['user'],
       'credential': result['credential'],
       'operationType': result['operationType'],
       'additionalUserInfo': result['additionalUserInfo']
     });
     // Sign in or link with redirect was previously triggered.
-    var pendingEmailCredential =
+    const pendingEmailCredential =
         firebaseui.auth.storage.getPendingEmailCredential(app.getAppId());
     // The email originally used before the federated sign in, if any.
-    var pendingEmail =
+    const pendingEmail =
         pendingEmailCredential && pendingEmailCredential.getEmail();
     // Test for email mismatch cases.
     if (pendingEmail &&
@@ -155,7 +155,7 @@ firebaseui.auth.widget.handler.handleCallbackResult_ =
           app, component, authResult);
       return;
     }
-    var pendingCredential =
+    const pendingCredential =
         pendingEmailCredential && pendingEmailCredential.getCredential();
     if (pendingCredential) {
       // Check if there is a pending auth credential. If so, complete the link
@@ -192,7 +192,7 @@ firebaseui.auth.widget.handler.handleCallbackResult_ =
   } else {
     // No previous redirect operation, go back to the sign-in page with no
     // error.
-    var container = component.getContainer();
+    const container = component.getContainer();
     component.dispose();
     // Clean the pending email credential, if any, to avoid keeping track of
     // a linking flow after the user has refreshed the page (i.e. when no more
@@ -233,9 +233,9 @@ firebaseui.auth.widget.handler.handleCallbackSuccess_ =
  */
 firebaseui.auth.widget.handler.handleCallbackFailure_ =
     function(app, component, error) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   firebaseui.auth.storage.removePendingEmailCredential(app.getAppId());
-  var errorMessage =
+  const errorMessage =
       firebaseui.auth.widget.handler.common.getErrorMessage(error);
   component.dispose();
   // Call widget sign in start handler.
@@ -257,7 +257,7 @@ firebaseui.auth.widget.handler.handleCallbackFailure_ =
  */
 firebaseui.auth.widget.handler.handleCallbackLinking_ =
     function(app, component, email, opt_infoBarMessage) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   app.registerPending(app.getAuth().fetchSignInMethodsForEmail(email)
       .then(function(signInMethods) {
         component.dispose();
@@ -296,7 +296,7 @@ firebaseui.auth.widget.handler.handleCallbackLinking_ =
               container,
               email);
         } else {
-          var federatedSignInMethod =
+          const federatedSignInMethod =
               firebaseui.auth.idp.getFirstFederatedSignInMethod(
                   signInMethods, app.getConfig().getProviders());
           if (federatedSignInMethod) {
@@ -335,7 +335,7 @@ firebaseui.auth.widget.handler.handleCallbackLinking_ =
  */
 firebaseui.auth.widget.handler.handleCallbackEmailMismatch_ =
     function(app, component, authResult) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   // On email mismatch, sign out the temporary user to avoid leaking this
   // temp auth session if the user decides to close the window.
   app.registerPending(app.clearTempAuthState().then(function() {
@@ -350,7 +350,7 @@ firebaseui.auth.widget.handler.handleCallbackEmailMismatch_ =
     if (error['name'] && error['name'] == 'cancel') {
       return;
     }
-    var errorMessage = firebaseui.auth.widget.handler.common.getErrorMessage(
+    const errorMessage = firebaseui.auth.widget.handler.common.getErrorMessage(
         error['code']);
     component.showInfoBar(errorMessage);
   }));
@@ -370,8 +370,8 @@ firebaseui.auth.widget.handler.hasUserEmailAddress_ = function(user, email) {
   }
   // Tests provider's email addresses.
   if (user['providerData']) {
-    for (var i = 0; i < user['providerData'].length; i++) {
-      var provider = user['providerData'][i];
+    for (let i = 0; i < user['providerData'].length; i++) {
+      const provider = user['providerData'][i];
       if (email == provider['email']) {
         return true;
       }

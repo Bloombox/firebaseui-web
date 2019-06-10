@@ -39,7 +39,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleEmailNotReceived = function(
     app, container, email, onCancelClick, opt_pendingCredential) {
-  var component = new firebaseui.auth.ui.page.EmailNotReceived(
+  const component = new firebaseui.auth.ui.page.EmailNotReceived(
       // On resend link click.
       function() {
         firebaseui.auth.widget.handler.common.sendEmailLinkForSignIn(
@@ -50,7 +50,7 @@ firebaseui.auth.widget.handler.handleEmailNotReceived = function(
             function(error) {
               // The email provided could be an invalid one or some other error
               // could occur.
-              var errorMessage =
+              const errorMessage =
                   firebaseui.auth.widget.handler.common.getErrorMessage(error);
               component.showInfoBar(errorMessage);
             },

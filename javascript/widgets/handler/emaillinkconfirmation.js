@@ -41,10 +41,10 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleEmailLinkConfirmation = function(
     app, container, link, onContinue, opt_email, opt_infoBarMessage) {
-  var component = new firebaseui.auth.ui.page.EmailLinkSignInConfirmation(
+  const component = new firebaseui.auth.ui.page.EmailLinkSignInConfirmation(
       // On email enter.
       function() {
-        var email = component.checkAndGetEmail();
+        const email = component.checkAndGetEmail();
         if (!email) {
           component.getEmailElement().focus();
           return;
