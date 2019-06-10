@@ -36,6 +36,7 @@ var IJ_DATA_ = {
   'githubLogo': '../image/github.svg',
   'facebookLogo': '../image/facebook.svg',
   'twitterLogo': '../image/twitter.svg',
+  'microsoftLogo': '../image/microsoft.png',
   'passwordLogo': '../image/mail.svg',
   'phoneLogo': '../image/phone.svg',
   'tosCallback': function() {

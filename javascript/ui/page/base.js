@@ -58,6 +58,7 @@ firebaseui.auth.ui.page.IJ_DATA_ = {
   githubLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'github.svg',
   facebookLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'facebook.svg',
   twitterLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'twitter.svg',
+  microsoftLogo: 'https://docs.microsoft.com/en-us/azure/active-directory/develop/media/howto-add-branding-in-azure-ad-apps/ms-symbollockup_mssymbol_19.png',
   passwordLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'mail.svg',
   phoneLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'phone.svg',
   anonymousLogo: firebaseui.auth.ui.page.IMAGE_BASE + 'anonymous.png'
