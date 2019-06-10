@@ -110,23 +110,31 @@ firebaseui.auth.AuthUI = function(auth, opt_appId) {
     // New instance, save reference to it.
     firebaseui.auth.AuthUI.instances_[key] = this;
   }
-  /** @private {!firebase.auth.Auth} The Firebase Auth instance. */
+  /**
+   * @const
+   * @private {!firebase.auth.Auth} The Firebase Auth instance. */
   this.auth_ = auth;
+
   /** @private {?string} The original Auth language code. */
   this.originalAuthLanguageCode_ = null;
+
   /** @private {boolean} Whether language code requires reverting. */
   this.languageCodePendingRevert_ = false;
+
   // Log FirebaseUI on external Auth instance.
   firebaseui.auth.AuthUI.logFirebaseUI_(this.auth_);
   const tempApp = firebase.initializeApp({
     'apiKey': auth['app']['options']['apiKey'],
     'authDomain': auth['app']['options']['authDomain']
   }, auth['app']['name'] + firebaseui.auth.AuthUI.TEMP_APP_NAME_SUFFIX_);
+
   /**
+   * @const
    * @private {!firebase.auth.Auth} The temporary internal Firebase Auth
    *     instance.
    */
   this.tempAuth_ = tempApp.auth();
+
   // Log FirebaseUI on internal Auth instance.
   firebaseui.auth.AuthUI.logFirebaseUI_(this.tempAuth_);
   // Change persistence to session to avoid the risk of dangling auth states in
@@ -134,53 +142,72 @@ firebaseui.auth.AuthUI = function(auth, opt_appId) {
   if (this.tempAuth_.setPersistence) {
     this.tempAuth_.setPersistence(firebase.auth.Auth.Persistence.SESSION);
   }
-  /** @private {string|undefined} The optional app id. */
+
+  /**
+   * @const
+   * @private {string|undefined} The optional app id. */
   this.appId_ = opt_appId;
-  /** @private {!firebaseui.auth.widget.Config} The AuthUI configuration. */
+
+  /**
+   * @const
+   * @private {!firebaseui.auth.widget.Config} The AuthUI configuration. */
   this.config_ = new firebaseui.auth.widget.Config();
+
   /**
    * @private {?firebaseui.auth.EventDispatcher} The event dispatcher for
    *     triggering custom events on DOM objects.
    */
   this.widgetEventDispatcher_ = null;
+
   /**
    * @private {?goog.Promise<!firebase.auth.UserCredential>} The result from
    *     any pending sign in with redirect operation.
    */
   this.getRedirectResult_ = null;
+
   /**
    * @private {?Element} The current widget element container. Only one widget
    *     instance can be created per page.
    */
   this.widgetElement_ = null;
+
   /**
    * @private {?firebaseui.auth.ui.page.Base} The currently rendered component.
    */
   this.currentComponent_ = null;
+
   /**
    * @private {!Array<!goog.Promise|!firebase.Promise|function()>} The array of
    *     pending promises or reset functions.
    */
   this.pending_ = [];
+
   /** @private {boolean} Whether One-Tap auto sign-in is disabled or not. */
   this.autoSignInDisabled_ = false;
+
   // Currently we do not dynamically load One-Tap JS binary. The developer has
   // to include it.
-  /** @private {!firebaseui.auth.GoogleYolo} The One-Tap UI wrapper. */
+  /**
+   * @const
+   * @private {!firebaseui.auth.GoogleYolo} The One-Tap UI wrapper. */
   this.googleYolo_ = firebaseui.auth.GoogleYolo.getInstance();
+
   /**
    * @private {?firebase.Promise} Promise that resolves when internal Auth
    *     instance is signed out, after which start is safe to execute.
    */
   this.pendingInternalAuthSignOut_ =  null;
+
   /**
    * @private {?firebase.User} The latest current user on the external Auth
    *     instance. This is currently only relevant for upgrade anonymous user
    *     flows.
    */
   this.currentUser_ = null;
+
   /** @private {boolean} Whether initial external Auth state is ready. */
   this.initialStateReady_ = false;
+
   /** @private {boolean} Whether the deprecation warning has been shown. */
   this.warningShown_ = false;
 };
@@ -576,7 +603,7 @@ firebaseui.auth.AuthUI.prototype.initElement_ = function(element) {
  * Initializes state needed for processing anonymous user upgrade if enabled,
  * before running the specified callback function and returning its result.
  * @param {function(?firebase.User):T} cb The callback to trigger when ready.
- * @return {T|goog.Promise<T>} The callback result.
+ * @return {T|!goog.Promise<T>} The callback result.
  * @template T
  * @private
  */
@@ -791,7 +818,7 @@ firebaseui.auth.AuthUI.prototype.reset = function() {
  * Initializes the widget page change listener. On page change, triggers the UI
  * changed callback if provided.
  *
- * @param {Element} element The widget container element.
+ * @param {!Element} element The widget container element.
  * @private
  */
 firebaseui.auth.AuthUI.prototype.initPageChangeListener_ = function(element) {
@@ -799,7 +826,8 @@ firebaseui.auth.AuthUI.prototype.initPageChangeListener_ = function(element) {
   /** @private {?string} Current page ID. */
   this.currentPageId_ = null;
   // Initialize the event dispatcher on the widget element.
-  this.widgetEventDispatcher_ = new firebaseui.auth.EventDispatcher(element);
+  this.widgetEventDispatcher_ = new firebaseui.auth.EventDispatcher(
+    /** @type {!Element} */ (element));
   // Register event dispatcher.
   this.widgetEventDispatcher_.register();
   // Listen to the pageEnter events.
@@ -840,7 +868,7 @@ firebaseui.auth.AuthUI.prototype.updateConfig = function(name, value) {
 
 /**
  * Sets the app configuration.
- * @param {Object} config The application configuration.
+ * @param {!Object} config The application configuration.
  */
 firebaseui.auth.AuthUI.prototype.setConfig = function(config) {
   // Check if instance is already destroyed.
@@ -866,7 +894,7 @@ firebaseui.auth.AuthUI.prototype.checkForDeprecation_ = function() {
 
 
 /**
- * @return {firebaseui.auth.widget.Config} The application configuration.
+ * @return {!firebaseui.auth.widget.Config} The application configuration.
  */
 firebaseui.auth.AuthUI.prototype.getConfig = function() {
   // Check if instance is already destroyed.
@@ -1463,15 +1491,25 @@ firebaseui.auth.AuthUI.prototype.startSignInWithPhoneNumber =
     if (user) {
       // For anonymous user upgrade, call link with phone number on the external
       // user.
+
+      /**
+       * Handle an upgrade error.
+       * @private
+       * @param {!Error} error Error that occurred.
+       * @throws {Error} If it isn't an expected upgrade error.
+       * @returns {!goog.Promise} Promise.
+       * @suppress {strictMissingProperties}
+       */
+      function upgradeErr_(error) {
+        if (error.code == 'auth/credential-already-in-use') {
+          return self.onUpgradeError(error);
+        }
+        throw error;
+      }
+
       return user.linkWithPhoneNumber(phoneNumber, appVerifier)
           .then(function(confirmationResult) {
-            return new firebaseui.auth.PhoneAuthResult(confirmationResult,
-                function(error) {
-                  if (error.code == 'auth/credential-already-in-use') {
-                    return self.onUpgradeError(error);
-                  }
-                  throw error;
-                });
+            return new firebaseui.auth.PhoneAuthResult(confirmationResult, upgradeErr_);
           });
     } else {
       // Starts sign in with phone number. This runs on the external Auth
