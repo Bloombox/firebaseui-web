@@ -88,7 +88,7 @@ firebaseui.auth.ui.element.listenForEnterEvent = function(component, e, cb) {
 
   /**
    * @private
-   * @param {!KeyboardEvent} event Event that occurred.
+   * @param {!goog.events.ActionEvent} event Event that occurred.
    */
   function handleEvent_(event) {
     if (event.keyCode == goog.events.KeyCodes.ENTER) {
@@ -151,7 +151,7 @@ firebaseui.auth.ui.element.listenForActionEvent = function(component, e, cb) {
 
   /**
    * @private
-   * @param {!Event} event Event that occurred.
+   * @param {!goog.events.ActionEvent} event Event that occurred.
    */
   function handleEvent_(event) {
     // Stop event propagation and disable the default action since it
