@@ -32,9 +32,9 @@ goog.require('firebaseui.auth.widget.handler.common');
 /**
  * Handles password account linking.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} email The email that was entered instead of password.
  */
 firebaseui.auth.widget.handler.handlePasswordLinking = function(
@@ -77,9 +77,9 @@ firebaseui.auth.widget.handler.handlePasswordLinking = function(
 
 /**
  * Handles the linking flow once the user has entered his password.
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {firebaseui.auth.ui.page.PasswordLinking} component The UI component.
+ * @param {!firebaseui.auth.ui.page.PasswordLinking} component The UI component.
  * @param {string} email The user's email.
  * @param {!firebase.auth.AuthCredential} pendingCredential The pending
  *     credential to link to a successfully signed in user.
@@ -151,10 +151,10 @@ firebaseui.auth.widget.handler.onPasswordLinkingSubmit_ =
 
 /**
  * Redirects the user to the password recovery page.
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
- * @param {firebaseui.auth.ui.page.PasswordLinking} component The UI component.
+ * @param {!Element} container The container DOM element.
+ * @param {!firebaseui.auth.ui.page.PasswordLinking} component The UI component.
  * @param {string} email The user's email.
  * @private
  */
@@ -170,5 +170,5 @@ firebaseui.auth.widget.handler.onPasswordRecoveryClicked_ =
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PASSWORD_LINKING,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePasswordLinking));

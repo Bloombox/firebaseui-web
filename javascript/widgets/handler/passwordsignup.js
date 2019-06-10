@@ -26,15 +26,16 @@ goog.require('firebaseui.auth.widget.Handler');
 goog.require('firebaseui.auth.widget.HandlerName');
 goog.require('firebaseui.auth.widget.handler');
 goog.require('firebaseui.auth.widget.handler.common');
+goog.require('goog.json');
 goog.require('goog.string');
 
 
 /**
  * Handles password sign up.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string=} opt_email The email address of the account.
  * @param {string=} opt_name The display name of the account.
  * @param {boolean=} opt_disableCancel Whether to disable the cancel link.
@@ -44,13 +45,13 @@ goog.require('goog.string');
 firebaseui.auth.widget.handler.handlePasswordSignUp = function(
     app, container, opt_email, opt_name, opt_disableCancel,
     opt_displayFullTosPpMessage) {
-  var onCancel = function() {
+  const onCancel = function() {
     component.dispose();
     // On cancel return to widget start page.
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
   };
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.PasswordSignUp(
+  const component = new firebaseui.auth.ui.page.PasswordSignUp(
       app.getConfig().isDisplayNameRequired(),
       // On submit.
       function() {
@@ -70,23 +71,23 @@ firebaseui.auth.widget.handler.handlePasswordSignUp = function(
 
 
 /**
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {firebaseui.auth.ui.page.PasswordSignUp} component The UI component.
+ * @param {!firebaseui.auth.ui.page.PasswordSignUp} component The UI component.
  * @private
  */
 firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
-  var requireDisplayName = app.getConfig().isDisplayNameRequired();
+  const requireDisplayName = app.getConfig().isDisplayNameRequired();
 
   // Check fields are valid.
-  var email = component.checkAndGetEmail();
+  const email = component.checkAndGetEmail();
 
-  var name = null;
+  let name = null;
   if (requireDisplayName) {
     name = component.checkAndGetName();
   }
 
-  var password = component.checkAndGetNewPassword();
+  const password = component.checkAndGetNewPassword();
   if (!email) {
     component.getEmailElement().focus();
     return;
@@ -106,7 +107,7 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
   // Initialize an internal temporary password credential. This will be used
   // to signInWithCredential to the developer provided auth instance on success.
   // This credential will never be passed to developer or stored internally.
-  var emailPassCred =
+  const emailPassCred =
       firebase.auth.EmailAuthProvider.credential(email, password);
   // Sign up new account.
   app.registerPending(component.executePromiseRequest(
@@ -115,7 +116,7 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
           ),
       [email, password],
       function(userCredential) {
-        var authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
+        const authResult = /** @type {!firebaseui.auth.AuthResult} */ ({
           'user': userCredential['user'],
           // Password credential is needed for signing in on external instance.
           'credential': emailPassCred,
@@ -124,7 +125,7 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
         });
         if (requireDisplayName) {
           // Sign up successful. We can now set the name.
-          var p = userCredential['user'].updateProfile({'displayName': name})
+          const p = userCredential['user'].updateProfile({'displayName': name})
               .then(function() {
                 return firebaseui.auth.widget.handler.common
                     .setLoggedInWithAuthResult(app, component, authResult);
@@ -141,7 +142,7 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
         if (error['name'] && error['name'] == 'cancel') {
           return;
         }
-        var errorMessage =
+        let errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         switch (error['code']) {
           case 'auth/email-already-in-use':
@@ -176,9 +177,9 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
 
 /**
  * Process the email exists error.
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {firebaseui.auth.ui.page.PasswordSignUp} component The UI component.
+ * @param {!firebaseui.auth.ui.page.PasswordSignUp} component The UI component.
  * @param {string} email The current email.
  * @param {*} emailExistsError The email exists error.
  * @return {!firebase.Promise} The promise that resolves when email exists error
@@ -189,19 +190,19 @@ firebaseui.auth.widget.handler.onEmailExists_ =
     function(app, component, email, emailExistsError) {
   // If a provider already exists, just display the error and focus the email
   // element.
-  var onSignInMethodExists = function() {
-    var errorMessage =
+  const onSignInMethodExists = function() {
+    const errorMessage =
         firebaseui.auth.widget.handler.common.getErrorMessage(emailExistsError);
     firebaseui.auth.ui.element.setValid(component.getEmailElement(), false);
     firebaseui.auth.ui.element.show(
         component.getEmailErrorElement(), errorMessage);
     component.getEmailElement().focus();
   };
-  var p = app.getAuth().fetchSignInMethodsForEmail(email)
+  const p = app.getAuth().fetchSignInMethodsForEmail(email)
       .then(function(signInMethods) {
         // No sign in method found.
         if (!signInMethods.length) {
-          var container = component.getContainer();
+          const container = component.getContainer();
           component.dispose();
           // Edge case. No sign in method for current email and backend is
           // returning an error that the email is already in use.
@@ -234,5 +235,5 @@ firebaseui.auth.widget.handler.onEmailExists_ =
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PASSWORD_SIGN_UP,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePasswordSignUp));
