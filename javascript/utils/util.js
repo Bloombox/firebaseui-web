@@ -51,13 +51,15 @@ firebaseui.auth.util.sanitizeUrl = function(url) {
 };
 
 
-/** @return {?string} The current URL scheme. */
+/** @return {!string} The current URL scheme. */
 firebaseui.auth.util.getScheme = function() {
   return window.location && window.location.protocol;
 };
 
 
-/** @return {boolean} Whether Cordova InAppBrowser plugin is installed. */
+/**
+ * @return {boolean} Whether Cordova InAppBrowser plugin is installed.
+ * @suppress {reportUnknownTypes} */
 firebaseui.auth.util.isCordovaInAppBrowserInstalled = function() {
   return !!(window['cordova'] && window['cordova']['InAppBrowser']);
 };
@@ -67,16 +69,6 @@ firebaseui.auth.util.isCordovaInAppBrowserInstalled = function() {
 firebaseui.auth.util.isHttpOrHttps = function() {
   return firebaseui.auth.util.getScheme() === 'http:' ||
       firebaseui.auth.util.getScheme() === 'https:';
-};
-
-
-/**
- * Navigates to the previous page.
- * It simply wraps the window.history.back and is meant for testing since
- * some browsers don't allow to overwrite the native object.
- */
-firebaseui.auth.util.goBack = function() {
-  window.history.back();
 };
 
 
@@ -181,7 +173,7 @@ firebaseui.auth.util.BROWSER_REDIRECT_TIMEOUT_ = 500;
 
 /**
  * Closes a window.
- * @param {Window} window The window to close.
+ * @param {!Window} window The window to close.
  */
 firebaseui.auth.util.close = function(window) {
   window.close();
@@ -223,10 +215,10 @@ firebaseui.auth.util.popup =
  * If an Element is passed in, it is returned.
  * An `Error` is thrown if the element can not be found.
  *
- * @param {string|Element} element The element or the query selector.
+ * @param {string|?Element} element The element or the query selector.
  * @param {string=} opt_notFoundDesc Error description when element not
  *     found.
- * @return {Element} The HTML element.
+ * @return {!Element} The HTML element.
  */
 firebaseui.auth.util.getElement = function(element, opt_notFoundDesc) {
   element = goog.dom.isElement(element) ?
@@ -237,7 +229,7 @@ firebaseui.auth.util.getElement = function(element, opt_notFoundDesc) {
     var notFoundDesc = opt_notFoundDesc || 'Cannot find element.';
     throw new Error(notFoundDesc);
   }
-  return /** @type {Element} */ (element);
+  return /** @type {!Element} */ (element);
 };
 
 

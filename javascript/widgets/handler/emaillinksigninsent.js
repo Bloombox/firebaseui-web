@@ -37,7 +37,7 @@ goog.require('firebaseui.auth.widget.handler');
  */
 firebaseui.auth.widget.handler.handleEmailLinkSignInSent = function(
     app, container, email, onCancelClick, opt_pendingCredential) {
-  var component = new firebaseui.auth.ui.page.EmailLinkSignInSent(
+  const component = new firebaseui.auth.ui.page.EmailLinkSignInSent(
       email,
       // On trouble getting email click.
       function() {

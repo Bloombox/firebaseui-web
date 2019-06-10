@@ -32,9 +32,9 @@ goog.require('goog.ui.Component');
 firebaseui.auth.ui.element.infoBar.showInfoBar = function(message) {
   // Dismiss previous info bar if it exists.
   firebaseui.auth.ui.element.infoBar.dismissInfoBar.call(this);
-  var infoBar = goog.soy.renderAsElement(
+  const infoBar = goog.soy.renderAsElement(
       firebaseui.auth.soy2.element.infoBar,
-      {'message': message},
+      {message: message},
       null,
       this.getDomHelper());
   this.getElement().appendChild(infoBar);
@@ -60,18 +60,20 @@ firebaseui.auth.ui.element.infoBar.dismissInfoBar = function() {
 
 
 /**
- * @return {Element} The info bar.
+ * @return {!Element} The info bar.
  * @this {goog.ui.Component}
  */
 firebaseui.auth.ui.element.infoBar.getInfoBarElement = function() {
-  return this.getElementByClass('firebaseui-id-info-bar');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-info-bar')));
 };
 
 
 /**
- * @return {Element} The info bar dismiss link.
+ * @return {!Element} The info bar dismiss link.
  * @this {goog.ui.Component}
  */
 firebaseui.auth.ui.element.infoBar.getInfoBarDismissLinkElement = function() {
-  return this.getElementByClass('firebaseui-id-dismiss-info-bar');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-dismiss-info-bar')));
 };

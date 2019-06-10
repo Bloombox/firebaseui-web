@@ -20,9 +20,8 @@ goog.provide('firebaseui.auth.widget.Handler');
 goog.provide('firebaseui.auth.widget.HandlerName');
 goog.provide('firebaseui.auth.widget.handler');
 
-goog.require('goog.asserts');
-
 goog.forwardDeclare('firebaseui.auth.AuthUI');
+goog.require('goog.asserts');
 
 
 
@@ -61,7 +60,7 @@ firebaseui.auth.widget.HandlerName = {
 
 
 /**
- * @typedef {!function(Element, ...*)}
+ * @typedef {!function(!Element, ...*)}
  */
 firebaseui.auth.widget.Handler;
 
@@ -77,8 +76,8 @@ firebaseui.auth.widget.handlers_ = {};
 
 /**
  * Registers a handler.
- * @param {firebaseui.auth.widget.HandlerName} name The handler name.
- * @param {firebaseui.auth.widget.Handler} handler The handler function.
+ * @param {!firebaseui.auth.widget.HandlerName} name The handler name.
+ * @param {!firebaseui.auth.widget.Handler} handler The handler function.
  * @package
  */
 firebaseui.auth.widget.handler.register = function(name, handler) {
@@ -88,9 +87,9 @@ firebaseui.auth.widget.handler.register = function(name, handler) {
 
 /**
  * Invokes a handler by the given name.
- * @param {firebaseui.auth.widget.HandlerName} name The handler name.
- * @param {firebaseui.auth.AuthUI} app The Firebase UI instance.
- * @param {Element} container The container DOM element for the handler.
+ * @param {!firebaseui.auth.widget.HandlerName} name The handler name.
+ * @param {!firebaseui.auth.AuthUI} app The Firebase UI instance.
+ * @param {!Element} container The container DOM element for the handler.
  * @param {...*} var_args The handler-specific arguments.
  */
 firebaseui.auth.widget.handler.handle =

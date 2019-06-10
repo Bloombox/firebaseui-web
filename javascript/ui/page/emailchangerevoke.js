@@ -32,7 +32,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  *     password link is clicked.
  * @param {function()=} opt_onContinueClick Callback to invoke when the continue
  *     button is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -86,11 +86,12 @@ firebaseui.auth.ui.page.EmailChangeRevoke.prototype.disposeInternal =
 
 
 /**
- * @return {Element} The reset password link.
+ * @return {!Element} The reset password link.
  */
 firebaseui.auth.ui.page.EmailChangeRevoke.prototype.getResetPasswordElement =
     function() {
-  return this.getElementByClass('firebaseui-id-reset-password-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-reset-password-link')));
 };
 
 

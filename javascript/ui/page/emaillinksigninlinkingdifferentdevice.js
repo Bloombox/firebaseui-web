@@ -44,6 +44,10 @@ firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+
   // Extend base page class and render Email link sign in linking different
   // device soy template.
   firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
@@ -55,10 +59,7 @@ firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice = function(
       },
       opt_domHelper,
       'emailLinkSignInLinkingDifferentDevice',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_);
   this.onContinueClick_ = onContinueClick;
 };
 goog.inherits(firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice,

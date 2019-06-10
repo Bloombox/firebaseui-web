@@ -18,6 +18,7 @@
 
 goog.provide('firebaseui.auth.widget.handler.handleDifferentDeviceError');
 
+goog.forwardDeclare('firebaseui.auth.AuthUI');
 goog.require('firebaseui.auth.ui.page.DifferentDeviceError');
 goog.require('firebaseui.auth.widget.HandlerName');
 goog.require('firebaseui.auth.widget.handler');
@@ -33,7 +34,7 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handleDifferentDeviceError = function(
     app, container) {
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.DifferentDeviceError(function() {
+  const component = new firebaseui.auth.ui.page.DifferentDeviceError(function() {
     component.dispose();
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
   });

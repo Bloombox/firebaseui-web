@@ -32,7 +32,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  * but is now trying to sign in with email/password.
  * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} email The email that was entered.
  * @param {string} providerId The providerId of the provider that should be used
  *     instead of password.
@@ -40,7 +40,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleFederatedSignIn = function(
     app, container, email, providerId, opt_infoBarMessage) {
-  var component = new firebaseui.auth.ui.page.FederatedLinking(
+  const component = new firebaseui.auth.ui.page.FederatedLinking(
       email,
       app.getConfig().getConfigForProvider(providerId),
       // On submit.

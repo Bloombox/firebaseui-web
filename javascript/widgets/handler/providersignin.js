@@ -29,16 +29,16 @@ goog.require('firebaseui.auth.widget.handler.common');
 /**
  * Handles provider sign in.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string=} opt_infoBarMessage The message to show on info bar.
  */
 firebaseui.auth.widget.handler.handleProviderSignIn = function(
     app,
     container,
     opt_infoBarMessage) {
-  var component = new firebaseui.auth.ui.page.ProviderSignIn(
+  const component = new firebaseui.auth.ui.page.ProviderSignIn(
       function(providerId) {
         // TODO: Consider deleting pending credentials on new sign in.
         if (providerId == firebase.auth.EmailAuthProvider.PROVIDER_ID) {
@@ -89,5 +89,5 @@ firebaseui.auth.widget.handler.handleProviderSignIn = function(
 // Register handler.
 firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PROVIDER_SIGN_IN,
-    /** @type {firebaseui.auth.widget.Handler} */
+    /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleProviderSignIn));

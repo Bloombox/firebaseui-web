@@ -35,7 +35,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleUnsupportedProvider = function(
     app, container, email) {
-  var component = new firebaseui.auth.ui.page.UnsupportedProvider(
+  const component = new firebaseui.auth.ui.page.UnsupportedProvider(
       email,
       // On recover password button clicked.
       function() {
@@ -67,4 +67,3 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.UNSUPPORTED_PROVIDER,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleUnsupportedProvider));
-    

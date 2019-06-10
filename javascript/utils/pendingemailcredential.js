@@ -57,7 +57,7 @@ firebaseui.auth.PendingEmailCredential.prototype.getCredential = function() {
 firebaseui.auth.PendingEmailCredential.prototype.toPlainObject = function() {
   return {
     'email': this.email_,
-    'credential': this.credential_ && this.credential_['toJSON']()
+    'credential': !!this.credential_ && this.credential_.toJSON()
   };
 };
 
@@ -68,11 +68,12 @@ firebaseui.auth.PendingEmailCredential.prototype.toPlainObject = function() {
  *     pending email credential object.
  * @return {?firebaseui.auth.PendingEmailCredential} The pending email
  *     credential representation of the provided object.
+ * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.PendingEmailCredential.fromPlainObject = function(response) {
-  if (response && response['email']) {
-    var credentialObject = response['credential'] &&
-        firebase.auth.AuthCredential['fromJSON'](response['credential']);
+  if (!!response && !!response['email']) {
+    var credentialObject = firebase.auth.AuthCredential.fromJSON(
+      /** @type {!Object} */ (response['credential']));
     return new firebaseui.auth.PendingEmailCredential(
         /** @type {string} */ (response['email']), credentialObject);
   }

@@ -41,7 +41,7 @@ goog.require('goog.asserts');
 firebaseui.auth.widget.handler.handleFederatedRedirect = function(
     app,
     container) {
-  var component = new firebaseui.auth.ui.page.Blank();
+  const component = new firebaseui.auth.ui.page.Blank();
   component.render(container);
   // Set current UI component.
   app.setCurrentComponent(component);
@@ -49,7 +49,7 @@ firebaseui.auth.widget.handler.handleFederatedRedirect = function(
   // is only designed to be called in this situation.
   goog.asserts.assert(
       app.getConfig().federatedProviderShouldImmediatelyRedirect());
-  var providerId = app.getConfig().getProviders()[0];
+  const providerId = app.getConfig().getProviders()[0];
   // Immediately start the redirect.
   firebaseui.auth.widget.handler.common.federatedSignIn(
       /** @type {!firebaseui.auth.AuthUI} */ (app),

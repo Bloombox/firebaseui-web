@@ -13,7 +13,7 @@
  */
 
 // Strings for the FirebaseUI widget.
-{namespace firebaseui.auth.soy2.strings autoescape="strict"}
+{namespace firebaseui.auth.soy2.strings}
 
 
 /** Progress dialog message to show while verifying a phone number. */
@@ -220,7 +220,7 @@
         The email address is already used by another account
       {/msg}
     {case 'auth/requires-recent-login'}
-      {call .errorLoginAgain_ /}
+      {call .errorLoginAgain /}
     {case 'auth/too-many-requests'}
       {msg desc="Error message for too many failed login attempts in a short period of time.
           Recommend that the user wait a few minutes before trying again."}
@@ -237,7 +237,7 @@
         That email address doesn't match an existing account
       {/msg}
     {case 'auth/user-token-expired'}
-      {call .errorLoginAgain_ /}
+      {call .errorLoginAgain /}
     {case 'auth/weak-password'}
       {msg desc="Error message for when the user tries to sign in or sign up with a password that
           is too short."}
@@ -304,7 +304,7 @@
 
 
 /** Error message for when user has to log in again. */
-{template .errorLoginAgain_ kind="text"}
+{template .errorLoginAgain kind="text"}
   {msg desc="Error message for when the user has to login again to perform a specific operation
       like updating password."}
     Please login again to perform this operation

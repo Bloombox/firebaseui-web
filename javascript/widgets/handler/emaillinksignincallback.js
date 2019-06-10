@@ -68,19 +68,19 @@ goog.require('goog.Promise');
 firebaseui.auth.widget.handler.handleEmailLinkSignInCallback = function(
     app, container, link, opt_email, opt_skipCodeCheck) {
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.Blank();
-  var urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
-  var oobCode = urlBuilder.getOobCode() || '';
-  var sessionId = urlBuilder.getSessionId() || '';
-  var forceSameDevice = urlBuilder.getForceSameDevice();
-  var anonymousUid = urlBuilder.getAnonymousUid();
-  var providerId = urlBuilder.getProviderId();
-  var isNewDevice = !firebaseui.auth.storage.hasEmailForSignIn(app.getAppId());
-  var email = opt_email || firebaseui.auth.storage.getEmailForSignIn(
+  const component = new firebaseui.auth.ui.page.Blank();
+  const urlBuilder = new firebaseui.auth.ActionCodeUrlBuilder(link);
+  const oobCode = urlBuilder.getOobCode() || '';
+  const sessionId = urlBuilder.getSessionId() || '';
+  const forceSameDevice = urlBuilder.getForceSameDevice();
+  const anonymousUid = urlBuilder.getAnonymousUid();
+  const providerId = urlBuilder.getProviderId();
+  const isNewDevice = !firebaseui.auth.storage.hasEmailForSignIn(app.getAppId());
+  const email = opt_email || firebaseui.auth.storage.getEmailForSignIn(
       sessionId, app.getAppId());
-  var pendingCredential = firebaseui.auth.storage.getEncryptedPendingCredential(
+  const pendingCredential = firebaseui.auth.storage.getEncryptedPendingCredential(
       sessionId, app.getAppId());
-  var credential = pendingCredential && pendingCredential.getCredential();
+  let credential = pendingCredential && pendingCredential.getCredential();
   // Linking required and the stored credential does not match expected
   // provider ID.
   if (providerId && credential && credential['providerId'] !== providerId) {
@@ -90,8 +90,8 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInCallback = function(
   // Set current UI component.
   app.setCurrentComponent(component);
 
-  var onError = function(error) {
-    var errorMessage = undefined;
+  const onError = function(error) {
+    let errorMessage = undefined;
     if (error && error['name'] && error['name'] == 'cancel') {
       return;
     }
@@ -132,8 +132,8 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInCallback = function(
     }
   };
 
-  var checkActionCodeAndGetUser = function() {
-    var anonymousUserPromise = goog.Promise.resolve(null);
+  const checkActionCodeAndGetUser = function() {
+    let anonymousUserPromise = goog.Promise.resolve(null);
     if ((anonymousUid && isNewDevice) || (isNewDevice && forceSameDevice)) {
       // Anonymous user with different device flow or regular sign in flow with
       // same device requirement on different device.
@@ -150,7 +150,7 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInCallback = function(
             return user;
           });
     }
-    var userToUpgrade = null;
+    let userToUpgrade = null;
     return anonymousUserPromise.then(function(user) {
       userToUpgrade = user;
       // User found or no anonymous upgrade needed.
@@ -251,16 +251,16 @@ firebaseui.auth.widget.handler.SIGN_IN_SUCCESS_DIALOG_DELAY = 1000;
  */
 firebaseui.auth.widget.handler.completeEmailLinkSignIn_ = function(
     app, component, email, link, credential, user) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   // Display the progress dialog while the user is being signed in or upgraded.
   component.showProgressDialog(
       firebaseui.auth.ui.element.progressDialog.State.LOADING,
       firebaseui.auth.soy2.strings.dialogEmailLinkProcessing().toString());
-  var signInPromise = user ?
+  const signInPromise = user ?
       app.upgradeWithEmailLink(user, email, link, credential) :
       app.signInWithEmailLink(email, link, credential);
-  var timer = null;
-  var p = signInPromise
+  let timer = null;
+  const p = signInPromise
       .then(function(authResult) {
         // Clear credentials and email on success.
         firebaseui.auth.storage.removeEncryptedPendingCredential(
@@ -293,7 +293,7 @@ firebaseui.auth.widget.handler.completeEmailLinkSignIn_ = function(
         if (error['name'] && error['name'] == 'cancel') {
           return;
         }
-        var errorMessage =
+        let errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         if (error['code'] == 'auth/email-already-in-use' ||
             error['code'] == 'auth/credential-already-in-use') {

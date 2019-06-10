@@ -30,8 +30,8 @@ goog.require('goog.storage.mechanism.mechanismfactory');
 
 
 goog.scope(function() {
-var mechanismfactory = goog.storage.mechanism.mechanismfactory;
-var storage = firebaseui.auth.storage;
+const mechanismfactory = goog.storage.mechanism.mechanismfactory;
+const storage = firebaseui.auth.storage;
 
 
 /**
@@ -290,9 +290,9 @@ storage.removeRememberAccount = function(opt_id) {
  * @return {!Array<!firebaseui.auth.Account>} The remembered accounts.
  */
 storage.getRememberedAccounts = function(opt_id) {
-  var rawAccounts = /** @type {!Array<!Object>} */ (
+  const rawAccounts = /** @type {!Array<!Object>} */ (
       storage.get_(storage.Key.REMEMBERED_ACCOUNTS, opt_id) || []);
-  var accounts = goog.array.map(rawAccounts, function(element) {
+  const accounts = goog.array.map(rawAccounts, function(element) {
     return firebaseui.auth.Account.fromPlainObject(element);
   });
   return goog.array.filter(accounts, goog.isDefAndNotNull);
@@ -307,9 +307,9 @@ storage.getRememberedAccounts = function(opt_id) {
  *     associates storage values with specific apps.
  */
 storage.rememberAccount = function(account, opt_id) {
-  var accounts = storage.getRememberedAccounts(opt_id);
+  const accounts = storage.getRememberedAccounts(opt_id);
   // Find the account if it's already remembered.
-  var index = goog.array.findIndex(accounts, function(element) {
+  const index = goog.array.findIndex(accounts, function(element) {
     return element.getEmail() == account.getEmail() &&
       element.getProviderId() == account.getProviderId();
   });
@@ -357,7 +357,7 @@ storage.hasPendingEmailCredential = function(opt_id) {
  *     credential if it exists.
  */
 storage.getPendingEmailCredential = function(opt_id) {
-  var credentialObject = /** @type {?Object} */ (
+  const credentialObject = /** @type {?Object} */ (
       storage.get_(storage.Key.PENDING_EMAIL_CREDENTIAL, opt_id) || null);
   return firebaseui.auth.PendingEmailCredential.fromPlainObject(
       credentialObject);
@@ -454,17 +454,18 @@ storage.hasEmailForSignIn = function(opt_id) {
  *     available.
  */
 storage.getEmailForSignIn = function(encryptionKey, opt_id) {
-  var encryptedEmailObject =
+  const encryptedEmailObject =
       storage.get_(storage.Key.EMAIL_FOR_SIGN_IN, opt_id);
-  var email = null;
+  let email = /** @type {?string} */ (null);
   if (encryptedEmailObject) {
     try {
-      var serilizedEmailObject = firebaseui.auth.crypt.aesDecrypt(
+      const serilizedEmailObject = firebaseui.auth.crypt.aesDecrypt(
           encryptionKey,
           /** @type {string} */ (encryptedEmailObject));
-      var emailObject = JSON.parse(serilizedEmailObject);
+      const emailObject = JSON.parse(serilizedEmailObject);
       email =
-          (emailObject && emailObject[storage.EMAIL_FOR_SIGN_IN_KEY_]) || null;
+          (!!emailObject &&
+            /** @type {!string|undefined} */ (emailObject[storage.EMAIL_FOR_SIGN_IN_KEY_])) || null;
     } catch (e) {
       // Do nothing.
     }
@@ -493,7 +494,7 @@ storage.removeEmailForSignIn = function(opt_id) {
  *     associates storage values with specific apps.
  */
 storage.setEmailForSignIn = function(encryptionKey, email, opt_id) {
-  var emailPlainObject = {};
+  const emailPlainObject = {};
   emailPlainObject[storage.EMAIL_FOR_SIGN_IN_KEY_] = email;
   storage.set_(
       storage.Key.EMAIL_FOR_SIGN_IN,
@@ -530,12 +531,12 @@ storage.hasEncryptedPendingCredential = function(opt_id) {
  *     credential if it exists.
  */
 storage.getEncryptedPendingCredential = function(encryptionKey, opt_id) {
-  var encryptedCred = storage.get_(
+  const encryptedCred = storage.get_(
       storage.Key.PENDING_ENCRYPTED_CREDENTIAL, opt_id);
-  var cred = null;
+  let cred = null;
   if (encryptedCred) {
     try {
-      var credString = firebaseui.auth.crypt.aesDecrypt(
+      const credString = firebaseui.auth.crypt.aesDecrypt(
           encryptionKey,
           /** @type {string} */ (encryptedCred));
       cred = /** @type {?Object} */ (JSON.parse(credString));

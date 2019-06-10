@@ -184,7 +184,9 @@ firebaseui.auth.ActionCodeUrlBuilder.prototype.getProviderId = function() {
 };
 
 
-/** @return {string} The URL string representation. */
+/**
+ * @override
+ * @return {string} The URL string representation. */
 firebaseui.auth.ActionCodeUrlBuilder.prototype.toString = function() {
   return this.uri_.toString();
 };

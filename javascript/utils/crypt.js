@@ -26,17 +26,18 @@ goog.require('goog.crypt.Aes');
 /**
  * 256 bit AES encrypt data string using provided key. For data messages longer
  * than 32 bytes, ECB mode is used.
- * @param {string} key The AES encryption key. This is in plain string form.
- * @param {string} data in plain string format.
- * @return {string} Encrypted data in hex encoding.
+ *
+ * @param {!string} key The AES encryption key. This is in plain string form.
+ * @param {!string} data in plain string format.
+ * @return {!string} Encrypted data in hex encoding.
  */
 firebaseui.auth.crypt.aesEncrypt = function(key, data) {
-  var aes = new goog.crypt.Aes(firebaseui.auth.crypt.getAesKeyArray_(key));
-  var inputArr = goog.crypt.stringToByteArray(data);
+  const aes = new goog.crypt.Aes(firebaseui.auth.crypt.getAesKeyArray_(key));
+  const inputArr = goog.crypt.stringToByteArray(data);
   // Split into 16 byte chunks (block size per AES spec).
-  var chunk = goog.array.splice(inputArr, 0, 16);
-  var stream  = '';
-  var paddingLength = 0;
+  let chunk = goog.array.splice(inputArr, 0, 16);
+  let stream  = '';
+  let paddingLength = 0;
   while (chunk.length) {
     // Pad with zeros.
     paddingLength = 16 - chunk.length;
@@ -52,17 +53,18 @@ firebaseui.auth.crypt.aesEncrypt = function(key, data) {
 
 /**
  * 256 bit AES decrypt data string using provided key.
- * @param {string} key The AES encryption key. This is in plain string form.
- * @param {string} data Encrypted data in hex encoding.
- * @return {string} Decrypted plain text string.
+ *
+ * @param {!string} key The AES encryption key. This is in plain string form.
+ * @param {!string} data Encrypted data in hex encoding.
+ * @return {!string} Decrypted plain text string.
  */
 firebaseui.auth.crypt.aesDecrypt = function(key, data) {
-  var aes = new goog.crypt.Aes(firebaseui.auth.crypt.getAesKeyArray_(key));
-  var inputArr = goog.crypt.hexToByteArray(data);
+  const aes = new goog.crypt.Aes(firebaseui.auth.crypt.getAesKeyArray_(key));
+  const inputArr = goog.crypt.hexToByteArray(data);
 
   // Split into 16 byte chunks (block size per AES spec).
-  var chunk = goog.array.splice(inputArr, 0, 16);
-  var stream  = '';
+  let chunk = goog.array.splice(inputArr, 0, 16);
+  let stream  = '';
   while (chunk.length) {
     stream += goog.crypt.byteArrayToString(aes.decrypt(chunk));
     chunk = goog.array.splice(inputArr, 0, 16);
@@ -81,10 +83,10 @@ firebaseui.auth.crypt.aesDecrypt = function(key, data) {
  */
 firebaseui.auth.crypt.getAesKeyArray_ = function(key) {
   // Trim key to 32 characters.
-  var keyArray = goog.crypt.stringToByteArray(key.substring(0, 32));
+  const keyArray = goog.crypt.stringToByteArray(key.substring(0, 32));
   // Pad to 32 characters if needed.
-  var paddingLength = 32 - keyArray.length;
-  for (var i = 0; i < paddingLength; i++) {
+  const paddingLength = 32 - keyArray.length;
+  for (let i = 0; i < paddingLength; i++) {
     // Pad with zeros.
     keyArray.push(0);
   }

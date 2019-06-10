@@ -18,6 +18,7 @@
 
 goog.provide('firebaseui.auth.widget.dispatcher');
 
+goog.forwardDeclare('firebaseui.auth.AuthUI');
 goog.require('firebaseui.auth.acClient');
 goog.require('firebaseui.auth.soy2.strings');
 goog.require('firebaseui.auth.storage');
@@ -28,8 +29,6 @@ goog.require('firebaseui.auth.widget.handler');
 goog.require('firebaseui.auth.widget.handler.common');
 goog.require('goog.asserts');
 goog.require('goog.uri.utils');
-
-goog.forwardDeclare('firebaseui.auth.AuthUI');
 
 
 /**
@@ -51,12 +50,12 @@ firebaseui.auth.widget.dispatcher.ELEMENT_NOT_FOUND_ = 'Could not find the ' +
  * @return {?firebaseui.auth.widget.Config.WidgetMode} The widget mode.
  */
 firebaseui.auth.widget.dispatcher.getMode = function(app, opt_url) {
-  var url = opt_url || firebaseui.auth.util.getCurrentUrl();
-  var modeParam = app.getConfig().getQueryParameterForWidgetMode();
-  var modeString = goog.uri.utils.getParamValue(url, modeParam) || '';
+  const url = opt_url || firebaseui.auth.util.getCurrentUrl();
+  const modeParam = app.getConfig().getQueryParameterForWidgetMode();
+  const modeString = goog.uri.utils.getParamValue(url, modeParam) || '';
   // Normalize the mode.
-  var WidgetMode = firebaseui.auth.widget.Config.WidgetMode;
-  for (var k in WidgetMode) {
+  const WidgetMode = firebaseui.auth.widget.Config.WidgetMode;
+  for (let k in WidgetMode) {
     if (WidgetMode[k].toLowerCase() == modeString.toLowerCase()) {
       return WidgetMode[k];
     }
@@ -75,11 +74,11 @@ firebaseui.auth.widget.dispatcher.getMode = function(app, opt_url) {
  * @return {?string} The current redirect URL if available in the URL.
  */
 firebaseui.auth.widget.dispatcher.getRedirectUrl = function(app, opt_url) {
-  var url = opt_url || firebaseui.auth.util.getCurrentUrl();
-  var queryParameterForSignInSuccessUrl =
+  const url = opt_url || firebaseui.auth.util.getCurrentUrl();
+  const queryParameterForSignInSuccessUrl =
       app.getConfig().getQueryParameterForSignInSuccessUrl();
   // Return the value of sign-in success URL from parsed url.
-  var redirectUrl =
+  const redirectUrl =
       goog.uri.utils.getParamValue(url, queryParameterForSignInSuccessUrl);
   return redirectUrl ? firebaseui.auth.util.sanitizeUrl(redirectUrl) : null;
 };
@@ -128,7 +127,7 @@ firebaseui.auth.widget.dispatcher.getActionCode_ = function(opt_url) {
  * @private
  */
 firebaseui.auth.widget.dispatcher.getContinueCallback_ = function(opt_url) {
-  var continueUrl = goog.uri.utils.getParamValue(
+  const continueUrl = goog.uri.utils.getParamValue(
        opt_url || firebaseui.auth.util.getCurrentUrl(), 'continueUrl');
   // If continue URL detected, return a callback URL to redirect to it.
   if (continueUrl) {
@@ -168,7 +167,7 @@ firebaseui.auth.widget.dispatcher.dispatchOperation = function(app, e) {
   } else {
     // Web storage not supported, display appropriate message.
     // Get container element.
-    var container = firebaseui.auth.util.getElement(
+    const container = firebaseui.auth.util.getElement(
         e, firebaseui.auth.widget.dispatcher.ELEMENT_NOT_FOUND_);
     // Show unrecoverable error message.
     firebaseui.auth.widget.handler.common.handleUnrecoverableError(
@@ -185,7 +184,7 @@ firebaseui.auth.widget.dispatcher.dispatchOperation = function(app, e) {
  * @private
  */
 firebaseui.auth.widget.dispatcher.doDispatchOperation_ = function(app, e) {
-  var container = firebaseui.auth.util.getElement(
+  const container = firebaseui.auth.util.getElement(
         e, firebaseui.auth.widget.dispatcher.ELEMENT_NOT_FOUND_);
 
   // TODO: refactor dispatcher to simplify and move logic externally.
@@ -196,7 +195,7 @@ firebaseui.auth.widget.dispatcher.doDispatchOperation_ = function(app, e) {
       // http://www.widgetpage.com/?signInSuccessUrl=http%3A%2F%2Fwww.google.com
       // On success this should redirect to google.com the same as when
       // mode=select is passed in query parameters.
-      var redirectUrl = firebaseui.auth.widget.dispatcher.getRedirectUrl(app);
+      const redirectUrl = firebaseui.auth.widget.dispatcher.getRedirectUrl(app);
       if (redirectUrl) {
         firebaseui.auth.storage.setRedirectUrl(redirectUrl, app.getAppId());
       }
@@ -256,9 +255,10 @@ firebaseui.auth.widget.dispatcher.doDispatchOperation_ = function(app, e) {
 
     case firebaseui.auth.widget.Config.WidgetMode.SELECT:
       // If redirect URL available, save in non-persistent storage.
-      var redirectUrl = firebaseui.auth.widget.dispatcher.getRedirectUrl(app);
-      if (redirectUrl) {
-        firebaseui.auth.storage.setRedirectUrl(redirectUrl, app.getAppId());
+      let redirectUrlSelect = (
+        firebaseui.auth.widget.dispatcher.getRedirectUrl(app));
+      if (redirectUrlSelect) {
+        firebaseui.auth.storage.setRedirectUrl(redirectUrlSelect, app.getAppId());
       }
 
       if (firebaseui.auth.acClient.isInitialized()) {
@@ -292,7 +292,7 @@ firebaseui.auth.widget.dispatcher.doDispatchOperation_ = function(app, e) {
       throw new Error('Unhandled widget operation.');
   }
   // By default, UI is shown so invoke the uiShown callback.
-  var uiShownCallback = app.getConfig().getUiShownCallback();
+  const uiShownCallback = app.getConfig().getUiShownCallback();
   if (uiShownCallback) {
     uiShownCallback();
   }

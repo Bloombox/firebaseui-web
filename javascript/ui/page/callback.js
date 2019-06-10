@@ -25,7 +25,7 @@ goog.require('firebaseui.auth.ui.page.Base');
 
 /**
  * Callback page UI componenet.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -48,7 +48,7 @@ goog.inherits(firebaseui.auth.ui.page.Callback, firebaseui.auth.ui.page.Base);
  * @param {!Array} parameters The API request array of parameters.
  * @param {function(*)} onSuccess The response handling success callback.
  * @param {function(*)} onError The response handling error callback.
- * @return {?goog.Promise} The pending promise.
+ * @return {!goog.Promise} The pending promise.
  * @override
  */
 firebaseui.auth.ui.page.Callback.prototype.executePromiseRequest =

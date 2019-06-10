@@ -30,7 +30,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  * @param {string} email The email to prefill.
  * @param {function()} onSubmitClick Callback to invoke when the submit button
  *     is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -43,6 +43,10 @@ firebaseui.auth.ui.page.PasswordReset = function(email, onSubmitClick,
       {email: email},
       opt_domHelper,
       'passwordReset');
+
+  /**
+   * @private
+   */
   this.onSubmitClick_ = onSubmitClick;
 };
 goog.inherits(firebaseui.auth.ui.page.PasswordReset,

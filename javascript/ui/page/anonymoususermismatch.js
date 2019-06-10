@@ -53,7 +53,7 @@ goog.inherits(
 /** @override */
 firebaseui.auth.ui.page.AnonymousUserMismatch.prototype.enterDocument =
     function() {
-  var self = this;
+  const self = this;
   // Handle action event for dismiss button.
   firebaseui.auth.ui.element.listenForActionEvent(
       this, this.getSecondaryLinkElement(), function(e) {

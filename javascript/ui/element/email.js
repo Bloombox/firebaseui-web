@@ -20,43 +20,46 @@ goog.provide('firebaseui.auth.ui.element.email');
 
 goog.require('firebaseui.auth.soy2.strings');
 goog.require('firebaseui.auth.ui.element');
-goog.require('goog.dom');
+goog.require('goog.asserts');
 goog.require('goog.format.EmailAddress');
+goog.require('goog.string');
 goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
-var strings = firebaseui.auth.soy2.strings;
+const element = firebaseui.auth.ui.element;
+const strings = firebaseui.auth.soy2.strings;
 
 
 /**
- * @return {Element} The email input.
+ * @return {!Element} The email input.
  * @this {goog.ui.Component}
  */
 element.email.getEmailElement = function() {
-  return this.getElementByClass('firebaseui-id-email');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-email')));
 };
 
 
 /**
- * @return {Element} The error panel.
+ * @return {!Element} The error panel.
  * @this {goog.ui.Component}
  */
 element.email.getEmailErrorElement = function() {
-  return this.getElementByClass('firebaseui-id-email-error');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-email-error')));
 };
 
 
 /**
  * Validates the field and shows/clears the error message if necessary.
- * @param {Element} emailElement The email input.
- * @param {Element} errorElement The error panel.
+ * @param {!Element} emailElement The email input.
+ * @param {!Element} errorElement The error panel.
  * @return {boolean} True if the field is valid.
  * @private
  */
 element.email.validate_ = function(emailElement, errorElement) {
-  var value = element.getInputValue(emailElement) || '';
+  const value = element.getInputValue(emailElement) || '';
   if (!value) {
     element.setValid(emailElement, false);
     element.show(errorElement, strings.errorMissingEmail().toString());
@@ -80,8 +83,8 @@ element.email.validate_ = function(emailElement, errorElement) {
  * @this {goog.ui.Component}
  */
 element.email.initEmailElement = function(opt_onEnter) {
-  var emailElement = element.email.getEmailElement.call(this);
-  var errorElement = element.email.getEmailErrorElement.call(this);
+  const emailElement = element.email.getEmailElement.call(this);
+  const errorElement = element.email.getEmailErrorElement.call(this);
   element.listenForInputEvent(this, emailElement, function(e) {
     // Clear the error message.
     if (element.isShown(errorElement)) {
@@ -114,8 +117,8 @@ element.email.getEmail = function() {
  * @this {goog.ui.Component}
  */
 element.email.checkAndGetEmail = function() {
-  var emailElement = element.email.getEmailElement.call(this);
-  var errorElement = element.email.getEmailErrorElement.call(this);
+  const emailElement = element.email.getEmailElement.call(this);
+  const errorElement = element.email.getEmailErrorElement.call(this);
   if (element.email.validate_(emailElement, errorElement)) {
     return goog.string.trim(
         goog.asserts.assert(element.getInputValue(emailElement)));

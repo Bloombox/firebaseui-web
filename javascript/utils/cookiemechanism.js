@@ -59,8 +59,8 @@ goog.inherits(
 /**
  * Set a value for a key.
  *
- * @param {string} key The key to set.
- * @param {string} value The string to save.
+ * @param {!string} key The key to set.
+ * @param {!string} value The string to save.
  * @override
  */
 firebaseui.auth.CookieMechanism.prototype.set = function(key, value) {
@@ -77,7 +77,7 @@ firebaseui.auth.CookieMechanism.prototype.set = function(key, value) {
 /**
  * Get the value stored under a key.
  *
- * @param {string} key The key to get.
+ * @param {!string} key The key to get.
  * @return {?string} The corresponding value, null if not found.
  * @override
  */

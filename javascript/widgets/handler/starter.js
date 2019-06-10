@@ -18,21 +18,20 @@
 
 goog.provide('firebaseui.auth.widget.handler.startSignIn');
 
+goog.forwardDeclare('firebaseui.auth.AuthUI');
 goog.require('firebaseui.auth.util');
 goog.require('firebaseui.auth.widget.Config');
 goog.require('firebaseui.auth.widget.handler');
-
-goog.forwardDeclare('firebaseui.auth.AuthUI');
 
 
 /**
  * Triggers the sign in flow.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
  */
 firebaseui.auth.widget.handler.startSignIn = function(app) {
-  var selectUrl = app.getConfig().getRequiredWidgetUrl(
+  const selectUrl = app.getConfig().getRequiredWidgetUrl(
       firebaseui.auth.widget.Config.WidgetMode.SELECT);
   if (app.getConfig().getPopupMode()) {
     firebaseui.auth.util.popup(selectUrl);

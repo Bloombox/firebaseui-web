@@ -46,7 +46,7 @@ goog.require('goog.dom.selection');
  * @param {?string=} opt_countryId The ID (e164_key) of the country to
  *     pre-select.
  * @param {?string=} opt_nationalNumber The national number to pre-fill.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -61,7 +61,10 @@ firebaseui.auth.ui.page.PhoneSignInStart = function(
     opt_countryId,
     opt_nationalNumber,
     opt_domHelper) {
-  var nationalNumber = opt_nationalNumber || null;
+  const nationalNumber = opt_nationalNumber || null;
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.PhoneSignInStart.base(
       this,
       'constructor',
@@ -74,19 +77,25 @@ firebaseui.auth.ui.page.PhoneSignInStart = function(
       },
       opt_domHelper,
       'phoneSignInStart',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
   /** @private @const {?string} The default country to select. */
   this.countryId_ = opt_countryId || null;
-  /** @private {boolean} Whether to enable visible reCAPTCHA. */
+
+  /**
+   * @private {boolean} Whether to enable visible reCAPTCHA.
+   * @const
+   **/
   this.enableVisibleRecaptcha_ = enableVisibleRecaptcha;
+
   /** @private {?function(?)} On submit click callback. */
   this.onSubmitClick_ = onSubmitClick;
+
   /** @private {?function(?)} On cancel click callback. */
   this.onCancelClick_ = opt_onCancelClick || null;
+
   /**
+   * @const
    * @private {?firebaseui.auth.data.country.LookupTree} The country
    *     lookup prefix tree to search country code with.
    */
@@ -123,23 +132,23 @@ firebaseui.auth.ui.page.PhoneSignInStart.prototype.disposeInternal =
  */
 firebaseui.auth.ui.page.PhoneSignInStart.prototype.setupFocus_ = function() {
   // Focus order.
+  const element = /** @type {!HTMLInputElement} */ (this.getPhoneNumberElement());
+  const submit = /** @type {!HTMLElement} */ (this.getSubmitElement());
   if (!this.enableVisibleRecaptcha_) {
     // When reCAPTCHA is not visible shift focus to submit button.
-    this.focusToNextOnEnter(
-        this.getPhoneNumberElement(), this.getSubmitElement());
+    this.focusToNextOnEnter(element, submit);
   }
   // Otherwise, can't force focus on visible reCAPTCHA.
 
   // Do not submit directly on phone input enter since an invisible reCAPTCHA
   // must be triggered by a button click, otherwise it may force a visible
   // challenge.
-  this.submitOnEnter(
-      this.getSubmitElement(), /** @type {function()} */ (this.onSubmitClick_));
+  this.submitOnEnter(submit, /** @type {function()} */ (this.onSubmitClick_));
   // Auto focus the phone input and put the cursor at the end.
-  this.getPhoneNumberElement().focus();
-  goog.dom.selection.setCursorPosition(
-      this.getPhoneNumberElement(),
-      (this.getPhoneNumberElement().value || '').length);
+  element.focus();
+
+  const value = /** @type {!string} */ (element.value || '');
+  goog.dom.selection.setCursorPosition(element, value.length);
 };
 
 

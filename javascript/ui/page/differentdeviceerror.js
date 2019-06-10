@@ -53,7 +53,7 @@ goog.inherits(
 /** @override */
 firebaseui.auth.ui.page.DifferentDeviceError.prototype.enterDocument =
     function() {
-  var self = this;
+  const self = this;
   // Handle action event for dismiss button.
   firebaseui.auth.ui.element.listenForActionEvent(
       this, this.getSecondaryLinkElement(), function(e) {
@@ -85,4 +85,3 @@ goog.mixin(
       getSecondaryLinkElement:
           firebaseui.auth.ui.element.form.getSecondaryLinkElement
     });
-

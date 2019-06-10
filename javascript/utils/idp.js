@@ -39,7 +39,7 @@ firebaseui.auth.idp.isSupportedProvider = function(providerId) {
  */
 firebaseui.auth.idp.getFirstFederatedSignInMethod =
     function(signInMethods, enabledProviders) {
-  for (var i = 0; i < signInMethods.length; i++) {
+  for (let i = 0; i < signInMethods.length; i++) {
     // Exclude non-federated sign in methods.
     if (!goog.array.contains(
             firebaseui.auth.idp.NonFederatedSignInMethods, signInMethods[i]) &&
@@ -61,7 +61,9 @@ firebaseui.auth.idp.SAML_PREFIX_ = 'saml.';
 
 /**
  * Supported non-federated sign-in methods.
- * @package {!Array<string>}
+ * @package
+ * @type {!Array<string>}
+ * @const
  */
 firebaseui.auth.idp.NonFederatedSignInMethods = [
   'emailLink',
@@ -71,7 +73,9 @@ firebaseui.auth.idp.NonFederatedSignInMethods = [
 
 /**
  * Supported IdP auth provider.
- * @package {Object<string, firebase.auth.AuthProvider>}
+ * @package
+ * @type {!Object<!string, !string>}
+ * @const
  */
 firebaseui.auth.idp.AuthProviders = {
   'facebook.com': 'FacebookAuthProvider',
@@ -82,10 +86,11 @@ firebaseui.auth.idp.AuthProviders = {
   'phone': 'PhoneAuthProvider'
 };
 
-
 /**
  * Map of provider to sign in methods.
- * @package {Object<string, Object<string, string>>}
+ * @package
+ * @type {!Object<!string, !Object<!string, !string>>}
+ * @const
  */
 firebaseui.auth.idp.SignInMethods = {
   'facebook.com': {'FACEBOOK_SIGN_IN_METHOD': 'facebook.com'},
@@ -101,7 +106,7 @@ firebaseui.auth.idp.SignInMethods = {
 
 
 /**
- * @param {string} providerId
+ * @param {!string} providerId
  * @return {boolean} Whether the provider is a SAML provider.
  * @private
  */
@@ -113,7 +118,7 @@ firebaseui.auth.idp.isSaml_ = function(providerId) {
 /**
  * Returns true if the provider is federated, that is either: a built-in OAuth
  * provider like Google, a SAML provider or an ODIC or generic OAuth provider.
- * @param {string} providerId
+ * @param {!string} providerId
  * @return {boolean} Whether the provider is non-federated or not.
  */
 firebaseui.auth.idp.isFederatedSignInMethod = function(providerId) {
@@ -126,13 +131,17 @@ firebaseui.auth.idp.isFederatedSignInMethod = function(providerId) {
 /**
  * Returns the provider by provider ID. If the provider ID is neither built-in
  * provider or SAML provder, it will be considered as generic OAuth provider.
- * @param {string} providerId
+ *
+ * @param {!string} providerId
  * @return {!firebase.auth.AuthProvider} The IdP.
+ * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.idp.getAuthProvider = function(providerId) {
-  if (firebaseui.auth.idp.AuthProviders[providerId] &&
-      firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]) {
-    return new firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]();
+  const providerName = firebaseui.auth.idp.AuthProviders[providerId];
+
+  if (!!providerName) {
+    return /** @type {!firebase.auth.AuthProvider} */ (
+      new firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]());
   } else if (firebaseui.auth.idp.isSaml_(providerId)) {
     return new firebase.auth['SAMLAuthProvider'](providerId);
   } else {
@@ -145,24 +154,26 @@ firebaseui.auth.idp.getAuthProvider = function(providerId) {
  * @param {?Object} credentialObject The credential object.
  * @return {?firebase.auth.AuthCredential} The corresponding auth credential.
  * @deprecated Use mockCredential for tests instead.
+ * @suppress {reportUnknownTypes}
  */
 firebaseui.auth.idp.getAuthCredential = function(credentialObject) {
-  var providerId = credentialObject && credentialObject['providerId'];
-  if (firebaseui.auth.idp.AuthProviders[providerId] &&
-      firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]) {
-    // Twitter special case.
-    if (credentialObject['secret'] && credentialObject['accessToken']) {
-      return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
-          .credential(credentialObject['accessToken'],
-                      credentialObject['secret']);
-    } else if (providerId == firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
-      return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
-          .credential(credentialObject['idToken'],
-                      credentialObject['accessToken']);
-    } else {
-      // GitHub and Facebook.
-      return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
-          .credential(credentialObject['accessToken']);
+  if (!!credentialObject) {
+    const providerId = /** @type {?string} */ (credentialObject['providerId']);
+    if (!!providerId && !!firebaseui.auth.idp.AuthProviders[providerId]) {
+      // Twitter special case.
+      if (!!credentialObject['secret'] && !!credentialObject['accessToken']) {
+        return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
+            .credential(/** @type {!string} */ (credentialObject['accessToken']),
+                        /** @type {!string} */ (credentialObject['secret']));
+      } else if (providerId == firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
+        return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
+            .credential(/** @type {!string} */ (credentialObject['idToken']),
+                        /** @type {!string} */ (credentialObject['accessToken']));
+      } else {
+        // GitHub and Facebook.
+        return firebase.auth[firebaseui.auth.idp.AuthProviders[providerId]]
+            .credential(/** @type {!string} */ (credentialObject['accessToken']));
+      }
     }
   }
   return null;

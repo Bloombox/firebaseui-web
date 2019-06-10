@@ -65,7 +65,7 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handleEmailMismatch = function(
     app, container, authResult) {
   // Render the UI.
-  var pendingEmailCredential =
+  const pendingEmailCredential =
       firebaseui.auth.storage.getPendingEmailCredential(app.getAppId());
   if (!pendingEmailCredential) {
     // If no pending email credential, it's an error and the user should be
@@ -73,7 +73,7 @@ firebaseui.auth.widget.handler.handleEmailMismatch = function(
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
     return;
   }
-  var component = new firebaseui.auth.ui.page.EmailMismatch(
+  const component = new firebaseui.auth.ui.page.EmailMismatch(
       authResult['user']['email'],
       pendingEmailCredential.getEmail(),
       // On submit.
@@ -129,7 +129,7 @@ firebaseui.auth.widget.handler.handleEmailMismatchContinue_ =
  */
 firebaseui.auth.widget.handler.handleEmailMismatchCancel_ =
     function(app, component, pendingEmailCredential, providerId) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   component.dispose();
   if (pendingEmailCredential.getCredential()) {
     // Redirects back to federated linking.

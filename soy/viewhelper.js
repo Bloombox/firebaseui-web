@@ -23,8 +23,27 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.dom.classlist');
 goog.require('goog.dom.safe');
+goog.require('goog.dom.TagName');
 goog.require('goog.html.TrustedResourceUrl');
 goog.require('goog.string.Const');
+
+
+const imgEl_ = goog.dom.TagName.IMAGE.toString();
+const linkEl_ = goog.dom.TagName.LINK.toString();
+const headEl_ = goog.dom.TagName.HEAD.toString();
+
+
+/**
+ * Enumerates classes used in the view helper.
+ *
+ * @enum {!string}
+ */
+const ViewHelperClasses_ = {
+  FIREBASE_INPUT: goog.getCssName('firebaseui-input'),
+  FIREBASE_INPUT_INVALID: goog.getCssName('firebaseui-input-invalid'),
+  RECAPTCHA_CONTAINER: goog.getCssName('firebaseui-recaptcha-container'),
+  FIREBASE_HIDDEN: goog.getCssName('firebaseui-hidden')
+};
 
 
 function isViewerMode() {
@@ -40,13 +59,13 @@ function isRtlMode() {
 
 
 function loadCss(path) {
-  var link = goog.dom.createElement('link');
+  var link = goog.dom.createElement(linkEl_);
   link.type = 'text/css';
   goog.dom.safe.setLinkHrefAndRel(
       link,
       goog.html.TrustedResourceUrl.fromConstant(goog.string.Const.from(path)),
       'stylesheet');
-  var head = goog.dom.getElementsByTagNameAndClass('head')[0];
+  var head = goog.dom.getElementsByTagNameAndClass(headEl_)[0];
   goog.dom.insertChildAt(head, link, 0);
 }
 
@@ -59,9 +78,9 @@ function loadCss(path) {
 function loadRecaptcha(container) {
   var root = goog.dom.getElement(container);
   var recaptchaContainer =
-      goog.dom.getElementByClass('firebaseui-recaptcha-container', root);
+      goog.dom.getElementByClass(ViewHelperClasses_.RECAPTCHA_CONTAINER, root);
   recaptchaContainer.style.display = 'block';
-  var img = goog.dom.createElement('img');
+  var img = goog.dom.createElement(imgEl_);
   img.src = '../image/test/recaptcha-widget.png';
   recaptchaContainer.appendChild(img);
 }
@@ -70,14 +89,14 @@ function loadRecaptcha(container) {
 function setInvalid(root, id) {
   var e = goog.dom.getElementByClass(goog.getCssName(id), root);
   goog.dom.classlist.addRemove(
-      e, 'firebaseui-input', 'firebaseui-input-invalid');
+      e, ViewHelperClasses_.FIREBASE_INPUT, ViewHelperClasses_.FIREBASE_INPUT_INVALID);
 }
 
 
 function setError(root, id, message) {
   var e = goog.dom.getElementByClass(goog.getCssName(id), root);
   goog.dom.setTextContent(e, message);
-  goog.dom.classlist.remove(e, 'firebaseui-hidden');
+  goog.dom.classlist.remove(e, ViewHelperClasses_.FIREBASE_HIDDEN);
 }
 
 function initViewer(file) {

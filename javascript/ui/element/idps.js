@@ -30,15 +30,23 @@ goog.require('goog.dom.dataset');
  * @this {goog.ui.Component}
  */
 firebaseui.auth.ui.element.idps.initIdpList = function(onClick) {
-  var buttons = this.getElementsByClass('firebaseui-id-idp-button');
-  var cb = function(providerId, e) {
+  const buttons = this.getElementsByClass(
+    goog.getCssName('firebaseui-id-idp-button'));
+
+  /**
+   * @private
+   * @param {!string} providerId ID of the provider selected.
+   * @param {!Event} event Event from the browser.
+   */
+  function handleTap_(providerId, event) {
     onClick(providerId);
-  };
-  for (var i = 0; i < buttons.length; i++) {
-    var button = buttons[i];
-    var providerId = goog.asserts.assert(
+  }
+
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    const providerId = goog.asserts.assert(
         goog.dom.dataset.get(button, 'providerId'));
     firebaseui.auth.ui.element.listenForActionEvent(
-        this, button, goog.partial(cb, providerId));
+        this, button, goog.partial(handleTap_, providerId));
   }
 };

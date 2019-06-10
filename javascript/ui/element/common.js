@@ -35,12 +35,12 @@ goog.require('goog.ui.Component');
 
 /**
  * Sets the valid state of the element.
- * @param {Element} e The element.
+ * @param {!Element} e The element.
  * @param {boolean} valid Whether the element is valid or not.
  */
 firebaseui.auth.ui.element.setValid = function(e, valid) {
   // The parent textfield element, if applicable.
-  var textfield = goog.dom.getAncestorByClass(e, 'firebaseui-textfield');
+  const textfield = goog.dom.getAncestorByClass(e, 'firebaseui-textfield');
 
   if (valid) {
     goog.dom.classlist.addRemove(
@@ -59,15 +59,15 @@ firebaseui.auth.ui.element.setValid = function(e, valid) {
 
 
 /**
- * @param {goog.ui.Component} component The component containing the element.
- * @param {Element} e The input element.
+ * @param {!goog.ui.Component} component The component containing the element.
+ * @param {!Element} e The input element.
  * @param {function(this:SCOPE, EVENTOBJ)} cb Callback to invoke when the event
  *     is fired.
  * @template SCOPE,EVENTOBJ
  * @suppress {accessControls}
  */
 firebaseui.auth.ui.element.listenForInputEvent = function(component, e, cb) {
-  var handler = new goog.events.InputHandler(e);
+  const handler = new goog.events.InputHandler(e);
   component.registerDisposable(handler);
   component.getHandler().listen(
       handler, goog.events.InputHandler.EventType.INPUT, cb);
@@ -75,39 +75,46 @@ firebaseui.auth.ui.element.listenForInputEvent = function(component, e, cb) {
 
 
 /**
- * @param {goog.ui.Component} component The component containing the element.
- * @param {Element} e The input element.
+ * @param {!goog.ui.Component} component The component containing the element.
+ * @param {!Element} e The input element.
  * @param {function(this:SCOPE, EVENTOBJ)} cb Callback to invoke when the event
  *     is fired.
  * @template SCOPE,EVENTOBJ
  * @suppress {accessControls}
  */
 firebaseui.auth.ui.element.listenForEnterEvent = function(component, e, cb) {
-  var handler = new goog.events.KeyHandler(e);
+  const handler = new goog.events.KeyHandler(e);
   component.registerDisposable(handler);
+
+  /**
+   * @private
+   * @param {!KeyboardEvent} event Event that occurred.
+   */
+  function handleEvent_(event) {
+    if (event.keyCode == goog.events.KeyCodes.ENTER) {
+      // Stop event propagation and disable the default action since it
+      // could cause a form submission.
+      event.stopPropagation();
+      event.preventDefault();
+      cb(event);
+    }
+  }
+
   component.getHandler().listen(
-      handler, goog.events.KeyHandler.EventType.KEY, function(e) {
-        if (e.keyCode == goog.events.KeyCodes.ENTER) {
-          // Stop event propagation and disable the default action since it
-          // could cause a form submission.
-          e.stopPropagation();
-          e.preventDefault();
-          cb(e);
-        }
-      });
+      handler, goog.events.KeyHandler.EventType.KEY, handleEvent_);
 };
 
 
 /**
- * @param {goog.ui.Component} component The component containing the element.
- * @param {Element} e The input element.
+ * @param {!goog.ui.Component} component The component containing the element.
+ * @param {!Element} e The input element.
  * @param {function(this:SCOPE, EVENTOBJ)} cb Callback to invoke when the
  *     element is focused.
  * @template SCOPE,EVENTOBJ
  * @suppress {accessControls}
  */
 firebaseui.auth.ui.element.listenForFocusInEvent = function(component, e, cb) {
-  var handler = new goog.events.FocusHandler(e);
+  const handler = new goog.events.FocusHandler(e);
   component.registerDisposable(handler);
   component.getHandler().listen(
       handler, goog.events.FocusHandler.EventType.FOCUSIN, cb);
@@ -115,15 +122,15 @@ firebaseui.auth.ui.element.listenForFocusInEvent = function(component, e, cb) {
 
 
 /**
- * @param {goog.ui.Component} component The component containing the element.
- * @param {Element} e The input element.
+ * @param {!goog.ui.Component} component The component containing the element.
+ * @param {!Element} e The input element.
  * @param {function(this:SCOPE, EVENTOBJ)} cb Callback to invoke when the
  *     element is blurred.
  * @template SCOPE,EVENTOBJ
  * @suppress {accessControls}
  */
 firebaseui.auth.ui.element.listenForFocusOutEvent = function(component, e, cb) {
-  var handler = new goog.events.FocusHandler(e);
+  const handler = new goog.events.FocusHandler(e);
   component.registerDisposable(handler);
   component.getHandler().listen(
       handler, goog.events.FocusHandler.EventType.FOCUSOUT, cb);
@@ -131,29 +138,36 @@ firebaseui.auth.ui.element.listenForFocusOutEvent = function(component, e, cb) {
 
 
 /**
- * @param {goog.ui.Component} component The component containing the element.
- * @param {Element} e The actionable element.
+ * @param {!goog.ui.Component} component The component containing the element.
+ * @param {!Element} e The actionable element.
  * @param {function(this:SCOPE, EVENTOBJ)} cb Callback to invoke when the event
  *     is fired.
  * @template SCOPE,EVENTOBJ
  * @suppress {accessControls}
  */
 firebaseui.auth.ui.element.listenForActionEvent = function(component, e, cb) {
-  var handler = new goog.events.ActionHandler(e);
+  const handler = new goog.events.ActionHandler(e);
   component.registerDisposable(handler);
+
+  /**
+   * @private
+   * @param {!Event} event Event that occurred.
+   */
+  function handleEvent_(event) {
+    // Stop event propagation and disable the default action since it
+    // could cause a form submission.
+    event.stopPropagation();
+    event.preventDefault();
+    cb(event);
+  }
+
   component.getHandler().listen(
-      handler, goog.events.ActionHandler.EventType.ACTION, function(e) {
-        // Stop event propagation and disable the default action since it
-        // could cause a form submission.
-        e.stopPropagation();
-        e.preventDefault();
-        cb(e);
-      });
+      handler, goog.events.ActionHandler.EventType.ACTION, handleEvent_);
 };
 
 
 /**
- * @param {Element} e The input element.
+ * @param {!Element} e The input element.
  * @return {?string} The text in the input.
  */
 firebaseui.auth.ui.element.getInputValue = function(e) {
@@ -163,7 +177,7 @@ firebaseui.auth.ui.element.getInputValue = function(e) {
 
 /**
  * Hides the element.
- * @param {Element} e The element to hide.
+ * @param {!Element} e The element to hide.
  */
 firebaseui.auth.ui.element.hide = function(e) {
   goog.dom.classlist.add(e, 'firebaseui-hidden');
@@ -172,7 +186,7 @@ firebaseui.auth.ui.element.hide = function(e) {
 
 /**
  * Shows the element.
- * @param {Element} e The element to show.
+ * @param {!Element} e The element to show.
  * @param {string=} opt_text The text to show.
  */
 firebaseui.auth.ui.element.show = function(e, opt_text) {
@@ -186,7 +200,7 @@ firebaseui.auth.ui.element.show = function(e, opt_text) {
 /**
  * Checks if the element is shown or not. The element is considered shown if it
  * doesn't have 'firebaseui-hidden' class or 'display:none' style.
- * @param {Element} e The element to check.
+ * @param {!Element} e The element to check.
  * @return {boolean} True if the element is shown.
  */
 firebaseui.auth.ui.element.isShown = function(e) {
@@ -198,7 +212,7 @@ firebaseui.auth.ui.element.isShown = function(e) {
 /**
  * Checks if the element is deeply hidden because it or one of its ancestors is
  * hidden.
- * @param {Element} e The element to check.
+ * @param {!Element} e The element to check.
  * @return {boolean} True if the element is hidden.
  */
 firebaseui.auth.ui.element.isDeeplyHidden = function(e) {
@@ -206,7 +220,12 @@ firebaseui.auth.ui.element.isDeeplyHidden = function(e) {
     if (!firebaseui.auth.ui.element.isShown(e)) {
       return true;
     }
-    e = e.parentElement;
+    const parentEl = e.parentElement;
+    if (parentEl !== null) {
+      e = /** @type {!Element} */ (parentEl);
+    } else {
+      break;
+    }
   }
   return false;
 };

@@ -35,7 +35,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  * link the accounts.
  * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} email The user's email.
  * @param {string} providerId The providerId corresponding to the email that the
  *     user should use to sign in.
@@ -43,9 +43,9 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleFederatedLinking = function(
     app, container, email, providerId, opt_infoBarMessage) {
-  var pendingEmailCredential =
+  const pendingEmailCredential =
       firebaseui.auth.storage.getPendingEmailCredential(app.getAppId());
-  var pendingCredential =
+  const pendingCredential =
       pendingEmailCredential && pendingEmailCredential.getCredential();
   if (!pendingCredential) {
     // If no pending credential, it's an error and the user should be redirected
@@ -53,7 +53,7 @@ firebaseui.auth.widget.handler.handleFederatedLinking = function(
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
     return;
   }
-  var component = new firebaseui.auth.ui.page.FederatedLinking(
+  const component = new firebaseui.auth.ui.page.FederatedLinking(
       email,
       app.getConfig().getConfigForProvider(providerId),
       // On submit.

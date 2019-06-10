@@ -38,9 +38,9 @@ goog.require('firebaseui.auth.widget.handler.common');
 /**
  * Handles password reset.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} actionCode The password reset action code.
  * @param {?function()=} opt_onContinueClick Callback to invoke when the
  *     continue button is clicked. If not provided, no continue button is
@@ -55,7 +55,7 @@ firebaseui.auth.widget.handler.handlePasswordReset = function(
           .then(
               function(email) {
                 // Show reset password UI.
-                var component = new firebaseui.auth.ui.page.PasswordReset(
+                const component = new firebaseui.auth.ui.page.PasswordReset(
                     email, function() {
                       firebaseui.auth.widget.handler.resetPassword_(
                           app, container, component, actionCode,
@@ -73,10 +73,10 @@ firebaseui.auth.widget.handler.handlePasswordReset = function(
 
 
 /**
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
- * @param {firebaseui.auth.ui.page.PasswordReset} component The UI component.
+ * @param {!Element} container The container DOM element.
+ * @param {!firebaseui.auth.ui.page.PasswordReset} component The UI component.
  * @param {string} actionCode The password reset action code.
  * @param {?function()=} opt_onContinueClick Callback to invoke when the
  *     continue button is clicked. If not provided, no continue button is
@@ -85,18 +85,18 @@ firebaseui.auth.widget.handler.handlePasswordReset = function(
  */
 firebaseui.auth.widget.handler.resetPassword_ = function(
     app, container, component, actionCode, opt_onContinueClick) {
-  var newPassword = component.checkAndGetNewPassword();
+  const newPassword = component.checkAndGetNewPassword();
   if (!newPassword) {
     return;
   }
-  var currentComponent = component;
+  const currentComponent = component;
   app.registerPending(component.executePromiseRequest(
       /** @type {function (): !goog.Promise} */ (
           goog.bind(app.getAuth().confirmPasswordReset, app.getAuth())),
       [actionCode, newPassword],
       function(resp) {
         currentComponent.dispose();
-        var component = new firebaseui.auth.ui.page.PasswordResetSuccess(
+        const component = new firebaseui.auth.ui.page.PasswordResetSuccess(
             opt_onContinueClick);
         component.render(container);
         // Set current UI component.
@@ -105,27 +105,27 @@ firebaseui.auth.widget.handler.resetPassword_ = function(
       function(error) {
         // Sign out user and show password reset failure.
         firebaseui.auth.widget.handler.handlePasswordResetFailure_(
-            app, container, component, /** @type {Error} */ (error));
+            app, container, component, /** @type {!Error} */ (error));
       }));
 };
 
 
 /**
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
- * @param {firebaseui.auth.ui.page.PasswordReset=} opt_component Current UI
+ * @param {!Element} container The container DOM element.
+ * @param {!firebaseui.auth.ui.page.PasswordReset=} opt_component Current UI
  *     component.
- * @param {Error=} opt_error The error received from the backend.
+ * @param {!Error=} opt_error The error received from the backend.
  * @private
  */
 firebaseui.auth.widget.handler.handlePasswordResetFailure_ = function(
     app, container, opt_component, opt_error) {
-  var errorCode = opt_error && opt_error['code'];
+  const errorCode = opt_error && opt_error['code'];
   if (errorCode == 'auth/weak-password') {
     // Handles this error differently as it just requires to display a message
     // to the user to use a longer password.
-    var errorMessage =
+    const errorMessage =
         firebaseui.auth.widget.handler.common.getErrorMessage(opt_error);
     firebaseui.auth.ui.element.setValid(
         opt_component.getNewPasswordElement(), false);
@@ -138,7 +138,7 @@ firebaseui.auth.widget.handler.handlePasswordResetFailure_ = function(
   if (opt_component) {
     opt_component.dispose();
   }
-  var component = new firebaseui.auth.ui.page.PasswordResetFailure();
+  const component = new firebaseui.auth.ui.page.PasswordResetFailure();
   component.render(container);
   // Set current UI component.
   app.setCurrentComponent(component);
@@ -148,14 +148,14 @@ firebaseui.auth.widget.handler.handlePasswordResetFailure_ = function(
 /**
  * Handles email change revocation action code.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} actionCode The new email verification action code.
  */
 firebaseui.auth.widget.handler.handleEmailChangeRevocation = function(
     app, container, actionCode) {
-  var email = null;
+  let email = null;
   // Gets the email related to the code.
   app.registerPending(
       app.getAuth()
@@ -180,15 +180,15 @@ firebaseui.auth.widget.handler.handleEmailChangeRevocation = function(
 /**
  * Handles email change revocation success.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} email The old email to revert to.
  * @private
  */
 firebaseui.auth.widget.handler.handleEmailChangeRevocationSuccess_ =
     function(app, container, email) {
-  var component = new firebaseui.auth.ui.page.EmailChangeRevoke(
+  let component = new firebaseui.auth.ui.page.EmailChangeRevoke(
       email,
       function () {
         app.registerPending(component.executePromiseRequest(
@@ -223,14 +223,14 @@ firebaseui.auth.widget.handler.handleEmailChangeRevocationSuccess_ =
 /**
  * Handles email change revocation failure.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @private
  */
 firebaseui.auth.widget.handler.handleEmailChangeRevocationFailure_ =
     function(app, container) {
-  var component = new firebaseui.auth.ui.page.EmailChangeRevokeFailure();
+  const component = new firebaseui.auth.ui.page.EmailChangeRevokeFailure();
   component.render(container);
   // Set current UI component.
   app.setCurrentComponent(component);
@@ -240,9 +240,9 @@ firebaseui.auth.widget.handler.handleEmailChangeRevocationFailure_ =
 /**
  * Handles email verification action code.
  *
- * @param {firebaseui.auth.AuthUI} app The current Firebase UI instance whose
+ * @param {!firebaseui.auth.AuthUI} app The current Firebase UI instance whose
  *     configuration is used.
- * @param {Element} container The container DOM element.
+ * @param {!Element} container The container DOM element.
  * @param {string} actionCode The email verification action code.
  * @param {?function()=} opt_onContinueClick Callback to invoke when the
  *     continue button is clicked. If not provided, no continue button is
@@ -255,7 +255,7 @@ firebaseui.auth.widget.handler.handleEmailVerification = function(
           .applyActionCode(actionCode)
           .then(
               function() {
-                var component =
+                const component =
                     new firebaseui.auth.ui.page.EmailVerificationSuccess(
                         opt_onContinueClick);
                 component.render(container);
@@ -263,7 +263,7 @@ firebaseui.auth.widget.handler.handleEmailVerification = function(
                 app.setCurrentComponent(component);
               },
               function(error) {
-                var component =
+                const component =
                     new firebaseui.auth.ui.page.EmailVerificationFailure();
                 component.render(container);
                 // Set current UI component.

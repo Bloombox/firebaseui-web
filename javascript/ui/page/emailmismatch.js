@@ -36,7 +36,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  *     is clicked.
  * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
  *     Privacy Policy link is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -48,6 +48,10 @@ firebaseui.auth.ui.page.EmailMismatch = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+
   // Extend base page class and render email mismatch soy template.
   firebaseui.auth.ui.page.EmailMismatch.base(
       this,
@@ -59,10 +63,8 @@ firebaseui.auth.ui.page.EmailMismatch = function(
       },
       opt_domHelper,
       'emailMismatch',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
+
   this.onContinueClick_ = onContinueClick;
   this.onCancelClick_ = onCancelClick;
 };
@@ -82,7 +84,7 @@ firebaseui.auth.ui.page.EmailMismatch.prototype.enterDocument = function() {
 
 /** @override */
 firebaseui.auth.ui.page.EmailMismatch.prototype.disposeInternal = function() {
-  this.onSubmitClick_ = null;
+  this.onContinueClick_ = null;
   this.onCancelClick_ = null;
   firebaseui.auth.ui.page.EmailMismatch.base(this, 'disposeInternal');
 };

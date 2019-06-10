@@ -27,33 +27,38 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
- * @return {?Element} The resend countdown.
+ * @return {!Element} The resend countdown.
+ *
  * @this {goog.ui.Component}
  */
 element.resend.getResendCountdown = function() {
-  return this.getElementByClass('firebaseui-id-resend-countdown');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-resend-countdown')));
 };
 
 
 /**
- * @return {?Element} The resend link.
+ * @return {!Element} The resend link.
+ *
  * @this {goog.ui.Component}
  */
 element.resend.getResendLink = function() {
-  return this.getElementByClass('firebaseui-id-resend-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-resend-link')));
 };
 
 
 /**
  * Hide the resend countdown.
+ *
  * @this {goog.ui.Component}
  */
 element.resend.hideResendCountdown = function() {
-  var el = this.getResendCountdown();
+  const el = element.resend.getResendCountdown.call(this);
   element.hide(el);
 };
 
@@ -63,7 +68,7 @@ element.resend.hideResendCountdown = function() {
  * @this {goog.ui.Component}
  */
 element.resend.showResendLink = function() {
-  var el = this.getResendLink();
+  const el = element.resend.getResendLink.call(this);
   element.show(el);
 };
 
@@ -74,13 +79,11 @@ element.resend.showResendLink = function() {
  * @this {goog.ui.Component}
  */
 element.resend.updateResendCountdown = function(secondsRemaining) {
-  var countdown = element.resend.getResendCountdown.call(this);
-  var prefix = secondsRemaining > 9 ? '0:' : '0:0';
-  var text = firebaseui.auth.soy2.strings
+  const countdown = element.resend.getResendCountdown.call(this);
+  const prefix = secondsRemaining > 9 ? '0:' : '0:0';
+  const text = firebaseui.auth.soy2.strings
                  .resendCountdown({timeRemaining: prefix + secondsRemaining})
                  .toString();
   goog.dom.setTextContent(countdown, text);
 };
-
-
 });

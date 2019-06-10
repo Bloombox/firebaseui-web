@@ -44,7 +44,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  *     is clicked.
  * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
  *     Privacy Policy link is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -52,6 +52,9 @@ firebaseui.auth.ui.page.PhoneSignInFinish = function(
     onChangePhoneNumberClick, onSubmitClick, onCancelClick, onResendClick,
     phoneNumber, resendDelay, opt_tosCallback, opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.PhoneSignInFinish.base(
       this, 'constructor', firebaseui.auth.soy2.page.phoneSignInFinish,
       {
@@ -59,14 +62,13 @@ firebaseui.auth.ui.page.PhoneSignInFinish = function(
       },
       opt_domHelper,
       'phoneSignInFinish',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
-  /** @private {string} the phone number to confirm. */
-  this.phoneNumber_ = phoneNumber;
-  /** @private {number} The resend delay. */
+      ijData_ || null);
+  /**
+   * @private {number} The resend delay.
+   * @const
+   **/
   this.resendDelay_ = resendDelay;
+
   /** @private {?goog.Timer} A resend timer with a one-second interval. */
   this.resendTimer_ = new goog.Timer(1000);
   /** @private {number} The seconds remaining before enabling resend. */
@@ -86,7 +88,7 @@ goog.inherits(
 
 /** @override */
 firebaseui.auth.ui.page.PhoneSignInFinish.prototype.enterDocument = function() {
-  var self = this;
+  const self = this;
   // Init countdown.
   this.updateResendCountdown(this.resendDelay_);
   goog.events.listen(
@@ -159,11 +161,12 @@ firebaseui.auth.ui.page.PhoneSignInFinish.prototype.setupFocus_ = function() {
 
 
 /**
- * @return {?Element} The change phone number link.
+ * @return {!Element} The change phone number link.
  */
 firebaseui.auth.ui.page.PhoneSignInFinish.prototype
     .getChangePhoneNumberElement = function() {
-  return this.getElementByClass('firebaseui-id-change-phone-number-link');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-change-phone-number-link')));
 };
 
 

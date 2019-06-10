@@ -33,7 +33,7 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handleAnonymousUserMismatch = function(
     app, container) {
   // Render the UI.
-  var component =
+  const component =
       new firebaseui.auth.ui.page.AnonymousUserMismatch(function() {
     component.dispose();
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);

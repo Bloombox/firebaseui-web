@@ -26,25 +26,26 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
- * @return {?Element} The confirmation code input.
+ * @return {!Element} The confirmation code input.
  * @this {goog.ui.Component}
  */
 element.phoneConfirmationCode.getPhoneConfirmationCodeElement = function() {
-  return this.getElementByClass('firebaseui-id-phone-confirmation-code');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-phone-confirmation-code')));
 };
 
 
 /**
- * @return {?Element} The error message element for the confirmation code input.
+ * @return {!Element} The error message element for the confirmation code input.
  * @this {goog.ui.Component}
  */
-element.phoneConfirmationCode.getPhoneConfirmationCodeErrorElement =
-    function() {
-  return this.getElementByClass('firebaseui-id-phone-confirmation-code-error');
+element.phoneConfirmationCode.getPhoneConfirmationCodeErrorElement = function() {
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-phone-confirmation-code-error')));
 };
 
 
@@ -54,13 +55,13 @@ element.phoneConfirmationCode.getPhoneConfirmationCodeErrorElement =
  *     pressed.
  * @this {goog.ui.Component}
  */
-element.phoneConfirmationCode.initPhoneConfirmationCodeElement = function(
-    opt_onEnter) {
-  var confirmationCodeElement =
+element.phoneConfirmationCode.initPhoneConfirmationCodeElement = function(opt_onEnter) {
+  const confirmationCodeElement =
       element.phoneConfirmationCode.getPhoneConfirmationCodeElement.call(this);
-  var errorElement =
+  const errorElement =
       element.phoneConfirmationCode.getPhoneConfirmationCodeErrorElement.call(
           this);
+
   element.listenForInputEvent(this, confirmationCodeElement, function(e) {
     // Clear the error message.
     if (element.isShown(errorElement)) {
@@ -81,7 +82,7 @@ element.phoneConfirmationCode.initPhoneConfirmationCodeElement = function(
  * @this {goog.ui.Component}
  */
 element.phoneConfirmationCode.checkAndGetPhoneConfirmationCode = function() {
-  var code = goog.string.trim(
+  const code = goog.string.trim(
       element.getInputValue(
           element.phoneConfirmationCode.getPhoneConfirmationCodeElement.call(
               this)) ||

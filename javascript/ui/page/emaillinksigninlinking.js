@@ -45,6 +45,10 @@ firebaseui.auth.ui.page.EmailLinkSignInLinking = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+
   // Extend base page class and render email link sign in linking soy template.
   firebaseui.auth.ui.page.EmailLinkSignInLinking.base(
       this,
@@ -56,10 +60,7 @@ firebaseui.auth.ui.page.EmailLinkSignInLinking = function(
       },
       opt_domHelper,
       'emailLinkSignInLinking',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ ||  null);
   this.onSubmitClick_ = onSubmitClick;
 };
 goog.inherits(firebaseui.auth.ui.page.EmailLinkSignInLinking,

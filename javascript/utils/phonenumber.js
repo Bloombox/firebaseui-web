@@ -47,12 +47,12 @@ firebaseui.auth.PhoneNumber.fromString = function(phoneNumberStr) {
   // Ideally libPhoneNumber should be used to parse the phone number string but
   // that dependency is too large to bundle with FirebaseUI-web, so we will
   // attempt a best effort approach to parse the 2 components.
-  var trimmedPhoneNumber = goog.string.trim(phoneNumberStr);
+  const trimmedPhoneNumber = goog.string.trim(phoneNumberStr);
   // Get matching countries if national number countains it.
-  var countries = firebaseui.auth.data.country.LOOKUP_TREE.search(
+  const countries = firebaseui.auth.data.country.LOOKUP_TREE.search(
       trimmedPhoneNumber);
   if (countries.length > 0) {
-    var countryId;
+    let countryId;
     // Parse the country ID and national number components.
     // If the country code is +1, use US as default code.
     // Otherwise, just pick the first country.
@@ -62,7 +62,7 @@ firebaseui.auth.PhoneNumber.fromString = function(phoneNumberStr) {
       countryId = countries[0].e164_key;
     }
     // Get the national number. Add the + char to the e164_cc string.
-    var nationalNumber =
+    const nationalNumber =
         trimmedPhoneNumber.substr(countries[0].e164_cc.length + 1);
     // Return the phone number object.
     return new firebaseui.auth.PhoneNumber(
@@ -76,7 +76,7 @@ firebaseui.auth.PhoneNumber.fromString = function(phoneNumberStr) {
  * @return {string} The full phone number.
  */
 firebaseui.auth.PhoneNumber.prototype.getPhoneNumber = function() {
-  var countryData = firebaseui.auth.data.country.getCountryByKey(
+  const countryData = firebaseui.auth.data.country.getCountryByKey(
       this.countryId);
   if (!countryData) {
     throw new Error('Country ID ' + this.countryId + ' not found.');

@@ -82,7 +82,7 @@ firebaseui.auth.Account.prototype.toPlainObject = function() {
 /**
  * Converts a plain account object to `firebaseui.auth.Account`.
  * @param {!Object} account The plain object representation of an account.
- * @return {firebaseui.auth.Account} The account.
+ * @return {?firebaseui.auth.Account} The account.
  */
 firebaseui.auth.Account.fromPlainObject = function(account) {
   // TODO: Remove this filter once accountchooser.com supports non-email

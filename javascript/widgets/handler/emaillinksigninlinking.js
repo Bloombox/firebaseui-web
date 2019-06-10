@@ -22,7 +22,7 @@ goog.require('firebaseui.auth.widget.handler.common');
  */
 firebaseui.auth.widget.handler.handleEmailLinkSignInLinking = function(
     app, container, email) {
-  var pendingCredential =
+  const pendingCredential =
       firebaseui.auth.storage.getPendingEmailCredential(app.getAppId());
   // No need to store the credential anymore at this point as it will be
   // encrypted and saved in cookie storage before sending the email link.
@@ -34,8 +34,8 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInLinking = function(
     firebaseui.auth.widget.handler.common.handleSignInStart(app, container);
     return;
   }
-  var providerId = pendingCredential.getCredential()['providerId'];
-  var component = new firebaseui.auth.ui.page.EmailLinkSignInLinking(
+  const providerId = pendingCredential.getCredential()['providerId'];
+  const component = new firebaseui.auth.ui.page.EmailLinkSignInLinking(
       email,
       app.getConfig().getConfigForProvider(providerId),
       // On submit.
@@ -68,7 +68,7 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInLinking = function(
  */
 firebaseui.auth.widget.handler.onEmailLinkSignInLinkingSubmit_ =
     function(app, component, email, pendingCredential) {
-  var container = component.getContainer();
+  const container = component.getContainer();
   firebaseui.auth.widget.handler.common.sendEmailLinkForSignIn(
       app,
       component,
@@ -86,7 +86,7 @@ firebaseui.auth.widget.handler.onEmailLinkSignInLinkingSubmit_ =
         if (error['name'] && error['name'] == 'cancel') {
           return;
         }
-        var errorMessage =
+        const errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         if (error && error['code'] == 'auth/network-request-failed') {
           component.showInfoBar(errorMessage);

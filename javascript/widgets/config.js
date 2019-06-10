@@ -23,6 +23,7 @@ goog.provide('firebaseui.auth.callback.signInSuccess');
 goog.provide('firebaseui.auth.callback.signInSuccessWithAuthResult');
 goog.provide('firebaseui.auth.widget.Config');
 
+goog.forwardDeclare('firebaseui.auth.AuthResult');
 goog.require('firebaseui.auth.AuthUIError');
 goog.require('firebaseui.auth.Config');
 goog.require('firebaseui.auth.PhoneNumber');
@@ -34,8 +35,6 @@ goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.uri.utils');
-
-goog.forwardDeclare('firebaseui.auth.AuthResult');
 
 
 /**
@@ -220,7 +219,7 @@ firebaseui.auth.widget.Config.BLACKLISTED_RECAPTCHA_KEYS_ = [
  */
 firebaseui.auth.widget.Config.prototype.getRequiredWidgetUrl =
     function(opt_mode) {
-  var url = /** @type {string} */ (this.config_.getRequired('widgetUrl'));
+  const url = /** @type {string} */ (this.config_.getRequired('widgetUrl'));
   return this.widgetUrlForMode_(url, opt_mode);
 };
 
@@ -235,7 +234,7 @@ firebaseui.auth.widget.Config.prototype.getRequiredWidgetUrl =
  * @return {string} The URL of the callback widget.
  */
 firebaseui.auth.widget.Config.prototype.getWidgetUrl = function(opt_mode) {
-  var url = /** @type {string|undefined} */ (this.config_.get('widgetUrl')) ||
+  const url = /** @type {string|undefined} */ (this.config_.get('widgetUrl')) ||
       // If no widget URL is provided, use the current one.
       firebaseui.auth.util.getCurrentUrl();
   return this.widgetUrlForMode_(url, opt_mode);
@@ -262,7 +261,7 @@ firebaseui.auth.widget.Config.prototype.getIdpCallbackUrl = function() {
 firebaseui.auth.widget.Config.prototype.widgetUrlForMode_ = function(baseUrl,
     opt_mode) {
   if (opt_mode) {
-    var key = this.getQueryParameterForWidgetMode();
+    const key = this.getQueryParameterForWidgetMode();
     return goog.uri.utils.setParam(baseUrl, key, opt_mode);
   } else {
     return baseUrl;
@@ -278,7 +277,7 @@ firebaseui.auth.widget.Config.prototype.getSignInSuccessUrl = function() {
 
 /** @return {boolean} Whether to auto upgrade anonymous users. */
 firebaseui.auth.widget.Config.prototype.autoUpgradeAnonymousUsers = function() {
-  var autoUpgradeAnonymousUsers =
+  const autoUpgradeAnonymousUsers =
       !!this.config_.get('autoUpgradeAnonymousUsers');
   // Confirm signInFailure callback is provided when anonymous upgrade is
   // enabled. This is required to provide a means of recovery for merge conflict
@@ -303,13 +302,13 @@ firebaseui.auth.widget.Config.prototype.autoUpgradeAnonymousUsers = function() {
  * @private
  */
 firebaseui.auth.widget.Config.prototype.getSignInOptions_ = function() {
-  var signInOptions = this.config_.get('signInOptions') || [];
-  var normalizedOptions = [];
-  for (var i = 0; i < signInOptions.length; i++) {
-    var providerConfig = signInOptions[i];
+  const signInOptions = /** @type {!Array<!Object>} */ (this.config_.get('signInOptions') || []);
+  const normalizedOptions = [];
+  for (let i = 0; i < /** @type {!Array<!Object>} */ (signInOptions).length; i++) {
+    const providerConfig = signInOptions[i];
 
     // If the config is not in object format, convert to object format.
-    var normalizedConfig = goog.isObject(providerConfig) ?
+    const normalizedConfig = goog.isObject(providerConfig) ?
         providerConfig : {'provider': providerConfig};
 
     if (normalizedConfig['provider']) {
@@ -330,9 +329,9 @@ firebaseui.auth.widget.Config.prototype.getSignInOptions_ = function() {
  */
 firebaseui.auth.widget.Config.prototype.getSignInOptionsForProvider_ =
     function(providerId) {
-  var signInOptions = this.getSignInOptions_();
+  const signInOptions = this.getSignInOptions_();
   // For each sign-in option.
-  for (var i = 0; i < signInOptions.length; i++) {
+  for (let i = 0; i < signInOptions.length; i++) {
     // Check if current option matches provider ID.
     if (signInOptions[i]['provider'] === providerId) {
       return signInOptions[i];
@@ -361,8 +360,8 @@ firebaseui.auth.widget.Config.prototype.getProviders = function() {
  */
 firebaseui.auth.widget.Config.prototype.getConfigForProvider =
     function(providerId) {
-  var providerConfigs = this.getProviderConfigs();
-  for (var i = 0; i < providerConfigs.length; i++) {
+  const providerConfigs = this.getProviderConfigs();
+  for (let i = 0; i < providerConfigs.length; i++) {
     // Check if current option matches provider ID.
     if (providerConfigs[i]['providerId'] === providerId) {
       return providerConfigs[i];
@@ -380,7 +379,14 @@ firebaseui.auth.widget.Config.prototype.getConfigForProvider =
  *     supported IdP configs.
  */
 firebaseui.auth.widget.Config.prototype.getProviderConfigs = function() {
-  return goog.array.map(this.getSignInOptions_(), function(option) {
+
+  /**
+   * @private
+   * @param {?Object} option Config for
+   *        the provider.
+   * @return {!firebaseui.auth.widget.Config.ProviderConfig}
+   */
+  function mapOptions_(option) {
     if (firebaseui.auth.idp.isSupportedProvider(option['provider']) ||
         goog.array.contains(
             firebaseui.auth.widget.Config.UI_SUPPORTED_PROVIDERS_,
@@ -389,20 +395,26 @@ firebaseui.auth.widget.Config.prototype.getProviderConfigs = function() {
       // icon URL are fixed. The login hint key is also automatically set for
       // built-in providers that support it.
       return {
-        providerId: option['provider']
+        providerId: /** @type {!string} */ (option['provider'])
       };
     } else {
       return {
-        providerId: option['provider'],
+        providerId: /** @type {!string} */ (option['provider']),
         // ProviderName should default to providerId if not provided.
-        providerName: option['providerName'] || option['provider'],
-        buttonColor: option['buttonColor'] || null,
-        iconUrl: option['iconUrl'] ?
-            firebaseui.auth.util.sanitizeUrl(option['iconUrl']) : null,
-        loginHintKey: option['loginHintKey'] || null
+        providerName: /** @type {!string} */ (
+          /** @type {?string} */ (option['providerName']) ||
+          /** @type {!string} */ (option['provider'])),
+        buttonColor: /** @type {?string} */ (
+          /** @type {?string} */ (option['buttonColor']) || null),
+        iconUrl: /** @type {?string} */ (!!option['iconUrl'] ?
+            firebaseui.auth.util.sanitizeUrl(option['iconUrl']) : null),
+        loginHintKey: /** @type {?string} */ (
+          /** @type {?string} */ (option['loginHintKey']) || null)
       };
     }
-  });
+  }
+
+  return goog.array.map(this.getSignInOptions_(), mapOptions_);
 };
 
 
@@ -411,8 +423,8 @@ firebaseui.auth.widget.Config.prototype.getProviderConfigs = function() {
  *     available.
  */
 firebaseui.auth.widget.Config.prototype.getGoogleYoloConfig = function() {
-  var supportedAuthMethods = [];
-  var supportedIdTokenProviders = [];
+  const supportedAuthMethods = [];
+  const supportedIdTokenProviders = [];
   goog.array.forEach(this.getSignInOptions_(), function(option) {
     if (option['authMethod']) {
       supportedAuthMethods.push(option['authMethod']);
@@ -424,7 +436,7 @@ firebaseui.auth.widget.Config.prototype.getGoogleYoloConfig = function() {
       }
     }
   });
-  var config = null;
+  let config = null;
   // Ensure configuration is not empty. At least one supportedIdTokenProviders
   // or supportedAuthMethods needs to be provided.
   if (this.getCredentialHelper() ===
@@ -449,7 +461,7 @@ firebaseui.auth.widget.Config.prototype.isAccountSelectionPromptEnabled =
   // This is only applicable to Google. If prompt is set, googleyolo retrieve is
   // disabled. Auto sign-in should be manually disabled.
   // Get Google custom parameters.
-  var googleCustomParameters = this.getProviderCustomParameters(
+  const googleCustomParameters = this.getProviderCustomParameters(
       firebase.auth.GoogleAuthProvider.PROVIDER_ID);
   // Google custom parameters must have prompt set to select_account, otherwise
   // account selection prompt is considered disabled.
@@ -467,15 +479,21 @@ firebaseui.auth.widget.Config.prototype.isAccountSelectionPromptEnabled =
  */
 firebaseui.auth.widget.Config.prototype.getProviderIdFromAuthMethod =
     function(authMethod) {
-  var providerId = null;
-  // For each supported provider.
-  goog.array.forEach(this.getSignInOptions_(), function(option) {
+  let providerId = /** @type {?string} */ (null);
+  /**
+   * @private
+   * @param {?Object} option Provider option to process.
+   */
+  function processOption_(option) {
+    const config = /** @type {!firebaseui.auth.widget.Config.ProviderConfig} */ (
+      option);
     // Check for matching authMethod.
-    if (option['authMethod'] === authMethod) {
+    if (!!option && config['authMethod'] === authMethod) {
       // Get the providerId for that provider.
-      providerId = option['provider'];
+      providerId = config['provider'];
     }
-  });
+  }
+  goog.array.forEach(this.getSignInOptions_(), processOption_);
   // Return the corresponding provider ID.
   return providerId;
 };
@@ -486,7 +504,7 @@ firebaseui.auth.widget.Config.prototype.getProviderIdFromAuthMethod =
  *     phone auth provider is enabled. If none provided, null is returned.
  */
 firebaseui.auth.widget.Config.prototype.getRecaptchaParameters = function() {
-  var recaptchaParameters = null;
+  let recaptchaParameters = null;
   goog.array.forEach(this.getSignInOptions_(), function(option) {
     if (option['provider'] ==
         firebase.auth.PhoneAuthProvider.PROVIDER_ID &&
@@ -499,7 +517,7 @@ firebaseui.auth.widget.Config.prototype.getRecaptchaParameters = function() {
   });
   if (recaptchaParameters) {
     // Keep track of all blacklisted keys passed by the developer.
-    var blacklistedKeys = [];
+    const blacklistedKeys = [];
     // Go over all blacklisted keys and remove them from the original object.
     goog.array.forEach(
         firebaseui.auth.widget.Config.BLACKLISTED_RECAPTCHA_KEYS_,
@@ -530,8 +548,8 @@ firebaseui.auth.widget.Config.prototype.getRecaptchaParameters = function() {
 firebaseui.auth.widget.Config.prototype.getProviderAdditionalScopes =
     function(providerId) {
   // Get provided sign-in options for specified provider.
-  var signInOptions = this.getSignInOptionsForProvider_(providerId);
-  var scopes = signInOptions && signInOptions['scopes'];
+  const signInOptions = this.getSignInOptionsForProvider_(providerId);
+  const scopes = signInOptions && signInOptions['scopes'];
   return goog.isArray(scopes) ? scopes : [];
 };
 
@@ -544,13 +562,13 @@ firebaseui.auth.widget.Config.prototype.getProviderAdditionalScopes =
 firebaseui.auth.widget.Config.prototype.getProviderCustomParameters =
     function(providerId) {
   // Get provided sign-in options for specified provider.
-  var signInOptions = this.getSignInOptionsForProvider_(providerId);
+  const signInOptions = this.getSignInOptionsForProvider_(providerId);
   // Get customParameters for that provider if available.
-  var customParameters = signInOptions && signInOptions['customParameters'];
+  const customParameters = signInOptions && signInOptions['customParameters'];
   // Custom parameters must be an object.
   if (goog.isObject(customParameters)) {
     // Clone original custom parameters.
-    var clonedCustomParameters = goog.object.clone(customParameters);
+    const clonedCustomParameters = goog.object.clone(customParameters);
     // Delete login_hint from provider (only Google supports it) as it could
     // break the flow.
     if (providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
@@ -569,11 +587,11 @@ firebaseui.auth.widget.Config.prototype.getProviderCustomParameters =
  */
 firebaseui.auth.widget.Config.prototype.getPhoneAuthDefaultNationalNumber =
     function() {
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.PhoneAuthProvider.PROVIDER_ID);
   // Check if loginHint passed. If so, get the national number from there.
   // If no defaultNationalNumber passed, use this value instead.
-  var defaultPhoneNumber = null;
+  let defaultPhoneNumber = null;
   if (signInOptions && goog.isString(signInOptions['loginHint'])) {
     defaultPhoneNumber = firebaseui.auth.PhoneNumber.fromString(
         /** @type {string} */ (signInOptions['loginHint']));
@@ -590,13 +608,13 @@ firebaseui.auth.widget.Config.prototype.getPhoneAuthDefaultNationalNumber =
  */
 firebaseui.auth.widget.Config.prototype.getPhoneAuthDefaultCountry =
     function() {
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.PhoneAuthProvider.PROVIDER_ID);
-  var iso2 = signInOptions && signInOptions['defaultCountry'] || null;
-  var countries = iso2 && firebaseui.auth.data.country.getCountriesByIso2(iso2);
+  const iso2 = signInOptions && signInOptions['defaultCountry'] || null;
+  const countries = iso2 && firebaseui.auth.data.country.getCountriesByIso2(iso2);
   // Check if loginHint passed. If so, get the country ID from there.
   // If no defaultCountry passed, use this value instead.
-  var defaultPhoneNumber = null;
+  let defaultPhoneNumber = null;
   if (signInOptions && goog.isString(signInOptions['loginHint'])) {
     defaultPhoneNumber = firebaseui.auth.PhoneNumber.fromString(
         /** @type {string} */ (signInOptions['loginHint']));
@@ -614,13 +632,13 @@ firebaseui.auth.widget.Config.prototype.getPhoneAuthDefaultCountry =
  */
 firebaseui.auth.widget.Config.prototype.getPhoneAuthAvailableCountries =
     function() {
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.PhoneAuthProvider.PROVIDER_ID);
   if (!signInOptions) {
     return null;
   }
-  var whitelistedCountries = signInOptions['whitelistedCountries'];
-  var blacklistedCountries = signInOptions['blacklistedCountries'];
+  const whitelistedCountries = signInOptions['whitelistedCountries'];
+  const blacklistedCountries = signInOptions['blacklistedCountries'];
   // First validate the input.
   if (typeof whitelistedCountries !== 'undefined' &&
       (!goog.isArray(whitelistedCountries) ||
@@ -640,36 +658,36 @@ firebaseui.auth.widget.Config.prototype.getPhoneAuthAvailableCountries =
   if (!whitelistedCountries && !blacklistedCountries) {
     return firebaseui.auth.data.country.COUNTRY_LIST;
   }
-  var countries = [];
-  var availableCountries = [];
+  let countries = [];
+  const availableCountries = [];
   if (whitelistedCountries) {
     // Whitelist is provided.
-    var whitelistedCountryMap = {};
-    for (var i = 0; i < whitelistedCountries.length; i++) {
+    const whitelistedCountryMap = {};
+    for (let i = 0; i < whitelistedCountries.length; i++) {
       countries = firebaseui.auth.data.country
           .getCountriesByE164OrIsoCode(whitelistedCountries[i]);
       // Remove duplicate and overlaps by putting into a map.
-      for (var j = 0; j < countries.length; j++) {
+      for (let j = 0; j < countries.length; j++) {
         whitelistedCountryMap[countries[j].e164_key] = countries[j];
       }
     }
-    for (var countryKey in whitelistedCountryMap) {
+    for (let countryKey in whitelistedCountryMap) {
        if (whitelistedCountryMap.hasOwnProperty(countryKey)) {
          availableCountries.push(whitelistedCountryMap[countryKey]);
        }
     }
     return availableCountries;
   } else {
-    var blacklistedCountryMap = {};
-    for (var i = 0; i < blacklistedCountries.length; i++) {
+    const blacklistedCountryMap = {};
+    for (let i = 0; i < blacklistedCountries.length; i++) {
       countries = firebaseui.auth.data.country
           .getCountriesByE164OrIsoCode(blacklistedCountries[i]);
       // Remove duplicate and overlaps by putting into a map.
-      for (var j = 0; j < countries.length; j++) {
+      for (let j = 0; j < countries.length; j++) {
         blacklistedCountryMap[countries[j].e164_key] = countries[j];
       }
     }
-    for (var k = 0; k < firebaseui.auth.data.country.COUNTRY_LIST.length; k++) {
+    for (let k = 0; k < firebaseui.auth.data.country.COUNTRY_LIST.length; k++) {
       if (!goog.object.containsKey(
               blacklistedCountryMap,
               firebaseui.auth.data.country.COUNTRY_LIST[k].e164_key)) {
@@ -708,8 +726,8 @@ firebaseui.auth.widget.Config.prototype.getSiteName = function() {
  *     wraps the URL with a callback function.
  */
 firebaseui.auth.widget.Config.prototype.getTosUrl = function() {
-  var tosUrl = this.config_.get('tosUrl') || null;
-  var privacyPolicyUrl = this.config_.get('privacyPolicyUrl') || null;
+  const tosUrl = this.config_.get('tosUrl') || null;
+  const privacyPolicyUrl = this.config_.get('privacyPolicyUrl') || null;
   if (tosUrl && !privacyPolicyUrl) {
     firebaseui.auth.log.warning('Privacy Policy URL is missing, ' +
                                 'the link will not be displayed.');
@@ -735,8 +753,8 @@ firebaseui.auth.widget.Config.prototype.getTosUrl = function() {
  *     URL is provided, wraps the URL with a callback function.
  */
 firebaseui.auth.widget.Config.prototype.getPrivacyPolicyUrl = function() {
-  var tosUrl = this.config_.get('tosUrl') || null;
-  var privacyPolicyUrl = this.config_.get('privacyPolicyUrl') || null;
+  const tosUrl = this.config_.get('tosUrl') || null;
+  const privacyPolicyUrl = this.config_.get('privacyPolicyUrl') || null;
   if (privacyPolicyUrl && !tosUrl) {
     firebaseui.auth.log.warning('Term of Service URL is missing, ' +
                                 'the link will not be displayed.');
@@ -763,7 +781,7 @@ firebaseui.auth.widget.Config.prototype.getPrivacyPolicyUrl = function() {
  */
 firebaseui.auth.widget.Config.prototype.isDisplayNameRequired = function() {
   // Get provided sign-in options for specified provider.
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.EmailAuthProvider.PROVIDER_ID);
 
   if (signInOptions &&
@@ -779,7 +797,7 @@ firebaseui.auth.widget.Config.prototype.isDisplayNameRequired = function() {
  */
 firebaseui.auth.widget.Config.prototype.isEmailLinkSignInAllowed = function() {
   // Get provided sign-in options for specified provider.
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.EmailAuthProvider.PROVIDER_ID);
 
   return !!(signInOptions && signInOptions['signInMethod'] ===
@@ -800,7 +818,7 @@ firebaseui.auth.widget.Config.prototype.isEmailPasswordSignInAllowed =
 firebaseui.auth.widget.Config.prototype.isEmailLinkSameDeviceForced =
     function() {
   // Get provided sign-in options for specified provider.
-  var signInOptions = this.getSignInOptionsForProvider_(
+  const signInOptions = this.getSignInOptionsForProvider_(
       firebase.auth.EmailAuthProvider.PROVIDER_ID);
 
   return !!(signInOptions && signInOptions['forceSameDevice']);
@@ -814,12 +832,12 @@ firebaseui.auth.widget.Config.prototype.isEmailLinkSameDeviceForced =
 firebaseui.auth.widget.Config.prototype.getEmailLinkSignInActionCodeSettings =
     function() {
   if (this.isEmailLinkSignInAllowed()) {
-    var actionCodeSettings = {
+    const actionCodeSettings = {
       'url': firebaseui.auth.util.getCurrentUrl(),
       'handleCodeInApp': true
     };
     // Get provided sign-in options for specified provider.
-    var signInOptions = this.getSignInOptionsForProvider_(
+    const signInOptions = this.getSignInOptionsForProvider_(
         firebase.auth.EmailAuthProvider.PROVIDER_ID);
     if (signInOptions &&
         typeof signInOptions['emailLinkSignIn'] === 'function') {
@@ -853,10 +871,10 @@ firebaseui.auth.widget.Config.prototype.getPopupMode = function() {
  */
 firebaseui.auth.widget.Config.prototype.
     federatedProviderShouldImmediatelyRedirect = function() {
-  var immediateFederatedRedirect = !!this.config_.get(
+  const immediateFederatedRedirect = !!this.config_.get(
       'immediateFederatedRedirect');
-  var providers = this.getProviders();
-  var signInFlow = this.getSignInFlow();
+  const providers = this.getProviders();
+  const signInFlow = this.getSignInFlow();
   return immediateFederatedRedirect &&
       providers.length == 1 &&
       firebaseui.auth.idp.isFederatedSignInMethod(providers[0]) &&
@@ -869,9 +887,9 @@ firebaseui.auth.widget.Config.prototype.
  *     flow.
  */
 firebaseui.auth.widget.Config.prototype.getSignInFlow = function() {
-  var signInFlow = this.config_.get('signInFlow');
+  const signInFlow = this.config_.get('signInFlow');
   // Make sure the select flow is a valid one.
-  for (var key in firebaseui.auth.widget.Config.SignInFlow) {
+  for (let key in firebaseui.auth.widget.Config.SignInFlow) {
     if (firebaseui.auth.widget.Config.SignInFlow[key] == signInFlow) {
       // Return valid flow.
       return firebaseui.auth.widget.Config.SignInFlow[key];
@@ -924,7 +942,7 @@ firebaseui.auth.widget.Config.prototype.getAccountChooserResultCallback =
    * @type {?function(?firebaseui.auth.widget.Config.AccountChooserResult,
    *     ?function())}
    */
-  var callback = this.getCallbacks_()['accountChooserResult'] || null;
+  const callback = this.getCallbacks_()['accountChooserResult'] || null;
   return callback;
 };
 
@@ -1005,9 +1023,9 @@ firebaseui.auth.widget.Config.prototype.getCredentialHelper = function() {
   if (!firebaseui.auth.util.isHttpOrHttps()) {
     return firebaseui.auth.CredentialHelper.NONE;
   }
-  var credentialHelper = this.config_.get('credentialHelper');
+  const credentialHelper = this.config_.get('credentialHelper');
   // Make sure the credential helper is valid.
-  for (var key in firebaseui.auth.CredentialHelper) {
+  for (let key in firebaseui.auth.CredentialHelper) {
     if (firebaseui.auth.CredentialHelper[key] == credentialHelper) {
       // Return valid flow.
       return firebaseui.auth.CredentialHelper[key];
@@ -1034,10 +1052,10 @@ firebaseui.auth.widget.Config.prototype.resolveImplicitConfig_ = function() {
 /**
  * Sets the configurations.
  *
- * @param {Object} config The configurations.
+ * @param {!Object} config The configurations.
  */
 firebaseui.auth.widget.Config.prototype.setConfig = function(config) {
-  for (var name in config) {
+  for (let name in config) {
     try {
       this.config_.update(name, config[name]);
     } catch (e) {

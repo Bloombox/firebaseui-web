@@ -25,12 +25,12 @@ goog.require('goog.dom');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
+const element = firebaseui.auth.ui.element;
 
 
 /**
  * Renders a dialog element.
- * @param {!Element} dialog The dialog element.
+ * @param {!HTMLDialogElement} dialog The dialog element.
  * @param {boolean=} opt_dismissOnBackdropClick Whether to dismiss the dialog
  *     when the user clicks outside of the dialog (i.e. on the backdrop).
  * @param {?boolean=} opt_centerRelativeToDocument Whether to center relative
@@ -47,31 +47,33 @@ element.dialog.showDialog = function(
   // but the FirebaseUI container has position: relative set, which throws off
   // those calculations.
   document.body.appendChild(dialog);
-
-  // Show the dialog, polyfilling the showModal() method if necessary.
-  if (!dialog.showModal) {
-    window['dialogPolyfill']['registerDialog'](dialog);
-  }
   dialog.showModal();
 
   // Enable MDL for the dialog.
   firebaseui.auth.ui.mdl.upgrade(dialog);
 
   if (opt_dismissOnBackdropClick) {
-    // Dismiss the dialog when the backdrop is clicked.
-    element.listenForActionEvent(this, dialog, function(event) {
+    /**
+     * @private
+     * @param {!MouseEvent} event Click event to handle.
+     * @this {goog.ui.Component}
+     */
+    function backdropClick_(event) {
       if (element.dialog.isClickOnBackdrop_(event, dialog)) {
         element.dialog.dismissDialog.call(this);
       }
-    });
+    }
+
+    // Dismiss the dialog when the backdrop is clicked.
+    element.listenForActionEvent(this, dialog, backdropClick_.bind(this));
   }
   // Check whether to center relative to document body. That is the default.
   if (!opt_centerRelativeToDocument) {
     // If not, center the dialog relative to the container if provided.
-    var container = this.getElement().parentElement || /** @type {Element} */ (
+    const container = this.getElement().parentElement || /** @type {!Element} */ (
         this.getElement().parentNode);
     if (container) {
-      var self = this;
+      const self = this;
       /**
        * @private {function()} The realign dialog callback to adjust the
        *     location of the dialog relative to the container on screen size
@@ -83,17 +85,17 @@ element.dialog.showDialog = function(
           window.removeEventListener('resize', self.realignDialog_);
           return;
         }
-        var dialogHeight = dialog.getBoundingClientRect().height;
-        var containerHeight = container.getBoundingClientRect().height;
-        var containerTop = container.getBoundingClientRect().top -
+        const dialogHeight = dialog.getBoundingClientRect().height;
+        const containerHeight = container.getBoundingClientRect().height;
+        const containerTop = container.getBoundingClientRect().top -
             document.body.getBoundingClientRect().top;
-        var containerLeft = container.getBoundingClientRect().left -
+            const containerLeft = container.getBoundingClientRect().left -
             document.body.getBoundingClientRect().left;
-        var dialogWidth = dialog.getBoundingClientRect().width;
-        var containerWidth = container.getBoundingClientRect().width;
+            const dialogWidth = dialog.getBoundingClientRect().width;
+        const containerWidth = container.getBoundingClientRect().width;
         dialog.style.top = (containerTop +
             (containerHeight - dialogHeight) / 2).toString() + 'px';
-        var dialogLeft = containerLeft + (containerWidth - dialogWidth) / 2;
+        const dialogLeft = containerLeft + (containerWidth - dialogWidth) / 2;
         dialog.style.left = dialogLeft.toString() + 'px';
         dialog.style.right = (document.body.getBoundingClientRect().width -
             dialogLeft - dialogWidth).toString() + 'px';
@@ -107,14 +109,14 @@ element.dialog.showDialog = function(
 
 
 /**
- * @param {!Event} clickEvent
- * @param {!Element} dialog
+ * @param {!MouseEvent} clickEvent
+ * @param {!HTMLDialogElement} dialog
  * @return {boolean} Whether the click event was on the backdrop (i.e. outside
  *     the bounds of the displayed dialog).
  * @private
  */
 element.dialog.isClickOnBackdrop_ = function(clickEvent, dialog) {
-  var dialogBounds = dialog.getBoundingClientRect();
+  const dialogBounds = dialog.getBoundingClientRect();
   return (clickEvent.clientX < dialogBounds.left ||
       dialogBounds.left + dialogBounds.width < clickEvent.clientX ||
       clickEvent.clientY < dialogBounds.top ||
@@ -124,7 +126,7 @@ element.dialog.isClickOnBackdrop_ = function(clickEvent, dialog) {
 
 /**
  * Dismisses the dialog.
- * @this {goog.ui.Component}
+ * @this {!goog.ui.Component}
  */
 element.dialog.dismissDialog = function() {
   // Clear the dialog itself.
@@ -146,10 +148,10 @@ element.dialog.dismissDialog = function() {
 
 
 /**
- * @return {Element} The dialog.
- * @this {goog.ui.Component}
+ * @return {?HTMLDialogElement} The dialog.
+ * @this {!goog.ui.Component}
  */
 element.dialog.getDialogElement = function() {
-  return goog.dom.getElementByClass('firebaseui-id-dialog');
+  return /** @type {?HTMLDialogElement} */ (goog.dom.getElementByClass(goog.getCssName('firebaseui-id-dialog')));
 };
 });

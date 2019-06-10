@@ -38,7 +38,7 @@ goog.require('firebaseui.auth.widget.handler.common');
 firebaseui.auth.widget.handler.handleSendEmailLinkForSignIn = function(
     app, container, email, onCancelClick) {
   // Render the UI.
-  var component = new firebaseui.auth.ui.page.Callback();
+  const component = new firebaseui.auth.ui.page.Callback();
   component.render(container);
   // Set current UI component.
   app.setCurrentComponent(component);
@@ -51,7 +51,7 @@ firebaseui.auth.widget.handler.handleSendEmailLinkForSignIn = function(
         component.dispose();
         // Error occurs while sending the email. Go back to the sign in page
         // with prefilled email and error message.
-        var errorMessage =
+        const errorMessage =
             firebaseui.auth.widget.handler.common.getErrorMessage(error);
         firebaseui.auth.widget.handler.handle(
             firebaseui.auth.widget.HandlerName.SIGN_IN,

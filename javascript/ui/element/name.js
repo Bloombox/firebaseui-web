@@ -30,32 +30,34 @@ var element = firebaseui.auth.ui.element;
 
 
 /**
- * @return {Element} The name input.
+ * @return {!Element} The name input.
  * @this {goog.ui.Component}
  */
 element.name.getNameElement = function() {
-  return this.getElementByClass('firebaseui-id-name');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-name')));
 };
 
 
 /**
- * @return {Element} The error panel.
+ * @return {!Element} The error panel.
  * @this {goog.ui.Component}
  */
 element.name.getNameErrorElement = function() {
-  return this.getElementByClass('firebaseui-id-name-error');
+  return /** @type {!Element} */ (
+    this.getElementByClass(goog.getCssName('firebaseui-id-name-error')));
 };
 
 
 /**
  * Validates the field and shows/clears the error message if necessary.
- * @param {Element} nameElement The name input.
- * @param {Element} errorElement The error panel.
+ * @param {!Element} nameElement The name input.
+ * @param {!Element} errorElement The error panel.
  * @return {boolean} True if the field is valid.
  * @private
  */
 element.name.validate_ = function(nameElement, errorElement) {
-  var valid = !goog.string.isEmptyOrWhitespace(goog.string.makeSafe(
+  const valid = !goog.string.isEmptyOrWhitespace(goog.string.makeSafe(
       element.getInputValue(nameElement)));
   element.setValid(nameElement, valid);
   if (valid) {
@@ -74,8 +76,8 @@ element.name.validate_ = function(nameElement, errorElement) {
  * @this {goog.ui.Component}
  */
 element.name.initNameElement = function() {
-  var nameElement = element.name.getNameElement.call(this);
-  var errorElement = element.name.getNameErrorElement.call(this);
+  const nameElement = element.name.getNameElement.call(this);
+  const errorElement = element.name.getNameErrorElement.call(this);
   element.listenForInputEvent(this, nameElement, function(e) {
     // Clear but not show error on-the-fly.
     if (element.isShown(errorElement)) {
@@ -93,8 +95,8 @@ element.name.initNameElement = function() {
  * @this {goog.ui.Component}
  */
 element.name.checkAndGetName = function() {
-  var nameElement = element.name.getNameElement.call(this);
-  var errorElement = element.name.getNameErrorElement.call(this);
+  const nameElement = element.name.getNameElement.call(this);
+  const errorElement = element.name.getNameErrorElement.call(this);
   if (element.name.validate_(nameElement, errorElement)) {
     return goog.string.trim(
         goog.asserts.assert(element.getInputValue(nameElement)));

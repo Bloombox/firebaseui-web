@@ -36,7 +36,7 @@ goog.require('firebaseui.auth.ui.page.Base');
  *     is clicked.
  * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
  *     Privacy Policy link is clicked.
- * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+ * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {firebaseui.auth.ui.page.Base}
  */
@@ -47,6 +47,9 @@ firebaseui.auth.ui.page.PasswordRecovery = function(
     opt_tosCallback,
     opt_privacyPolicyCallback,
     opt_domHelper) {
+  const ijData_ = {};
+  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
   firebaseui.auth.ui.page.PasswordRecovery.base(
       this,
       'constructor',
@@ -57,10 +60,7 @@ firebaseui.auth.ui.page.PasswordRecovery = function(
       },
       opt_domHelper,
       'passwordRecovery',
-      {
-        tosCallback: opt_tosCallback,
-        privacyPolicyCallback: opt_privacyPolicyCallback
-      });
+      ijData_ || null);
   this.onSubmitClick_ = onSubmitClick;
   this.onCancelClick_ = opt_onCancelClick;
 };

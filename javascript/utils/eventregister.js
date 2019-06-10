@@ -20,12 +20,13 @@
 goog.provide('firebaseui.auth.EventDispatcher');
 goog.provide('firebaseui.auth.EventRegister');
 
+goog.require('goog.array');
 goog.require('goog.events.EventTarget');
 
 
 
 /**
- * @private {!Object.<number, Array<firebaseui.auth.EventDispatcher>>} The map
+ * @private {!Object.<number, !Array<!firebaseui.auth.EventDispatcher>>} The map
  *     of elements to their corresponding event dispatchers.
  */
 firebaseui.auth.EventRegister.map_ = {};
@@ -41,7 +42,7 @@ firebaseui.auth.EventRegister.counter_ = 0;
  * Dispatches a custom event on the element provided. If a dispatcher is
  * available for that element, it will be used to trigger that event.
  * @param {!Element} el The element which event dispatcher would trigger event.
- * @param {goog.events.Event|Object|string} evt The event object.
+ * @param {!goog.events.Event|!Object|!string} evt The event object.
  */
 firebaseui.auth.EventRegister.dispatchEvent = function(el, evt) {
   if (!el) {
@@ -59,7 +60,7 @@ firebaseui.auth.EventRegister.dispatchEvent = function(el, evt) {
 
 /**
  * Registers a dispatcher for event dispatching.
- * @param {firebaseui.auth.EventDispatcher} dispatcher The event dispatcher
+ * @param {!firebaseui.auth.EventDispatcher} dispatcher The event dispatcher
  *     object.
  */
 firebaseui.auth.EventRegister.register = function(dispatcher) {
@@ -69,7 +70,7 @@ firebaseui.auth.EventRegister.register = function(dispatcher) {
     // New element.
     firebaseui.auth.EventRegister.map_[key] = [dispatcher];
   } else if (!goog.array.contains(
-      /** @type {!Array<firebaseui.auth.EventDispatcher>} */ (
+      /** @type {!Array<!firebaseui.auth.EventDispatcher>} */ (
           firebaseui.auth.EventRegister.map_[key]),
       dispatcher)) {
     // Element found, make sure no duplicate dispatcher in element array before
@@ -81,7 +82,7 @@ firebaseui.auth.EventRegister.register = function(dispatcher) {
 
 /**
  * Unregisters a dispatcher from event dispatching.
- * @param {firebaseui.auth.EventDispatcher} dispatcher The event dispatcher
+ * @param {!firebaseui.auth.EventDispatcher} dispatcher The event dispatcher
  *     object.
  */
 firebaseui.auth.EventRegister.unregister = function(dispatcher) {
@@ -91,7 +92,7 @@ firebaseui.auth.EventRegister.unregister = function(dispatcher) {
   if (firebaseui.auth.EventRegister.map_[key] &&
       firebaseui.auth.EventRegister.map_[key].length) {
     goog.array.removeIf(
-        /** @type {!Array<firebaseui.auth.EventDispatcher>} */ (
+        /** @type {!Array<!firebaseui.auth.EventDispatcher>} */ (
           firebaseui.auth.EventRegister.map_[key]),
         function(current) {
           return current == dispatcher;
@@ -105,17 +106,24 @@ firebaseui.auth.EventRegister.unregister = function(dispatcher) {
 
 
 /**
- * @param {Element} el The element which identifying key is to be returned.
+ * @param {!Element} el The element which identifying key is to be returned.
  * @return {number} Returns the hash map key corresponding to the element
  *     provided.
  * @private
  */
 firebaseui.auth.EventRegister.getKey_ = function(el) {
-  if (typeof el.dispatchId_ === 'undefined') {
-    el.dispatchId_ = firebaseui.auth.EventRegister.counter_;
+  if (typeof el['dispatchId_'] === 'undefined') {
+    const id = firebaseui.auth.EventRegister.counter_;
+    /**
+     * @private
+     * @type {number}
+     */
+    el['dispatchId_'] = id;
     firebaseui.auth.EventRegister.counter_++;
+    return id;
+  } else {
+    return /** @type {number} */ (el['dispatchId_']);
   }
-  return el.dispatchId_;
 };
 
 
@@ -124,7 +132,7 @@ firebaseui.auth.EventRegister.getKey_ = function(el) {
  * An event dispatcher wrapper for an element. Anytime an event is to be
  * triggered on the provided element, it is to be dispatched via event register
  * and if a listener is set, then its callback will be called.
- * @param {Element} el The element on which events will be dispatched.
+ * @param {!Element} el The element on which events will be dispatched.
  * @constructor
  * @extends {goog.events.EventTarget}
  */
@@ -139,7 +147,7 @@ goog.inherits(firebaseui.auth.EventDispatcher, goog.events.EventTarget);
 
 
 /**
- * @return {Element} The element corresponding to the event dispatcher.
+ * @return {!Element} The element corresponding to the event dispatcher.
  */
 firebaseui.auth.EventDispatcher.prototype.getElement = function() {
   return this.el_;
