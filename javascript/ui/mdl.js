@@ -18,6 +18,8 @@
 
 goog.provide('firebaseui.auth.ui.mdl');
 
+goog.require('componentHandler.downgradeElements');
+goog.require('componentHandler.upgradeElement');
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.dom.classlist');
@@ -29,7 +31,7 @@ goog.require('goog.dom.classlist');
  * @param {?Element} element
  */
 firebaseui.auth.ui.mdl.upgrade = function(element) {
-  firebaseui.auth.ui.mdl.performOnMdlComponents_(element, 'upgradeElement');
+  firebaseui.auth.ui.mdl.performOnMdlComponents_(element, componentHandler.upgradeElement);
 };
 
 /**
@@ -39,7 +41,7 @@ firebaseui.auth.ui.mdl.upgrade = function(element) {
  * @param {?Element} element
  */
 firebaseui.auth.ui.mdl.downgrade = function(element) {
-  firebaseui.auth.ui.mdl.performOnMdlComponents_(element, 'downgradeElements');
+  firebaseui.auth.ui.mdl.performOnMdlComponents_(element, componentHandler.downgradeElements);
 };
 
 
@@ -59,23 +61,23 @@ firebaseui.auth.ui.mdl.MDL_COMPONENT_CLASSES_ = [
  * Performs an operation on all MDL elements within a given element (e.g.
  * upgradeElement, downgradeElements), including the element itself.
  * @param {?Element} element
- * @param {string} operation
+ * @param {!function(!Element): void} operation
  * @private
  */
 firebaseui.auth.ui.mdl.performOnMdlComponents_ = function(element, operation) {
-  if (!element || !window['componentHandler'] ||
-      !window['componentHandler'][operation]) {
+  if (!element || !operation) {
     return;
   }
+
   goog.array.forEach(firebaseui.auth.ui.mdl.MDL_COMPONENT_CLASSES_,
       function(className) {
     if (goog.dom.classlist.contains(element, className)) {
-      window['componentHandler'][operation](element);
+      operation(/** @type {!Element} */ (element));
     }
 
     var matchingElements = goog.dom.getElementsByClass(className, element);
     goog.array.forEach(matchingElements, function(mdlElement) {
-      window['componentHandler'][operation](mdlElement);
+      operation(/** @type {!Element} */ (mdlElement));
     });
   });
 };
