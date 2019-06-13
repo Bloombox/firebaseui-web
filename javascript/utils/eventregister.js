@@ -113,13 +113,13 @@ firebaseui.auth.EventRegister.unregister = function(dispatcher) {
  */
 firebaseui.auth.EventRegister.getKey_ = function(el) {
   if (typeof el['dispatchId_'] === 'undefined') {
+    firebaseui.auth.EventRegister.counter_++;
     const id = firebaseui.auth.EventRegister.counter_;
     /**
      * @private
      * @type {number}
      */
     el['dispatchId_'] = id;
-    firebaseui.auth.EventRegister.counter_++;
     return id;
   } else {
     return /** @type {number} */ (el['dispatchId_']);

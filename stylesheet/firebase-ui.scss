@@ -30,7 +30,7 @@
 	-webkit-box-sizing: border-box;
 	color: $text-color;
 	direction: ltr;
-	font: 16px Roboto, arial, sans-serif;
+	font-size: 16px;
 	margin: 0 auto;
 	max-width: 360px;
 	overflow: visible;
@@ -424,7 +424,7 @@ input.firebaseui-input-invalid {
 .firebaseui-dialog {
 	box-sizing: border-box;
 	color: $text-color;
-	font: 16px Roboto, arial, sans-serif;
+	font-size: 16px;
 	height: auto;
 	padding: 24px;
 	text-align: left;
