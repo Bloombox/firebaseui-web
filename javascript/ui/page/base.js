@@ -34,6 +34,8 @@ goog.require('goog.object');
 goog.require('goog.soy');
 goog.require('goog.ui.Component');
 
+goog.require('incrementaldom');
+
 
 /**
  * @define {!string} The base URL of images.
@@ -65,8 +67,33 @@ firebaseui.auth.ui.page.IJ_DATA_ = {
 };
 
 
+/**
+  * @typedef {{
+  *    privacyPolicyCallback: (function(): void|undefined),
+  *    tosCallback: (function(): void|undefined)}}
+  */
+  let BaseInjectedData;
+
+
+  /**
+   * @typedef {{
+   *    privacyPolicyCallback: (function(): void|undefined),
+   *    tosCallback: (function(): void|undefined),
+   *    googleLogo: !string,
+   *    githubLogo: !string,
+   *    facebookLogo: !string,
+   *    twitterLogo: !string,
+   *    passwordLogo: !string,
+   *    phoneLogo: !string,
+   *    anonymousLogo: !string}}
+   */
+  let PageInjectedData;
+
+
 goog.scope(function() {
   const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
+  const IncrementalDOM = goog.module.get('incrementaldom');
+
   /**
    * Base page custom event.
    * @param {!string} type The event type.
@@ -85,29 +112,6 @@ goog.scope(function() {
     }
   };
   goog.inherits(firebaseui.auth.ui.page.CustomEvent, goog.events.Event);
-
-
-  /**
-   * @typedef {{
-   *    privacyPolicyCallback: (function(): void|undefined),
-   *    tosCallback: (function(): void|undefined)}}
-   */
-  let BaseInjectedData;
-
-
-  /**
-    * @typedef {{
-    *    privacyPolicyCallback: (function(): void|undefined),
-    *    tosCallback: (function(): void|undefined),
-    *    googleLogo: !string,
-    *    githubLogo: !string,
-    *    facebookLogo: !string,
-    *    twitterLogo: !string,
-    *    passwordLogo: !string,
-    *    phoneLogo: !string,
-    *    anonymousLogo: !string}}
-    */
-  let PageInjectedData;
 
   /**
    * Base UI component.
@@ -163,6 +167,12 @@ goog.scope(function() {
      */
     this.busyIndicator_ = null;
 
+    /**
+     * @private
+     * @type {!boolean}
+     */
+    this.rendered_ = false;
+
     const ijData_ = {};
     goog.object.extend(
         ijData_, opt_injectedData || {}, firebaseui.auth.ui.page.IJ_DATA_);
@@ -200,13 +210,31 @@ goog.scope(function() {
 
   /** @override */
   firebaseui.auth.ui.page.Base.prototype.createDom = function() {
-    const element = goog.soy.renderAsElement(
+    /** @type {null|!Element|!DocumentFragment} */
+    let target;
+    if (!this.rendered_) {
+      target = document.createDocumentFragment();
+    } else {
+      target = this.getElementStrict();
+    }
+    IncrementalDOM.patch(/** @type {!Element|!DocumentFragment} */ (target), () => {
+      goog.soy.renderAsElement(
         this.template_,
         this.templateData_,
         this.injectedData_,
         this.getDomHelper());
-    firebaseui.auth.ui.mdl.upgrade(element);
-    this.setElementInternal(element);
+    });
+
+    if (!this.rendered_) {
+      // on first render, pluck the element from the document fragment
+      // and attach it as the component's backing element.
+      this.rendered_ = true;
+      const el = target.firstElementChild;
+      this.setElementInternal(/** @type {!HTMLElement} */ (el));
+      firebaseui.auth.ui.mdl.upgrade(/** @type {!Element} */ (el));
+    } else {
+      firebaseui.auth.ui.mdl.upgrade(/** @type {!Element} */ (target));
+    }
   };
 
 
