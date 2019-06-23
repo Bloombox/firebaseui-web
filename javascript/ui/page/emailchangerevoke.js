@@ -24,86 +24,88 @@ goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * Email change revocation UI component.
+   * @param {string} email The original email to revert back to.
+   * @param {function()} onResetPasswordClick Callback to invoke when the reset
+   *     password link is clicked.
+   * @param {function()=} opt_onContinueClick Callback to invoke when the continue
+   *     button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   */
+  firebaseui.auth.ui.page.EmailChangeRevoke = function(
+      email,
+      onResetPasswordClick,
+      opt_onContinueClick,
+      opt_domHelper) {
+    firebaseui.auth.ui.page.EmailChangeRevoke.base(
+        this,
+        'constructor',
+        pageTemplates.emailChangeRevokeSuccess,
+        {
+          email: email,
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_domHelper,
+        'emailChangeRevoke');
+    this.onResetPasswordClick_ = onResetPasswordClick;
+    this.onContinueClick_ = opt_onContinueClick || null;
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailChangeRevoke,
+      firebaseui.auth.ui.page.Base);
 
-/**
- * Email change revocation UI component.
- * @param {string} email The original email to revert back to.
- * @param {function()} onResetPasswordClick Callback to invoke when the reset
- *     password link is clicked.
- * @param {function()=} opt_onContinueClick Callback to invoke when the continue
- *     button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.EmailChangeRevoke = function(
-    email,
-    onResetPasswordClick,
-    opt_onContinueClick,
-    opt_domHelper) {
-  firebaseui.auth.ui.page.EmailChangeRevoke.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailChangeRevokeSuccess,
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailChangeRevoke.prototype.enterDocument = function() {
+    var self = this;
+    // Handle action event for 'change your password immediately' link.
+    firebaseui.auth.ui.element.listenForActionEvent(
+        this,
+        this.getResetPasswordElement(),
+        function(e) {
+          self.onResetPasswordClick_();
+        });
+    if (this.onContinueClick_) {
+      this.initFormElement(this.onContinueClick_);
+      this.getSubmitElement().focus();
+    }
+    firebaseui.auth.ui.page.EmailChangeRevoke.base(this, 'enterDocument');
+  };
+
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailChangeRevoke.prototype.disposeInternal =
+      function() {
+    this.onContinueClick_ = null;
+    this.onResetPasswordClick_ = null;
+    firebaseui.auth.ui.page.EmailChangeRevoke.base(this, 'disposeInternal');
+  };
+
+
+  /**
+   * @return {!Element} The reset password link.
+   */
+  firebaseui.auth.ui.page.EmailChangeRevoke.prototype.getResetPasswordElement =
+      function() {
+    return /** @type {!Element} */ (
+      this.getElementByClass(goog.getCssName('firebaseui-id-reset-password-link')));
+  };
+
+
+  goog.mixin(
+      firebaseui.auth.ui.page.EmailChangeRevoke.prototype,
+      /** @lends {firebaseui.auth.ui.page.EmailChangeRevoke.prototype} */
       {
-        email: email,
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_domHelper,
-      'emailChangeRevoke');
-  this.onResetPasswordClick_ = onResetPasswordClick;
-  this.onContinueClick_ = opt_onContinueClick || null;
-};
-goog.inherits(firebaseui.auth.ui.page.EmailChangeRevoke,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailChangeRevoke.prototype.enterDocument = function() {
-  var self = this;
-  // Handle action event for 'change your password immediately' link.
-  firebaseui.auth.ui.element.listenForActionEvent(
-      this,
-      this.getResetPasswordElement(),
-      function(e) {
-        self.onResetPasswordClick_();
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
       });
-  if (this.onContinueClick_) {
-    this.initFormElement(this.onContinueClick_);
-    this.getSubmitElement().focus();
-  }
-  firebaseui.auth.ui.page.EmailChangeRevoke.base(this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailChangeRevoke.prototype.disposeInternal =
-    function() {
-  this.onContinueClick_ = null;
-  this.onResetPasswordClick_ = null;
-  firebaseui.auth.ui.page.EmailChangeRevoke.base(this, 'disposeInternal');
-};
-
-
-/**
- * @return {!Element} The reset password link.
- */
-firebaseui.auth.ui.page.EmailChangeRevoke.prototype.getResetPasswordElement =
-    function() {
-  return /** @type {!Element} */ (
-    this.getElementByClass(goog.getCssName('firebaseui-id-reset-password-link')));
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.EmailChangeRevoke.prototype,
-    /** @lends {firebaseui.auth.ui.page.EmailChangeRevoke.prototype} */
-    {
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+});

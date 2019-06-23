@@ -26,97 +26,99 @@ goog.require('firebaseui.auth.ui.page.Base');
 goog.require('goog.asserts');
 
 
-
-/**
- * Password linking UI component.
- * @param {string} email The user's email.
- * @param {function()} onSubmitClick Callback to invoke when the submit button
- *     is clicked.
- * @param {function()} onForgotClick Callback to invoke when the forgot password
- *     link is clicked.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.PasswordLinking = function(
-    email,
-    onSubmitClick,
-    onForgotClick,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
-  firebaseui.auth.ui.page.PasswordLinking.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.passwordLinking,
-      {
-        email: email
-      },
-      opt_domHelper,
-      'passwordLinking',
-      ijData_ || null);
-  this.onSubmitClick_ = onSubmitClick;
-  this.onForgotClick_ = onForgotClick;
-};
-goog.inherits(firebaseui.auth.ui.page.PasswordLinking,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.PasswordLinking.prototype.enterDocument = function() {
-  this.initPasswordElement();
-  this.initFormElement(this.onSubmitClick_, this.onForgotClick_);
-  // Submit on enter in password element.
-  this.submitOnEnter(
-      this.getPasswordElement(),
-      this.onSubmitClick_);
-  this.getPasswordElement().focus();
-  firebaseui.auth.ui.page.PasswordLinking.base(this, 'enterDocument');
-};
+goog.scope(function() {
+    const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+    /**
+     * Password linking UI component.
+     * @param {string} email The user's email.
+     * @param {function()} onSubmitClick Callback to invoke when the submit button
+     *     is clicked.
+     * @param {function()} onForgotClick Callback to invoke when the forgot password
+     *     link is clicked.
+     * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+     *     is clicked.
+     * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+     *     Privacy Policy link is clicked.
+     * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+     * @constructor
+     * @extends {firebaseui.auth.ui.page.Base}
+     */
+    firebaseui.auth.ui.page.PasswordLinking = function(
+        email,
+        onSubmitClick,
+        onForgotClick,
+        opt_tosCallback,
+        opt_privacyPolicyCallback,
+        opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+    firebaseui.auth.ui.page.PasswordLinking.base(
+        this,
+        'constructor',
+        pageTemplates.passwordLinking,
+        {
+            email: email
+        },
+        opt_domHelper,
+        'passwordLinking',
+        ijData_ || null);
+    this.onSubmitClick_ = onSubmitClick;
+    this.onForgotClick_ = onForgotClick;
+    };
+    goog.inherits(firebaseui.auth.ui.page.PasswordLinking,
+        firebaseui.auth.ui.page.Base);
 
 
-/** @override */
-firebaseui.auth.ui.page.PasswordLinking.prototype.disposeInternal = function() {
-  this.onSubmitClick_ = null;
-  firebaseui.auth.ui.page.PasswordLinking.base(this, 'disposeInternal');
-};
+    /** @override */
+    firebaseui.auth.ui.page.PasswordLinking.prototype.enterDocument = function() {
+    this.initPasswordElement();
+    this.initFormElement(this.onSubmitClick_, this.onForgotClick_);
+    // Submit on enter in password element.
+    this.submitOnEnter(
+        this.getPasswordElement(),
+        this.onSubmitClick_);
+    this.getPasswordElement().focus();
+    firebaseui.auth.ui.page.PasswordLinking.base(this, 'enterDocument');
+    };
 
 
-/** @return {string} The email address of the account. */
-firebaseui.auth.ui.page.PasswordLinking.prototype.checkAndGetEmail =
-    function() {
-  return goog.asserts.assertString(firebaseui.auth.ui.element.getInputValue(
-      /** @type {!Element} */ (
-        this.getElementByClass(goog.getCssName('firebaseui-id-email')))));
-};
+    /** @override */
+    firebaseui.auth.ui.page.PasswordLinking.prototype.disposeInternal = function() {
+    this.onSubmitClick_ = null;
+    firebaseui.auth.ui.page.PasswordLinking.base(this, 'disposeInternal');
+    };
 
 
-goog.mixin(
-    firebaseui.auth.ui.page.PasswordLinking.prototype,
-    /** @lends {firebaseui.auth.ui.page.PasswordLinking.prototype} */
-    {
-      // For password.
-      getPasswordElement:
-          firebaseui.auth.ui.element.password.getPasswordElement,
-      getPasswordErrorElement:
-          firebaseui.auth.ui.element.password.getPasswordErrorElement,
-      initPasswordElement:
-          firebaseui.auth.ui.element.password.initPasswordElement,
-      checkAndGetPassword:
-          firebaseui.auth.ui.element.password.checkAndGetPassword,
+    /** @return {string} The email address of the account. */
+    firebaseui.auth.ui.page.PasswordLinking.prototype.checkAndGetEmail =
+        function() {
+    return goog.asserts.assertString(firebaseui.auth.ui.element.getInputValue(
+        /** @type {!Element} */ (
+            this.getElementByClass(goog.getCssName('firebaseui-id-email')))));
+    };
 
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+
+    goog.mixin(
+        firebaseui.auth.ui.page.PasswordLinking.prototype,
+        /** @lends {firebaseui.auth.ui.page.PasswordLinking.prototype} */
+        {
+        // For password.
+        getPasswordElement:
+            firebaseui.auth.ui.element.password.getPasswordElement,
+        getPasswordErrorElement:
+            firebaseui.auth.ui.element.password.getPasswordErrorElement,
+        initPasswordElement:
+            firebaseui.auth.ui.element.password.initPasswordElement,
+        checkAndGetPassword:
+            firebaseui.auth.ui.element.password.checkAndGetPassword,
+
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+        });
+});

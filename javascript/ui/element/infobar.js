@@ -24,56 +24,58 @@ goog.require('goog.dom');
 goog.require('goog.soy');
 goog.require('goog.ui.Component');
 
-
-/**
- * @param {string} message The message to show on the info bar.
- * @this {goog.ui.Component}
- */
-firebaseui.auth.ui.element.infoBar.showInfoBar = function(message) {
-  // Dismiss previous info bar if it exists.
-  firebaseui.auth.ui.element.infoBar.dismissInfoBar.call(this);
-  const infoBar = goog.soy.renderAsElement(
-      firebaseui.auth.soy2.element.infoBar,
-      {message: message},
-      null,
-      this.getDomHelper());
-  this.getElement().appendChild(infoBar);
-  // Handle dismiss link
-  firebaseui.auth.ui.element.listenForActionEvent(
-      this,
-      firebaseui.auth.ui.element.infoBar.getInfoBarDismissLinkElement.call(
-          this),
-      function(e) {
-        goog.dom.removeNode(infoBar);
-      });
-};
-
-
-/**
- * Dismisses the info bar.
- * @this {goog.ui.Component}
- */
-firebaseui.auth.ui.element.infoBar.dismissInfoBar = function() {
-  goog.dom.removeNode(
-      firebaseui.auth.ui.element.infoBar.getInfoBarElement.call(this));
-};
+goog.scope(function() {
+  const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
+  /**
+   * @param {string} message The message to show on the info bar.
+   * @this {goog.ui.Component}
+   */
+  firebaseui.auth.ui.element.infoBar.showInfoBar = function(message) {
+    // Dismiss previous info bar if it exists.
+    firebaseui.auth.ui.element.infoBar.dismissInfoBar.call(this);
+    const infoBar = goog.soy.renderAsElement(
+        elementTemplates.infoBar,
+        {message: message},
+        null,
+        this.getDomHelper());
+    this.getElement().appendChild(infoBar);
+    // Handle dismiss link
+    firebaseui.auth.ui.element.listenForActionEvent(
+        this,
+        firebaseui.auth.ui.element.infoBar.getInfoBarDismissLinkElement.call(
+            this),
+        function(e) {
+          goog.dom.removeNode(infoBar);
+        });
+  };
 
 
-/**
- * @return {!Element} The info bar.
- * @this {goog.ui.Component}
- */
-firebaseui.auth.ui.element.infoBar.getInfoBarElement = function() {
-  return /** @type {!Element} */ (
-    this.getElementByClass(goog.getCssName('firebaseui-id-info-bar')));
-};
+  /**
+   * Dismisses the info bar.
+   * @this {goog.ui.Component}
+   */
+  firebaseui.auth.ui.element.infoBar.dismissInfoBar = function() {
+    goog.dom.removeNode(
+        firebaseui.auth.ui.element.infoBar.getInfoBarElement.call(this));
+  };
 
 
-/**
- * @return {!Element} The info bar dismiss link.
- * @this {goog.ui.Component}
- */
-firebaseui.auth.ui.element.infoBar.getInfoBarDismissLinkElement = function() {
-  return /** @type {!Element} */ (
-    this.getElementByClass(goog.getCssName('firebaseui-id-dismiss-info-bar')));
-};
+  /**
+   * @return {!Element} The info bar.
+   * @this {goog.ui.Component}
+   */
+  firebaseui.auth.ui.element.infoBar.getInfoBarElement = function() {
+    return /** @type {!Element} */ (
+      this.getElementByClass(goog.getCssName('firebaseui-id-info-bar')));
+  };
+
+
+  /**
+   * @return {!Element} The info bar dismiss link.
+   * @this {goog.ui.Component}
+   */
+  firebaseui.auth.ui.element.infoBar.getInfoBarDismissLinkElement = function() {
+    return /** @type {!Element} */ (
+      this.getElementByClass(goog.getCssName('firebaseui-id-dismiss-info-bar')));
+  };
+});

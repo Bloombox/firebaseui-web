@@ -32,6 +32,7 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
+const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
 const listBoxDialog = firebaseui.auth.ui.element.listBoxDialog;
 const element = firebaseui.auth.ui.element;
 
@@ -47,7 +48,7 @@ const element = firebaseui.auth.ui.element;
  */
 listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
   const dialogElement = goog.soy.renderAsElement(
-      firebaseui.auth.soy2.element.listBoxDialog,
+    elementTemplates.listBoxDialog,
       {items: items},
       null,
       this.getDomHelper());
