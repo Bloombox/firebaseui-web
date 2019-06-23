@@ -23,9 +23,12 @@ goog.require('firebaseui.auth.ui.element');
 goog.require('goog.dom');
 goog.require('goog.soy');
 goog.require('goog.ui.Component');
+goog.require('incrementaldom');
 
 goog.scope(function() {
   const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
+  const IncrementalDOM = goog.module.get('incrementaldom');
+
   /**
    * @param {string} message The message to show on the info bar.
    * @this {goog.ui.Component}
@@ -33,11 +36,20 @@ goog.scope(function() {
   firebaseui.auth.ui.element.infoBar.showInfoBar = function(message) {
     // Dismiss previous info bar if it exists.
     firebaseui.auth.ui.element.infoBar.dismissInfoBar.call(this);
-    const infoBar = goog.soy.renderAsElement(
+
+    const infoBarFragment = (this.getDomHelper() ?
+        this.getDomHelper().getDocument() : goog.global.document)
+          .createDocumentFragment();
+
+    IncrementalDOM.patch(infoBarFragment, () => {
+      goog.soy.renderAsElement(
         elementTemplates.infoBar,
         {message: message},
         null,
         this.getDomHelper());
+    });
+
+    const infoBar = infoBarFragment.firstElementChild;
     this.getElement().appendChild(infoBar);
     // Handle dismiss link
     firebaseui.auth.ui.element.listenForActionEvent(

@@ -33,7 +33,6 @@ goog.require('goog.events.Event');
 goog.require('goog.object');
 goog.require('goog.soy');
 goog.require('goog.ui.Component');
-
 goog.require('incrementaldom');
 
 
@@ -318,11 +317,17 @@ goog.scope(function() {
       if (!self.getElement() || self.busyIndicator_ !== null) {
         return;
       }
-      self.busyIndicator_ = goog.soy.renderAsElement(
+      const indicatorFragment = (self.getDomHelper() ? self.getDomHelper().getDocument() : goog.global.document)
+          .createDocumentFragment();
+
+      IncrementalDOM.patch(indicatorFragment, () => {
+        goog.soy.renderAsElement(
           elementTemplates.busyIndicator,
           // Pass whether a spinner is to be used instead of a progress bar.
           {useSpinner: useSpinner}, null,
           self.getDomHelper());
+      });
+      self.busyIndicator_ = indicatorFragment.firstElementChild;
       self.getElement().appendChild(self.busyIndicator_);
       firebaseui.auth.ui.mdl.upgrade(self.busyIndicator_);
     }, firebaseui.auth.ui.page.SHOW_PROCESSING_DELAY_);

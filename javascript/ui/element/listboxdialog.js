@@ -28,11 +28,13 @@ goog.require('goog.dom.dataset');
 goog.require('goog.soy');
 goog.require('goog.style');
 goog.require('goog.ui.Component');
+goog.require('incrementaldom');
 
 
 
 goog.scope(function() {
 const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
+const IncrementalDOM = goog.module.get('incrementaldom');
 const listBoxDialog = firebaseui.auth.ui.element.listBoxDialog;
 const element = firebaseui.auth.ui.element;
 
@@ -47,11 +49,17 @@ const element = firebaseui.auth.ui.element;
  * @this {goog.ui.Component}
  */
 listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
-  const dialogElement = goog.soy.renderAsElement(
-    elementTemplates.listBoxDialog,
-      {items: items},
-      null,
-      this.getDomHelper());
+  const dialogFragment = (this.getDomHelper() ? this.getDomHelper().getDocument() :
+    goog.global.document).createDocumentFragment();
+
+  IncrementalDOM.patch(dialogFragment, () => {
+    goog.soy.renderAsElement(
+      elementTemplates.listBoxDialog,
+        {items: items},
+        null,
+        this.getDomHelper());
+  });
+  const dialogElement = /** @type {!HTMLDialogElement} */ (dialogFragment.firstElementChild);
   element.dialog.showDialog.call(this, /** @type {!HTMLDialogElement} */ (dialogElement), true, true);
 
   if (opt_selectedId) {
