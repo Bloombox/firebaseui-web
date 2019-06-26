@@ -830,6 +830,7 @@ firebaseui.auth.AuthUI.prototype.initPageChangeListener_ = function(element) {
     /** @type {!Element} */ (element));
   // Register event dispatcher.
   this.widgetEventDispatcher_.register();
+
   // Listen to the pageEnter events.
   goog.events.listen(
       this.widgetEventDispatcher_,

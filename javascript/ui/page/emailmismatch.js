@@ -23,82 +23,84 @@ goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * Email mismatch UI component.
+   * @param {string} userEmail The email returned by identity provider.
+   * @param {string} pendingEmail The email formerly used to sign in.
+   * @param {function()} onContinueClick Callback to invoke when the continue
+   *     button is clicked.
+   * @param {function()} onCancelClick Callback to invoke when the cancel
+   *     button is clicked.
+   * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+   *     is clicked.
+   * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+   *     Privacy Policy link is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   */
+  firebaseui.auth.ui.page.EmailMismatch = function(
+      userEmail,
+      pendingEmail,
+      onContinueClick,
+      onCancelClick,
+      opt_tosCallback,
+      opt_privacyPolicyCallback,
+      opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
 
-/**
- * Email mismatch UI component.
- * @param {string} userEmail The email returned by identity provider.
- * @param {string} pendingEmail The email formerly used to sign in.
- * @param {function()} onContinueClick Callback to invoke when the continue
- *     button is clicked.
- * @param {function()} onCancelClick Callback to invoke when the cancel
- *     button is clicked.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.EmailMismatch = function(
-    userEmail,
-    pendingEmail,
-    onContinueClick,
-    onCancelClick,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+    // Extend base page class and render email mismatch soy template.
+    firebaseui.auth.ui.page.EmailMismatch.base(
+        this,
+        'constructor',
+        pageTemplates.emailMismatch,
+        {
+          userEmail: userEmail,
+          pendingEmail: pendingEmail
+        },
+        opt_domHelper,
+        'emailMismatch',
+        ijData_ || null);
 
-  // Extend base page class and render email mismatch soy template.
-  firebaseui.auth.ui.page.EmailMismatch.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailMismatch,
+    this.onContinueClick_ = onContinueClick;
+    this.onCancelClick_ = onCancelClick;
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailMismatch,
+      firebaseui.auth.ui.page.Base);
+
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailMismatch.prototype.enterDocument = function() {
+    // Initialize form elements with their click handlers.
+    this.initFormElement(this.onContinueClick_, this.onCancelClick_);
+    // Set initial focus on the submit button.
+    this.getSubmitElement().focus();
+    firebaseui.auth.ui.page.EmailMismatch.base(this, 'enterDocument');
+  };
+
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailMismatch.prototype.disposeInternal = function() {
+    this.onContinueClick_ = null;
+    this.onCancelClick_ = null;
+    firebaseui.auth.ui.page.EmailMismatch.base(this, 'disposeInternal');
+  };
+
+
+  goog.mixin(
+      firebaseui.auth.ui.page.EmailMismatch.prototype,
+      /** @lends {firebaseui.auth.ui.page.EmailMismatch.prototype} */
       {
-        userEmail: userEmail,
-        pendingEmail: pendingEmail
-      },
-      opt_domHelper,
-      'emailMismatch',
-      ijData_ || null);
-
-  this.onContinueClick_ = onContinueClick;
-  this.onCancelClick_ = onCancelClick;
-};
-goog.inherits(firebaseui.auth.ui.page.EmailMismatch,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailMismatch.prototype.enterDocument = function() {
-  // Initialize form elements with their click handlers.
-  this.initFormElement(this.onContinueClick_, this.onCancelClick_);
-  // Set initial focus on the submit button.
-  this.getSubmitElement().focus();
-  firebaseui.auth.ui.page.EmailMismatch.base(this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailMismatch.prototype.disposeInternal = function() {
-  this.onContinueClick_ = null;
-  this.onCancelClick_ = null;
-  firebaseui.auth.ui.page.EmailMismatch.base(this, 'disposeInternal');
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.EmailMismatch.prototype,
-    /** @lends {firebaseui.auth.ui.page.EmailMismatch.prototype} */
-    {
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+      });
+});

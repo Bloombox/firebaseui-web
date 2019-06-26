@@ -24,77 +24,80 @@ goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
-/**
- * Email link sign in linking different device UI component.
- * @param {?Object} providerConfig The provider config of the IdP we should use
- *     for sign in.
- * @param {function()} onContinueClick Callback to invoke when the continue
- *     button is clicked.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice = function(
-    providerConfig,
-    onContinueClick,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * Email link sign in linking different device UI component.
+   * @param {?Object} providerConfig The provider config of the IdP we should use
+   *     for sign in.
+   * @param {function()} onContinueClick Callback to invoke when the continue
+   *     button is clicked.
+   * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+   *     is clicked.
+   * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+   *     Privacy Policy link is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   */
+  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice = function(
+      providerConfig,
+      onContinueClick,
+      opt_tosCallback,
+      opt_privacyPolicyCallback,
+      opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
 
-  // Extend base page class and render Email link sign in linking different
-  // device soy template.
-  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailLinkSignInLinkingDifferentDevice,
+    // Extend base page class and render Email link sign in linking different
+    // device soy template.
+    firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
+        this,
+        'constructor',
+        pageTemplates.emailLinkSignInLinkingDifferentDevice,
+        {
+          providerConfig: providerConfig
+        },
+        opt_domHelper,
+        'emailLinkSignInLinkingDifferentDevice',
+        ijData_);
+    this.onContinueClick_ = onContinueClick;
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice,
+      firebaseui.auth.ui.page.Base);
+
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype
+      .enterDocument = function() {
+    this.initFormElement(this.onContinueClick_);
+    this.getSubmitElement().focus();
+    firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
+        this, 'enterDocument');
+  };
+
+
+  /** @override */
+  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype
+      .disposeInternal = function() {
+    this.onContinueClick_ = null;
+    firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
+        this, 'disposeInternal');
+  };
+
+
+  goog.mixin(
+      firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype,
+      /**
+       * @lends
+       * {firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype}
+       */
       {
-        providerConfig: providerConfig
-      },
-      opt_domHelper,
-      'emailLinkSignInLinkingDifferentDevice',
-      ijData_);
-  this.onContinueClick_ = onContinueClick;
-};
-goog.inherits(firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype
-    .enterDocument = function() {
-  this.initFormElement(this.onContinueClick_);
-  this.getSubmitElement().focus();
-  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
-      this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype
-    .disposeInternal = function() {
-  this.onContinueClick_ = null;
-  firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.base(
-      this, 'disposeInternal');
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype,
-    /**
-     * @lends
-     * {firebaseui.auth.ui.page.EmailLinkSignInLinkingDifferentDevice.prototype}
-     */
-    {
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+      });
+});

@@ -85,6 +85,7 @@ element.email.validate_ = function(emailElement, errorElement) {
 element.email.initEmailElement = function(opt_onEnter) {
   const emailElement = element.email.getEmailElement.call(this);
   const errorElement = element.email.getEmailErrorElement.call(this);
+
   element.listenForInputEvent(this, emailElement, function(e) {
     // Clear the error message.
     if (element.isShown(errorElement)) {

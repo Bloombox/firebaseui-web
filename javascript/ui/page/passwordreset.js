@@ -24,73 +24,75 @@ goog.require('firebaseui.auth.ui.element.newPassword');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
+goog.scope(function() {
+    const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+    /**
+     * Password reset UI component.
+     * @param {string} email The email to prefill.
+     * @param {function()} onSubmitClick Callback to invoke when the submit button
+     *     is clicked.
+     * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+     * @constructor
+     * @extends {firebaseui.auth.ui.page.Base}
+     */
+    firebaseui.auth.ui.page.PasswordReset = function(email, onSubmitClick,
+        opt_domHelper) {
+    firebaseui.auth.ui.page.PasswordReset.base(
+        this,
+        'constructor',
+        pageTemplates.passwordReset,
+        {email: email},
+        opt_domHelper,
+        'passwordReset');
 
-/**
- * Password reset UI component.
- * @param {string} email The email to prefill.
- * @param {function()} onSubmitClick Callback to invoke when the submit button
- *     is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.PasswordReset = function(email, onSubmitClick,
-    opt_domHelper) {
-  firebaseui.auth.ui.page.PasswordReset.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.passwordReset,
-      {email: email},
-      opt_domHelper,
-      'passwordReset');
-
-  /**
-   * @private
-   */
-  this.onSubmitClick_ = onSubmitClick;
-};
-goog.inherits(firebaseui.auth.ui.page.PasswordReset,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.PasswordReset.prototype.enterDocument = function() {
-  this.initNewPasswordElement();
-  this.initFormElement(this.onSubmitClick_);
-  this.submitOnEnter(this.getNewPasswordElement(), this.onSubmitClick_);
-  this.getNewPasswordElement().focus();
-  firebaseui.auth.ui.page.PasswordReset.base(this, 'enterDocument');
-};
+    /**
+     * @private
+     */
+    this.onSubmitClick_ = onSubmitClick;
+    };
+    goog.inherits(firebaseui.auth.ui.page.PasswordReset,
+        firebaseui.auth.ui.page.Base);
 
 
-/** @override */
-firebaseui.auth.ui.page.PasswordReset.prototype.disposeInternal = function() {
-  this.onSubmitClick_ = null;
-  firebaseui.auth.ui.page.PasswordReset.base(this, 'disposeInternal');
-};
+    /** @override */
+    firebaseui.auth.ui.page.PasswordReset.prototype.enterDocument = function() {
+    this.initNewPasswordElement();
+    this.initFormElement(this.onSubmitClick_);
+    this.submitOnEnter(this.getNewPasswordElement(), this.onSubmitClick_);
+    this.getNewPasswordElement().focus();
+    firebaseui.auth.ui.page.PasswordReset.base(this, 'enterDocument');
+    };
 
 
-goog.mixin(
-    firebaseui.auth.ui.page.PasswordReset.prototype,
-    /** @lends {firebaseui.auth.ui.page.PasswordReset.prototype} */
-    {
-      // For new password.
-      getNewPasswordElement:
-          firebaseui.auth.ui.element.newPassword.getNewPasswordElement,
-      getNewPasswordErrorElement:
-          firebaseui.auth.ui.element.newPassword.getNewPasswordErrorElement,
-      getPasswordToggleElement:
-          firebaseui.auth.ui.element.newPassword.getPasswordToggleElement,
-      initNewPasswordElement:
-          firebaseui.auth.ui.element.newPassword.initNewPasswordElement,
-      checkAndGetNewPassword:
-          firebaseui.auth.ui.element.newPassword.checkAndGetNewPassword,
+    /** @override */
+    firebaseui.auth.ui.page.PasswordReset.prototype.disposeInternal = function() {
+    this.onSubmitClick_ = null;
+    firebaseui.auth.ui.page.PasswordReset.base(this, 'disposeInternal');
+    };
 
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+
+    goog.mixin(
+        firebaseui.auth.ui.page.PasswordReset.prototype,
+        /** @lends {firebaseui.auth.ui.page.PasswordReset.prototype} */
+        {
+        // For new password.
+        getNewPasswordElement:
+            firebaseui.auth.ui.element.newPassword.getNewPasswordElement,
+        getNewPasswordErrorElement:
+            firebaseui.auth.ui.element.newPassword.getNewPasswordErrorElement,
+        getPasswordToggleElement:
+            firebaseui.auth.ui.element.newPassword.getPasswordToggleElement,
+        initNewPasswordElement:
+            firebaseui.auth.ui.element.newPassword.initNewPasswordElement,
+        checkAndGetNewPassword:
+            firebaseui.auth.ui.element.newPassword.checkAndGetNewPassword,
+
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+        });
+});

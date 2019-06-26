@@ -26,111 +26,113 @@ goog.require('firebaseui.auth.ui.page.Base');
 goog.require('goog.dom.selection');
 
 
-
-/**
- * Email link sign in confirmation UI component.
- * @param {function()} onEmailEnter Callback to invoke when enter key (or its
- *     equivalent) is detected.
- * @param {function()} onCancelClick Callback to invoke when cancel button
- *     is clicked.
- * @param {string=} opt_email The email to prefill.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.EmailLinkSignInConfirmation = function(
-    onEmailEnter,
-    onCancelClick,
-    opt_email,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
-
-  firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailLinkSignInConfirmation,
-      {
-        email: opt_email
-      },
-      opt_domHelper,
-      'emailLinkSignInConfirmation',
-      ijData_ || null);
-  this.onEmailEnter_ = onEmailEnter;
-  this.onCancelClick_ = onCancelClick;
-};
-goog.inherits(
-    firebaseui.auth.ui.page.EmailLinkSignInConfirmation,
-    firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.enterDocument =
-    function() {
-  // Handle on enter event for email element.
-  this.initEmailElement(this.onEmailEnter_);
-  // Handle a click on the submit button or cancel button.
-  this.initFormElement(this.onEmailEnter_, this.onCancelClick_);
-  this.setupFocus_();
-  firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
-      this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.disposeInternal =
-    function() {
-  this.onEmailEnter_ = null;
-  this.onCancelClick_ = null;
-  firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
-      this, 'disposeInternal');
-};
-
-
-/**
- * Sets up the focus order and auto focus.
- * @private
- */
-firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.setupFocus_ =
-    function() {
-  // Auto focus the email input and put the cursor at the end.
-  const element = /** @type {!HTMLInputElement} */ (this.getEmailElement());
-  const value = /** @type {!string} */ (element.value || '');
-  element.focus();
-  goog.dom.selection.setCursorPosition(element, value.length);
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype,
+goog.scope(function() {
+    const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
     /**
-     * @lends {firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype}
+     * Email link sign in confirmation UI component.
+     * @param {function()} onEmailEnter Callback to invoke when enter key (or its
+     *     equivalent) is detected.
+     * @param {function()} onCancelClick Callback to invoke when cancel button
+     *     is clicked.
+     * @param {string=} opt_email The email to prefill.
+     * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+     *     is clicked.
+     * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+     *     Privacy Policy link is clicked.
+     * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+     * @constructor
+     * @extends {firebaseui.auth.ui.page.Base}
      */
-    {
-      // For email.
-      getEmailElement:
-          firebaseui.auth.ui.element.email.getEmailElement,
-      getEmailErrorElement:
-          firebaseui.auth.ui.element.email.getEmailErrorElement,
-      initEmailElement:
-          firebaseui.auth.ui.element.email.initEmailElement,
-      getEmail:
-          firebaseui.auth.ui.element.email.getEmail,
-      checkAndGetEmail:
-          firebaseui.auth.ui.element.email.checkAndGetEmail,
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation = function(
+        onEmailEnter,
+        onCancelClick,
+        opt_email,
+        opt_tosCallback,
+        opt_privacyPolicyCallback,
+        opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
 
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
+        this,
+        'constructor',
+        pageTemplates.emailLinkSignInConfirmation,
+        {
+            email: opt_email
+        },
+        opt_domHelper,
+        'emailLinkSignInConfirmation',
+        ijData_ || null);
+    this.onEmailEnter_ = onEmailEnter;
+    this.onCancelClick_ = onCancelClick;
+    };
+    goog.inherits(
+        firebaseui.auth.ui.page.EmailLinkSignInConfirmation,
+        firebaseui.auth.ui.page.Base);
+
+
+    /** @override */
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.enterDocument =
+        function() {
+    // Handle on enter event for email element.
+    this.initEmailElement(this.onEmailEnter_);
+    // Handle a click on the submit button or cancel button.
+    this.initFormElement(this.onEmailEnter_, this.onCancelClick_);
+    this.setupFocus_();
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
+        this, 'enterDocument');
+    };
+
+
+    /** @override */
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.disposeInternal =
+        function() {
+    this.onEmailEnter_ = null;
+    this.onCancelClick_ = null;
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.base(
+        this, 'disposeInternal');
+    };
+
+
+    /**
+     * Sets up the focus order and auto focus.
+     * @private
+     */
+    firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype.setupFocus_ =
+        function() {
+    // Auto focus the email input and put the cursor at the end.
+    const element = /** @type {!HTMLInputElement} */ (this.getEmailElement());
+    const value = /** @type {!string} */ (element.value || '');
+    element.focus();
+    goog.dom.selection.setCursorPosition(element, value.length);
+    };
+
+
+    goog.mixin(
+        firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype,
+        /**
+         * @lends {firebaseui.auth.ui.page.EmailLinkSignInConfirmation.prototype}
+         */
+        {
+        // For email.
+        getEmailElement:
+            firebaseui.auth.ui.element.email.getEmailElement,
+        getEmailErrorElement:
+            firebaseui.auth.ui.element.email.getEmailErrorElement,
+        initEmailElement:
+            firebaseui.auth.ui.element.email.initEmailElement,
+        getEmail:
+            firebaseui.auth.ui.element.email.getEmail,
+        checkAndGetEmail:
+            firebaseui.auth.ui.element.email.checkAndGetEmail,
+
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+        });
+});

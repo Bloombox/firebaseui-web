@@ -26,40 +26,43 @@ goog.require('goog.soy');
 goog.require('goog.ui.Component');
 
 
-/**
- * Renders a dialog for showing progress.
- * @param {!firebaseui.auth.ui.element.progressDialog.State} state The
- *     loading state that we wish to show, reflected in the icon of the dialog.
- * @param {string} message The message to show on the progress dialog.
- * @this {goog.ui.Component}
- */
-firebaseui.auth.ui.element.progressDialog.showProgressDialog = function(
-    state, message) {
-  const progressDialog = goog.soy.renderAsElement(
-      firebaseui.auth.soy2.element.progressDialog,
-      {
-        iconClass: state,
-        message: message,
-      },
-      null,
-      this.getDomHelper());
-  firebaseui.auth.ui.element.dialog.showDialog.call(this, /** @type {!HTMLDialogElement} */ (
-    progressDialog));
-};
+goog.scope(function() {
+  const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
+  /**
+   * Renders a dialog for showing progress.
+   * @param {!firebaseui.auth.ui.element.progressDialog.State} state The
+   *     loading state that we wish to show, reflected in the icon of the dialog.
+   * @param {string} message The message to show on the progress dialog.
+   * @this {goog.ui.Component}
+   */
+  firebaseui.auth.ui.element.progressDialog.showProgressDialog = function(
+      state, message) {
+    const progressDialog = goog.soy.renderAsElement(
+        elementTemplates.progressDialog,
+        {
+          iconClass: state,
+          message: message,
+        },
+        null,
+        this.getDomHelper());
+    firebaseui.auth.ui.element.dialog.showDialog.call(this, /** @type {!HTMLDialogElement} */ (
+      progressDialog));
+  };
 
 
-/**
- * The state of the dialog, which is reflected on the icon in the dialog.
- *
- * Internally, this is a map to the CSS class of the icon.
- * @enum {string}
- */
-firebaseui.auth.ui.element.progressDialog.State = {
-  LOADING: [
-    goog.getCssName('mdl-spinner'),
-    goog.getCssName('mdl-spinner--single-color'),
-    goog.getCssName('mdl-js-spinner'),
-    goog.getCssName('is-active'),
-    goog.getCssName('firebaseui-progress-dialog-loading-icon')].join(' '),
-  DONE: goog.getCssName('firebaseui-icon-done')
-};
+  /**
+   * The state of the dialog, which is reflected on the icon in the dialog.
+   *
+   * Internally, this is a map to the CSS class of the icon.
+   * @enum {string}
+   */
+  firebaseui.auth.ui.element.progressDialog.State = {
+    LOADING: [
+      goog.getCssName('mdl-spinner'),
+      goog.getCssName('mdl-spinner--single-color'),
+      goog.getCssName('mdl-js-spinner'),
+      goog.getCssName('is-active'),
+      goog.getCssName('firebaseui-progress-dialog-loading-icon')].join(' '),
+    DONE: goog.getCssName('firebaseui-icon-done')
+  };
+});

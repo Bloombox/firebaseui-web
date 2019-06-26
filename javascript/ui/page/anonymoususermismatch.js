@@ -24,64 +24,66 @@ goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * Anonymous user mismatch error UI component.
+   * @param {function()} onDismissClick Callback to invoke when dismiss button
+   *     is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   */
+  firebaseui.auth.ui.page.AnonymousUserMismatch = function(
+      onDismissClick,
+      opt_domHelper) {
+    firebaseui.auth.ui.page.AnonymousUserMismatch.base(
+        this,
+        'constructor',
+        pageTemplates.anonymousUserMismatch,
+        undefined,
+        opt_domHelper,
+        'anonymousUserMismatch');
+    this.onDismissClick_ = onDismissClick;
+  };
+  goog.inherits(
+      firebaseui.auth.ui.page.AnonymousUserMismatch,
+      firebaseui.auth.ui.page.Base);
 
-/**
- * Anonymous user mismatch error UI component.
- * @param {function()} onDismissClick Callback to invoke when dismiss button
- *     is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.AnonymousUserMismatch = function(
-    onDismissClick,
-    opt_domHelper) {
-  firebaseui.auth.ui.page.AnonymousUserMismatch.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.anonymousUserMismatch,
-      undefined,
-      opt_domHelper,
-      'anonymousUserMismatch');
-  this.onDismissClick_ = onDismissClick;
-};
-goog.inherits(
-    firebaseui.auth.ui.page.AnonymousUserMismatch,
-    firebaseui.auth.ui.page.Base);
+
+  /** @override */
+  firebaseui.auth.ui.page.AnonymousUserMismatch.prototype.enterDocument =
+      function() {
+    const self = this;
+    // Handle action event for dismiss button.
+    firebaseui.auth.ui.element.listenForActionEvent(
+        this, this.getSecondaryLinkElement(), function(e) {
+          self.onDismissClick_();
+        });
+    // Set initial focus on the dismiss button.
+    this.getSecondaryLinkElement().focus();
+    firebaseui.auth.ui.page.AnonymousUserMismatch.base(
+        this, 'enterDocument');
+  };
 
 
-/** @override */
-firebaseui.auth.ui.page.AnonymousUserMismatch.prototype.enterDocument =
-    function() {
-  const self = this;
-  // Handle action event for dismiss button.
-  firebaseui.auth.ui.element.listenForActionEvent(
-      this, this.getSecondaryLinkElement(), function(e) {
-        self.onDismissClick_();
+  /** @override */
+  firebaseui.auth.ui.page.AnonymousUserMismatch.prototype.disposeInternal =
+      function() {
+    this.onDismissClick_ = null;
+    firebaseui.auth.ui.page.AnonymousUserMismatch.base(
+        this, 'disposeInternal');
+  };
+
+
+  goog.mixin(
+      firebaseui.auth.ui.page.AnonymousUserMismatch.prototype,
+      /**
+       * @lends {firebaseui.auth.ui.page.AnonymousUserMismatch.prototype}
+       */
+      {
+        // For form.
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement
       });
-  // Set initial focus on the dismiss button.
-  this.getSecondaryLinkElement().focus();
-  firebaseui.auth.ui.page.AnonymousUserMismatch.base(
-      this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.AnonymousUserMismatch.prototype.disposeInternal =
-    function() {
-  this.onDismissClick_ = null;
-  firebaseui.auth.ui.page.AnonymousUserMismatch.base(
-      this, 'disposeInternal');
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.AnonymousUserMismatch.prototype,
-    /**
-     * @lends {firebaseui.auth.ui.page.AnonymousUserMismatch.prototype}
-     */
-    {
-      // For form.
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement
-    });
+});

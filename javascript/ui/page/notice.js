@@ -32,261 +32,263 @@ goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
-
-/**
- * A UI component represnting a notice.
- * @param {function(ARG_TYPES, null=, !Object.<string, *>=):*} template The Soy
- *     template for the component.
- * @param {ARG_TYPES=} opt_templateData The data for the template.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @param {string=} opt_uiLabel The optional UI label.
- * @param {?Object=} opt_injectedData Optional injected data.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- * @template ARG_TYPES
- */
-firebaseui.auth.ui.page.Notice = function(
-    template,
-    opt_templateData,
-    opt_onContinueClick,
-    opt_domHelper,
-    opt_uiLabel,
-    opt_injectedData) {
-  firebaseui.auth.ui.page.Notice.base(
-      this,
-      'constructor',
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * A UI component represnting a notice.
+   * @param {function(ARG_TYPES, null=, !Object.<string, *>=):*} template The Soy
+   *     template for the component.
+   * @param {ARG_TYPES=} opt_templateData The data for the template.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @param {string=} opt_uiLabel The optional UI label.
+   * @param {?Object=} opt_injectedData Optional injected data.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   * @template ARG_TYPES
+   */
+  firebaseui.auth.ui.page.Notice = function(
       template,
       opt_templateData,
+      opt_onContinueClick,
       opt_domHelper,
-      opt_uiLabel || 'notice',
-      opt_injectedData);
+      opt_uiLabel,
+      opt_injectedData) {
+    firebaseui.auth.ui.page.Notice.base(
+        this,
+        'constructor',
+        template,
+        opt_templateData,
+        opt_domHelper,
+        opt_uiLabel || 'notice',
+        opt_injectedData);
+
+    /**
+     * @private
+     * @type {function(): void|null}
+     */
+    this.onContinueClick_ = opt_onContinueClick || null;
+  };
+  goog.inherits(firebaseui.auth.ui.page.Notice, firebaseui.auth.ui.page.Base);
+
+
+  /** @override */
+  firebaseui.auth.ui.page.Notice.prototype.enterDocument = function() {
+    if (this.onContinueClick_) {
+      this.initFormElement(this.onContinueClick_);
+      this.getSubmitElement().focus();
+    }
+    firebaseui.auth.ui.page.Notice.base(this, 'enterDocument');
+  };
+
+
+  /** @override */
+  firebaseui.auth.ui.page.Notice.prototype.disposeInternal = function() {
+    this.onContinueClick_ = null;
+    firebaseui.auth.ui.page.Notice.base(this, 'disposeInternal');
+  };
+
+
+  goog.mixin(
+      firebaseui.auth.ui.page.Notice.prototype,
+      /** @lends {firebaseui.auth.ui.page.Notice.prototype} */
+      {
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+      });
+
+
 
   /**
-   * @private
-   * @type {function(): void|null}
+   * Password recovery email sent notice UI component.
+   * @param {string} email The email to which the recovery email has been sent.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+   *     is clicked.
+   * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+   *     Privacy Policy link is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
    */
-  this.onContinueClick_ = opt_onContinueClick || null;
-};
-goog.inherits(firebaseui.auth.ui.page.Notice, firebaseui.auth.ui.page.Base);
+  firebaseui.auth.ui.page.PasswordRecoveryEmailSent = function(
+      email, opt_onContinueClick, opt_tosCallback, opt_privacyPolicyCallback,
+      opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+    firebaseui.auth.ui.page.PasswordRecoveryEmailSent.base(
+        this,
+        'constructor',
+        pageTemplates.passwordRecoveryEmailSent,
+        {
+          email: email,
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'passwordRecoveryEmailSent',
+        ijData_ || null);
+  };
+  goog.inherits(firebaseui.auth.ui.page.PasswordRecoveryEmailSent,
+      firebaseui.auth.ui.page.Notice);
 
 
-/** @override */
-firebaseui.auth.ui.page.Notice.prototype.enterDocument = function() {
-  if (this.onContinueClick_) {
-    this.initFormElement(this.onContinueClick_);
-    this.getSubmitElement().focus();
-  }
-  firebaseui.auth.ui.page.Notice.base(this, 'enterDocument');
-};
-
-
-/** @override */
-firebaseui.auth.ui.page.Notice.prototype.disposeInternal = function() {
-  this.onContinueClick_ = null;
-  firebaseui.auth.ui.page.Notice.base(this, 'disposeInternal');
-};
-
-
-goog.mixin(
-    firebaseui.auth.ui.page.Notice.prototype,
-    /** @lends {firebaseui.auth.ui.page.Notice.prototype} */
-    {
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
-
-
-
-/**
- * Password recovery email sent notice UI component.
- * @param {string} email The email to which the recovery email has been sent.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.PasswordRecoveryEmailSent = function(
-    email, opt_onContinueClick, opt_tosCallback, opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
-  firebaseui.auth.ui.page.PasswordRecoveryEmailSent.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.passwordRecoveryEmailSent,
-      {
-        email: email,
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'passwordRecoveryEmailSent',
-      ijData_ || null);
-};
-goog.inherits(firebaseui.auth.ui.page.PasswordRecoveryEmailSent,
-    firebaseui.auth.ui.page.Notice);
-
-
-/**
- * Email verification success notice UI component.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.EmailVerificationSuccess = function(
-    opt_onContinueClick, opt_domHelper) {
-  firebaseui.auth.ui.page.EmailVerificationSuccess.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailVerificationSuccess,
-      {
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'emailVerificationSuccess');
-};
-goog.inherits(firebaseui.auth.ui.page.EmailVerificationSuccess,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Email verification success notice UI component.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.EmailVerificationSuccess = function(
+      opt_onContinueClick, opt_domHelper) {
+    firebaseui.auth.ui.page.EmailVerificationSuccess.base(
+        this,
+        'constructor',
+        pageTemplates.emailVerificationSuccess,
+        {
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'emailVerificationSuccess');
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailVerificationSuccess,
+      firebaseui.auth.ui.page.Notice);
 
 
 
-/**
- * Email verification failure notice UI component.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.EmailVerificationFailure = function(
-    opt_onContinueClick, opt_domHelper) {
-  firebaseui.auth.ui.page.EmailVerificationFailure.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailVerificationFailure,
-      {
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'emailVerificationFailure');
-};
-goog.inherits(firebaseui.auth.ui.page.EmailVerificationFailure,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Email verification failure notice UI component.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.EmailVerificationFailure = function(
+      opt_onContinueClick, opt_domHelper) {
+    firebaseui.auth.ui.page.EmailVerificationFailure.base(
+        this,
+        'constructor',
+        pageTemplates.emailVerificationFailure,
+        {
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'emailVerificationFailure');
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailVerificationFailure,
+      firebaseui.auth.ui.page.Notice);
 
 
 
-/**
- * Password reset success notice UI component.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.PasswordResetSuccess = function(
-    opt_onContinueClick, opt_domHelper) {
-  firebaseui.auth.ui.page.PasswordResetSuccess.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.passwordResetSuccess,
-      {
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'passwordResetSuccess');
-};
-goog.inherits(firebaseui.auth.ui.page.PasswordResetSuccess,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Password reset success notice UI component.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.PasswordResetSuccess = function(
+      opt_onContinueClick, opt_domHelper) {
+    firebaseui.auth.ui.page.PasswordResetSuccess.base(
+        this,
+        'constructor',
+        pageTemplates.passwordResetSuccess,
+        {
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'passwordResetSuccess');
+  };
+  goog.inherits(firebaseui.auth.ui.page.PasswordResetSuccess,
+      firebaseui.auth.ui.page.Notice);
 
 
 
-/**
- * Password reset failure notice UI component.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.PasswordResetFailure = function(
-    opt_onContinueClick, opt_domHelper) {
-  firebaseui.auth.ui.page.PasswordResetFailure.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.passwordResetFailure,
-      {
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'passwordResetFailure');
-};
-goog.inherits(firebaseui.auth.ui.page.PasswordResetFailure,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Password reset failure notice UI component.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.PasswordResetFailure = function(
+      opt_onContinueClick, opt_domHelper) {
+    firebaseui.auth.ui.page.PasswordResetFailure.base(
+        this,
+        'constructor',
+        pageTemplates.passwordResetFailure,
+        {
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'passwordResetFailure');
+  };
+  goog.inherits(firebaseui.auth.ui.page.PasswordResetFailure,
+      firebaseui.auth.ui.page.Notice);
 
 
-/**
- * Email change revoke failure notice UI component.
- * @param {?function()=} opt_onContinueClick Callback to invoke when the
- *     continue button is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.EmailChangeRevokeFailure = function(
-    opt_onContinueClick, opt_domHelper) {
-  firebaseui.auth.ui.page.EmailChangeRevokeFailure.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.emailChangeRevokeFailure,
-      {
-        allowContinue: !!opt_onContinueClick
-      },
-      opt_onContinueClick,
-      opt_domHelper,
-      'emailChangeRevokeFailure');
-};
-goog.inherits(firebaseui.auth.ui.page.EmailChangeRevokeFailure,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Email change revoke failure notice UI component.
+   * @param {?function()=} opt_onContinueClick Callback to invoke when the
+   *     continue button is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.EmailChangeRevokeFailure = function(
+      opt_onContinueClick, opt_domHelper) {
+    firebaseui.auth.ui.page.EmailChangeRevokeFailure.base(
+        this,
+        'constructor',
+        pageTemplates.emailChangeRevokeFailure,
+        {
+          allowContinue: !!opt_onContinueClick
+        },
+        opt_onContinueClick,
+        opt_domHelper,
+        'emailChangeRevokeFailure');
+  };
+  goog.inherits(firebaseui.auth.ui.page.EmailChangeRevokeFailure,
+      firebaseui.auth.ui.page.Notice);
 
 
 
-/**
- * Unrecoverable error notice UI component.
- * @param {string} errorMessage The detailed error message to be displayed.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Notice}
- */
-firebaseui.auth.ui.page.UnrecoverableError =
-    function(errorMessage, opt_domHelper) {
-  // Unrecoverable error notice has no continue button.
-  firebaseui.auth.ui.page.UnrecoverableError.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.unrecoverableError,
-      {errorMessage: errorMessage},
-      undefined,
-      opt_domHelper,
-      'unrecoverableError');
-};
-goog.inherits(firebaseui.auth.ui.page.UnrecoverableError,
-    firebaseui.auth.ui.page.Notice);
+  /**
+   * Unrecoverable error notice UI component.
+   * @param {string} errorMessage The detailed error message to be displayed.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Notice}
+   */
+  firebaseui.auth.ui.page.UnrecoverableError =
+      function(errorMessage, opt_domHelper) {
+    // Unrecoverable error notice has no continue button.
+    firebaseui.auth.ui.page.UnrecoverableError.base(
+        this,
+        'constructor',
+        pageTemplates.unrecoverableError,
+        {errorMessage: errorMessage},
+        undefined,
+        opt_domHelper,
+        'unrecoverableError');
+  };
+  goog.inherits(firebaseui.auth.ui.page.UnrecoverableError,
+      firebaseui.auth.ui.page.Notice);
+});

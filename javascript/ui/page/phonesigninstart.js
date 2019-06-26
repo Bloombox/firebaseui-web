@@ -27,161 +27,163 @@ goog.require('firebaseui.auth.ui.page.Base');
 goog.require('goog.dom.selection');
 
 
+goog.scope(function() {
+    const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+    /**
+     * UI component for the user to enter their phone number.
+     * @param {function(?)} onSubmitClick Callback to invoke when enter key (or its
+     *     equivalent) is detected on submission.
+     * @param {boolean} enableVisibleRecaptcha Whether to enable visible reCAPTCHA.
+     * @param {?function(?)=} opt_onCancelClick Callback to invoke when cancel
+     *     button is clicked.
+     * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+     *     is clicked.
+     * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+     *     Privacy Policy link is clicked.
+     * @param {boolean=} opt_displayFullTosPpMessage Whether to display the full
+     *     message of Term of Service and Privacy Policy.
+     * @param {?firebaseui.auth.data.country.LookupTree=} opt_lookupTree The country
+     *     lookup prefix tree to search country code with.
+     * @param {?string=} opt_countryId The ID (e164_key) of the country to
+     *     pre-select.
+     * @param {?string=} opt_nationalNumber The national number to pre-fill.
+     * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+     * @constructor
+     * @extends {firebaseui.auth.ui.page.Base}
+     */
+    firebaseui.auth.ui.page.PhoneSignInStart = function(
+        onSubmitClick,
+        enableVisibleRecaptcha,
+        opt_onCancelClick,
+        opt_tosCallback,
+        opt_privacyPolicyCallback,
+        opt_displayFullTosPpMessage,
+        opt_lookupTree,
+        opt_countryId,
+        opt_nationalNumber,
+        opt_domHelper) {
+    const nationalNumber = opt_nationalNumber || null;
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+    firebaseui.auth.ui.page.PhoneSignInStart.base(
+        this,
+        'constructor',
+        pageTemplates.phoneSignInStart,
+        {
+            enableVisibleRecaptcha: enableVisibleRecaptcha,
+            nationalNumber: nationalNumber,
+            displayCancelButton: !!opt_onCancelClick,
+            displayFullTosPpMessage: !!opt_displayFullTosPpMessage
+        },
+        opt_domHelper,
+        'phoneSignInStart',
+        ijData_ || null);
 
-/**
- * UI component for the user to enter their phone number.
- * @param {function(?)} onSubmitClick Callback to invoke when enter key (or its
- *     equivalent) is detected on submission.
- * @param {boolean} enableVisibleRecaptcha Whether to enable visible reCAPTCHA.
- * @param {?function(?)=} opt_onCancelClick Callback to invoke when cancel
- *     button is clicked.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {boolean=} opt_displayFullTosPpMessage Whether to display the full
- *     message of Term of Service and Privacy Policy.
- * @param {?firebaseui.auth.data.country.LookupTree=} opt_lookupTree The country
- *     lookup prefix tree to search country code with.
- * @param {?string=} opt_countryId The ID (e164_key) of the country to
- *     pre-select.
- * @param {?string=} opt_nationalNumber The national number to pre-fill.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.PhoneSignInStart = function(
-    onSubmitClick,
-    enableVisibleRecaptcha,
-    opt_onCancelClick,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_displayFullTosPpMessage,
-    opt_lookupTree,
-    opt_countryId,
-    opt_nationalNumber,
-    opt_domHelper) {
-  const nationalNumber = opt_nationalNumber || null;
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
-  firebaseui.auth.ui.page.PhoneSignInStart.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.phoneSignInStart,
-      {
-        enableVisibleRecaptcha: enableVisibleRecaptcha,
-        nationalNumber: nationalNumber,
-        displayCancelButton: !!opt_onCancelClick,
-        displayFullTosPpMessage: !!opt_displayFullTosPpMessage
-      },
-      opt_domHelper,
-      'phoneSignInStart',
-      ijData_ || null);
+    /** @private @const {?string} The default country to select. */
+    this.countryId_ = opt_countryId || null;
 
-  /** @private @const {?string} The default country to select. */
-  this.countryId_ = opt_countryId || null;
+    /**
+     * @private {boolean} Whether to enable visible reCAPTCHA.
+     * @const
+     **/
+    this.enableVisibleRecaptcha_ = enableVisibleRecaptcha;
 
-  /**
-   * @private {boolean} Whether to enable visible reCAPTCHA.
-   * @const
-   **/
-  this.enableVisibleRecaptcha_ = enableVisibleRecaptcha;
+    /** @private {?function(?)} On submit click callback. */
+    this.onSubmitClick_ = onSubmitClick;
 
-  /** @private {?function(?)} On submit click callback. */
-  this.onSubmitClick_ = onSubmitClick;
+    /** @private {?function(?)} On cancel click callback. */
+    this.onCancelClick_ = opt_onCancelClick || null;
 
-  /** @private {?function(?)} On cancel click callback. */
-  this.onCancelClick_ = opt_onCancelClick || null;
-
-  /**
-   * @const
-   * @private {?firebaseui.auth.data.country.LookupTree} The country
-   *     lookup prefix tree to search country code with.
-   */
-  this.lookupTree_ = opt_lookupTree || null;
-};
-goog.inherits(
-    firebaseui.auth.ui.page.PhoneSignInStart, firebaseui.auth.ui.page.Base);
-
-
-/** @override */
-firebaseui.auth.ui.page.PhoneSignInStart.prototype.enterDocument = function() {
-  this.initPhoneNumberElement(this.lookupTree_, this.countryId_);
-  // Handle a click on the submit button or cancel button.
-  this.initFormElement(
-      /** @type {function(?)} */ (this.onSubmitClick_),
-      this.onCancelClick_ || undefined);
-  this.setupFocus_();
-  firebaseui.auth.ui.page.PhoneSignInStart.base(this, 'enterDocument');
-};
+    /**
+     * @const
+     * @private {?firebaseui.auth.data.country.LookupTree} The country
+     *     lookup prefix tree to search country code with.
+     */
+    this.lookupTree_ = opt_lookupTree || null;
+    };
+    goog.inherits(
+        firebaseui.auth.ui.page.PhoneSignInStart, firebaseui.auth.ui.page.Base);
 
 
-/** @override */
-firebaseui.auth.ui.page.PhoneSignInStart.prototype.disposeInternal =
-    function() {
-  this.onSubmitClick_ = null;
-  this.onCancelClick_ = null;
-  firebaseui.auth.ui.page.PhoneSignInStart.base(this, 'disposeInternal');
-};
+    /** @override */
+    firebaseui.auth.ui.page.PhoneSignInStart.prototype.enterDocument = function() {
+    this.initPhoneNumberElement(this.lookupTree_, this.countryId_);
+    // Handle a click on the submit button or cancel button.
+    this.initFormElement(
+        /** @type {function(?)} */ (this.onSubmitClick_),
+        this.onCancelClick_ || undefined);
+    this.setupFocus_();
+    firebaseui.auth.ui.page.PhoneSignInStart.base(this, 'enterDocument');
+    };
 
 
-/**
- * Sets up the focus order and auto focus.
- * @private
- */
-firebaseui.auth.ui.page.PhoneSignInStart.prototype.setupFocus_ = function() {
-  // Focus order.
-  const element = /** @type {!HTMLInputElement} */ (this.getPhoneNumberElement());
-  const submit = /** @type {!HTMLElement} */ (this.getSubmitElement());
-  if (!this.enableVisibleRecaptcha_) {
-    // When reCAPTCHA is not visible shift focus to submit button.
-    this.focusToNextOnEnter(element, submit);
-  }
-  // Otherwise, can't force focus on visible reCAPTCHA.
-
-  // Do not submit directly on phone input enter since an invisible reCAPTCHA
-  // must be triggered by a button click, otherwise it may force a visible
-  // challenge.
-  this.submitOnEnter(submit, /** @type {function()} */ (this.onSubmitClick_));
-  // Auto focus the phone input and put the cursor at the end.
-  element.focus();
-
-  const value = /** @type {!string} */ (element.value || '');
-  goog.dom.selection.setCursorPosition(element, value.length);
-};
+    /** @override */
+    firebaseui.auth.ui.page.PhoneSignInStart.prototype.disposeInternal =
+        function() {
+    this.onSubmitClick_ = null;
+    this.onCancelClick_ = null;
+    firebaseui.auth.ui.page.PhoneSignInStart.base(this, 'disposeInternal');
+    };
 
 
-goog.mixin(
-    firebaseui.auth.ui.page.PhoneSignInStart.prototype,
-    /** @lends {firebaseui.auth.ui.page.PhoneSignInStart.prototype} */
-    {
-      // For country selector list.
-      getDialogElement:
-          firebaseui.auth.ui.element.dialog.getDialogElement,
-      // For phone number input.
-      getPhoneNumberElement:
-          firebaseui.auth.ui.element.phoneNumber.getPhoneNumberElement,
-      getPhoneNumberErrorElement:
-          firebaseui.auth.ui.element.phoneNumber.getPhoneNumberErrorElement,
-      initPhoneNumberElement:
-          firebaseui.auth.ui.element.phoneNumber.initPhoneNumberElement,
-      getPhoneNumberValue:
-          firebaseui.auth.ui.element.phoneNumber.getPhoneNumberValue,
-      getCountrySelectorElement:
-           firebaseui.auth.ui.element.phoneNumber.getCountrySelectorElement,
+    /**
+     * Sets up the focus order and auto focus.
+     * @private
+     */
+    firebaseui.auth.ui.page.PhoneSignInStart.prototype.setupFocus_ = function() {
+    // Focus order.
+    const element = /** @type {!HTMLInputElement} */ (this.getPhoneNumberElement());
+    const submit = /** @type {!HTMLElement} */ (this.getSubmitElement());
+    if (!this.enableVisibleRecaptcha_) {
+        // When reCAPTCHA is not visible shift focus to submit button.
+        this.focusToNextOnEnter(element, submit);
+    }
+    // Otherwise, can't force focus on visible reCAPTCHA.
 
-      // For visible reCAPTCHA.
-      getRecaptchaElement:
-          firebaseui.auth.ui.element.recaptcha.getRecaptchaElement,
-      getRecaptchaErrorElement:
-          firebaseui.auth.ui.element.recaptcha.getRecaptchaErrorElement,
+    // Do not submit directly on phone input enter since an invisible reCAPTCHA
+    // must be triggered by a button click, otherwise it may force a visible
+    // challenge.
+    this.submitOnEnter(submit, /** @type {function()} */ (this.onSubmitClick_));
+    // Auto focus the phone input and put the cursor at the end.
+    element.focus();
 
-      // For form.
-      getSubmitElement:
-          firebaseui.auth.ui.element.form.getSubmitElement,
-      getSecondaryLinkElement:
-          firebaseui.auth.ui.element.form.getSecondaryLinkElement,
-      initFormElement:
-          firebaseui.auth.ui.element.form.initFormElement
-    });
+    const value = /** @type {!string} */ (element.value || '');
+    goog.dom.selection.setCursorPosition(element, value.length);
+    };
+
+
+    goog.mixin(
+        firebaseui.auth.ui.page.PhoneSignInStart.prototype,
+        /** @lends {firebaseui.auth.ui.page.PhoneSignInStart.prototype} */
+        {
+        // For country selector list.
+        getDialogElement:
+            firebaseui.auth.ui.element.dialog.getDialogElement,
+        // For phone number input.
+        getPhoneNumberElement:
+            firebaseui.auth.ui.element.phoneNumber.getPhoneNumberElement,
+        getPhoneNumberErrorElement:
+            firebaseui.auth.ui.element.phoneNumber.getPhoneNumberErrorElement,
+        initPhoneNumberElement:
+            firebaseui.auth.ui.element.phoneNumber.initPhoneNumberElement,
+        getPhoneNumberValue:
+            firebaseui.auth.ui.element.phoneNumber.getPhoneNumberValue,
+        getCountrySelectorElement:
+            firebaseui.auth.ui.element.phoneNumber.getCountrySelectorElement,
+
+        // For visible reCAPTCHA.
+        getRecaptchaElement:
+            firebaseui.auth.ui.element.recaptcha.getRecaptchaElement,
+        getRecaptchaErrorElement:
+            firebaseui.auth.ui.element.recaptcha.getRecaptchaErrorElement,
+
+        // For form.
+        getSubmitElement:
+            firebaseui.auth.ui.element.form.getSubmitElement,
+        getSecondaryLinkElement:
+            firebaseui.auth.ui.element.form.getSecondaryLinkElement,
+        initFormElement:
+            firebaseui.auth.ui.element.form.initFormElement
+        });
+});

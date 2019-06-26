@@ -22,37 +22,39 @@ goog.require('firebaseui.auth.soy2.page');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
+  /**
+   * Callback page UI componenet.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
+   */
+  firebaseui.auth.ui.page.Callback = function(opt_domHelper) {
+    firebaseui.auth.ui.page.Callback.base(
+        this,
+        'constructor',
+        pageTemplates.callback,
+        undefined,
+        opt_domHelper,
+        'callback');
+  };
+  goog.inherits(firebaseui.auth.ui.page.Callback, firebaseui.auth.ui.page.Base);
 
-/**
- * Callback page UI componenet.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.Callback = function(opt_domHelper) {
-  firebaseui.auth.ui.page.Callback.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.callback,
-      undefined,
-      opt_domHelper,
-      'callback');
-};
-goog.inherits(firebaseui.auth.ui.page.Callback, firebaseui.auth.ui.page.Base);
 
-
-/**
- * Executes an API promise based request. This page already has a progress bar,
- * no need to show another progress bar when executing a promise.
- * @param {function(...):!goog.Promise} executor The request executor.
- * @param {!Array} parameters The API request array of parameters.
- * @param {function(*)} onSuccess The response handling success callback.
- * @param {function(*)} onError The response handling error callback.
- * @return {!goog.Promise} The pending promise.
- * @override
- */
-firebaseui.auth.ui.page.Callback.prototype.executePromiseRequest =
-    function(executor, parameters, onSuccess, onError) {
-  return executor.apply(null, parameters)
-      .then(onSuccess, onError);
-};
+  /**
+   * Executes an API promise based request. This page already has a progress bar,
+   * no need to show another progress bar when executing a promise.
+   * @param {function(...):!goog.Promise} executor The request executor.
+   * @param {!Array} parameters The API request array of parameters.
+   * @param {function(*)} onSuccess The response handling success callback.
+   * @param {function(*)} onError The response handling error callback.
+   * @return {!goog.Promise} The pending promise.
+   * @override
+   */
+  firebaseui.auth.ui.page.Callback.prototype.executePromiseRequest =
+      function(executor, parameters, onSuccess, onError) {
+    return executor.apply(null, parameters)
+        .then(onSuccess, onError);
+  };
+});

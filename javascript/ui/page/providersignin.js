@@ -23,69 +23,71 @@ goog.require('firebaseui.auth.ui.element.idps');
 goog.require('firebaseui.auth.ui.page.Base');
 
 
-
-/**
- * UI component that displays a list of supported identity providers.
- * @param {function(string)} onIdpClick Callback to invoke when the user clicks
- *     one IdP button.
- * @param {!Array<!Object>} providerConfigs The provider configs of the IdPs to
- *     display.
- * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
- *     is clicked.
- * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
- *     Privacy Policy link is clicked.
- * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @constructor
- * @extends {firebaseui.auth.ui.page.Base}
- */
-firebaseui.auth.ui.page.ProviderSignIn = function(
-    onIdpClick,
-    providerConfigs,
-    opt_tosCallback,
-    opt_privacyPolicyCallback,
-    opt_domHelper) {
-  const ijData_ = {};
-  if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
-  if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
-  firebaseui.auth.ui.page.ProviderSignIn.base(
-      this,
-      'constructor',
-      firebaseui.auth.soy2.page.providerSignIn,
-      {
-        providerConfigs: providerConfigs
-      },
-      opt_domHelper,
-      'providerSignIn',
-      ijData_ || null);
-
+goog.scope(function() {
+  const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
   /**
-   * @private
+   * UI component that displays a list of supported identity providers.
+   * @param {function(string)} onIdpClick Callback to invoke when the user clicks
+   *     one IdP button.
+   * @param {!Array<!Object>} providerConfigs The provider configs of the IdPs to
+   *     display.
+   * @param {?function()=} opt_tosCallback Callback to invoke when the ToS link
+   *     is clicked.
+   * @param {?function()=} opt_privacyPolicyCallback Callback to invoke when the
+   *     Privacy Policy link is clicked.
+   * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
+   * @constructor
+   * @extends {firebaseui.auth.ui.page.Base}
    */
-  this.onIdpClick_ = onIdpClick;
-};
-goog.inherits(firebaseui.auth.ui.page.ProviderSignIn,
-    firebaseui.auth.ui.page.Base);
+  firebaseui.auth.ui.page.ProviderSignIn = function(
+      onIdpClick,
+      providerConfigs,
+      opt_tosCallback,
+      opt_privacyPolicyCallback,
+      opt_domHelper) {
+    const ijData_ = {};
+    if (opt_tosCallback) ijData_.tosCallback = opt_tosCallback;
+    if (opt_privacyPolicyCallback) ijData_.privacyPolicyCallback = opt_privacyPolicyCallback;
+    firebaseui.auth.ui.page.ProviderSignIn.base(
+        this,
+        'constructor',
+        pageTemplates.providerSignIn,
+        {
+          providerConfigs: providerConfigs
+        },
+        opt_domHelper,
+        'providerSignIn',
+        ijData_ || null);
+
+    /**
+     * @private
+     */
+    this.onIdpClick_ = onIdpClick;
+  };
+  goog.inherits(firebaseui.auth.ui.page.ProviderSignIn,
+      firebaseui.auth.ui.page.Base);
 
 
-/** @override */
-firebaseui.auth.ui.page.ProviderSignIn.prototype.enterDocument = function() {
-  this.initIdpList(this.onIdpClick_);
-  firebaseui.auth.ui.page.ProviderSignIn.base(this, 'enterDocument');
-};
+  /** @override */
+  firebaseui.auth.ui.page.ProviderSignIn.prototype.enterDocument = function() {
+    this.initIdpList(this.onIdpClick_);
+    firebaseui.auth.ui.page.ProviderSignIn.base(this, 'enterDocument');
+  };
 
 
-/** @override */
-firebaseui.auth.ui.page.ProviderSignIn.prototype.disposeInternal = function() {
-  this.onIdpClick_ = null;
-  firebaseui.auth.ui.page.ProviderSignIn.base(this, 'disposeInternal');
-};
+  /** @override */
+  firebaseui.auth.ui.page.ProviderSignIn.prototype.disposeInternal = function() {
+    this.onIdpClick_ = null;
+    firebaseui.auth.ui.page.ProviderSignIn.base(this, 'disposeInternal');
+  };
 
 
-goog.mixin(
-    firebaseui.auth.ui.page.ProviderSignIn.prototype,
-    /** @lends {firebaseui.auth.ui.page.ProviderSignIn.prototype} */
-    {
-      // For idps.
-      initIdpList:
-          firebaseui.auth.ui.element.idps.initIdpList
-    });
+  goog.mixin(
+      firebaseui.auth.ui.page.ProviderSignIn.prototype,
+      /** @lends {firebaseui.auth.ui.page.ProviderSignIn.prototype} */
+      {
+        // For idps.
+        initIdpList:
+            firebaseui.auth.ui.element.idps.initIdpList
+      });
+});
