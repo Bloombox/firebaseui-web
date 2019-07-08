@@ -452,7 +452,7 @@ input.firebaseui-input-invalid {
 	width: 28px;
 }
 .firebaseui-icon-done {
-	background-image: url("https://www.gstatic.com/images/icons/material/system/2x/done_googgreen_36dp.png");
+	background-image: url("https://deliver.bloomware.media/ui/auth/done-green-36dp.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 36px 36px;
@@ -461,7 +461,7 @@ input.firebaseui-input-invalid {
 	display: flex;
 }
 .firebaseui-country-selector {
-	background-image: url('https://www.gstatic.com/images/icons/material/system/1x/arrow_drop_down_grey600_18dp.png');
+	background-image: url('https://deliver.bloomware.media/ui/auth/arrow-down-grey-18dp.png');
 	background-position: right center;
 	background-repeat: no-repeat;
 	background-size: 18px auto;
@@ -482,7 +482,7 @@ input.firebaseui-input-invalid {
 	margin-right: 1ex;
 }
 .firebaseui-flag {
-	background-image: url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/flags_sprite_2x.png");
+	background-image: url("https://deliver.bloomware.media/ui/auth/flags-sprite-2x.png");
 	background-size: 100% auto;
 	filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.54));
 	height: 14px;
@@ -559,10 +559,12 @@ input.firebaseui-input-invalid {
 	width: 24px;
 }
 .firebaseui-input-toggle-on {
-	background-image: url("https://www.gstatic.com/images/icons/material/system/1x/visibility_black_24dp.png");
+	background-image: url("https://deliver.bloomware.media/ui/auth/visibility-24dp.png");
+	background-size: 24px 24px;
 }
 .firebaseui-input-toggle-off {
-	background-image: url("https://www.gstatic.com/images/icons/material/system/1x/visibility_off_black_24dp.png");
+	background-image: url("https://deliver.bloomware.media/ui/auth/visibility-off-24dp.png");
+	background-size: 24px 24px;
 }
 .firebaseui-input-toggle-focus {
 	opacity: 0.87;
@@ -609,7 +611,7 @@ input.firebaseui-input-invalid {
 	height: 64px;
 }
 .firebaseui-email-sent {
-	background-image: url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/success_status.png");
+	background-image: url("https://deliver.bloomware.media/ui/auth/success.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 64px 64px;

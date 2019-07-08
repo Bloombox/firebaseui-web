@@ -396,20 +396,18 @@
  * Renders the links of Terms of Service and Privacy Policy.
  */
 {template .tosPpLink}
-  {if $ij.tosCallback and $ij.privacyPolicyCallback}
-    <ul class="{css('firebaseui-tos-list')} {css('firebaseui-tos')}">
-      <li class="{css('firebaseui-inline-list-item')}">
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
-          {msg desc="Label for the terms of service"}Terms of Service{/msg}
-        </a>
-      </li>
-      <li class="{css('firebaseui-inline-list-item')}">
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
-          {msg desc="Label for the privacy policy"}Privacy Policy{/msg}
-        </a>
-      </li>
-    </ul>
-  {/if}
+  <ul class="{css('firebaseui-tos-list')} {css('firebaseui-tos')}">
+    <li class="{css('firebaseui-inline-list-item')}">
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
+        {msg desc="Label for the terms of service"}Terms of Service{/msg}
+      </a>
+    </li>
+    <li class="{css('firebaseui-inline-list-item')}">
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
+        {msg desc="Label for the privacy policy"}Privacy Policy{/msg}
+      </a>
+    </li>
+  </ul>
 {/template}
 
 
@@ -419,26 +417,18 @@
  */
 {template .phoneTosPp}
   <p class="{css('firebaseui-tos')} {css('firebaseui-phone-tos')}">
-    {if $ij.tosCallback and $ij.privacyPolicyCallback}
-      {msg desc="The terms of service and privacy policy for a phone authentication flow. Note that
-          'Verify' must match the the label of the 'Verify' button that completes the
-          phone number verification flow."}
-        By tapping Verify, you are indicating that you accept our{sp}
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
-          Terms of Service
-        </a> and{sp}
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
-          Privacy Policy
-        </a>
-        . An SMS may be sent. Message &amp; data rates may apply.
-      {/msg}
-    {else}
-      {msg desc="Notify the user that an SMS may be sent, which may cost the user money.
-        Note that 'Verify' must match the the label of the 'Verify' button that initiates the
-        phone number verification."}
-        By tapping Verify, an SMS may be sent. Message &amp; data rates may apply.
-      {/msg}
-    {/if}
+    {msg desc="The terms of service and privacy policy for a phone authentication flow. Note that
+        'Verify' must match the the label of the 'Verify' button that completes the
+        phone number verification flow."}
+      By tapping Verify, you are indicating that you accept our{sp}
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
+        Terms of Service
+      </a> and{sp}
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
+        Privacy Policy
+      </a>
+      . An SMS may be sent. Message &amp; data rates may apply.
+    {/msg}
   </p>
 {/template}
 
@@ -447,19 +437,17 @@
  * Renders full Terms of Service and Privacy Policy agreement for the first page.
  */
 {template .fullMessageTosPp}
-  {if $ij.tosCallback and $ij.privacyPolicyCallback}
-    <p class="{css('firebaseui-tos')} {css('firebaseui-tospp-full-message')}">
-      {msg desc="The terms of service and privacy policy for the first page."}
-        By continuing, you are indicating that you accept our{sp}
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
-          Terms of Service
-        </a> and{sp}
-        <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
-          Privacy Policy
-        </a>.
-      {/msg}
-    </p>
-  {/if}
+  <p class="{css('firebaseui-tos')} {css('firebaseui-tospp-full-message')}">
+    {msg desc="The terms of service and privacy policy for the first page."}
+      By continuing, you are indicating that you accept our{sp}
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-tos-link')}" target="_blank">
+        Terms of Service
+      </a> and{sp}
+      <a href="javascript:void(0)" class="{css('firebaseui-link')} {css('firebaseui-pp-link')}" target="_blank">
+        Privacy Policy
+      </a>.
+    {/msg}
+  </p>
 {/template}
 
 
@@ -644,23 +632,26 @@
   {if $providerConfig.iconUrl}
     {$providerConfig.iconUrl}
   {else}
+    {let $authImagePrefix kind="uri"}
+      https://deliver.bloomware.media/ui/auth
+    {/let}
     {switch $providerConfig.providerId}
       {case 'google.com'}
-        {$ij.googleLogo}
+        {$authImagePrefix}/google.svg
       {case 'github.com'}
-        {$ij.githubLogo}
+        {$authImagePrefix}/github.svg
       {case 'facebook.com'}
-        {$ij.facebookLogo}
+        {$authImagePrefix}/facebook.svg
       {case 'twitter.com'}
-        {$ij.twitterLogo}
+        {$authImagePrefix}/twitter.svg
       {case 'microsoft.com'}
-        {$ij.microsoftLogo}
+        {$authImagePrefix}/microsoft.png
       {case 'phone'}
-        {$ij.phoneLogo}
+        {$authImagePrefix}/phone.svg
       {case 'anonymous'}
-        {$ij.anonymousLogo}
+        {$authImagePrefix}/anonymous.png
       {default}
-        {$ij.passwordLogo}
+        {$authImagePrefix}/mail.svg
     {/switch}
   {/if}
 {/template}
