@@ -19,6 +19,8 @@
 goog.provide('firebaseui.auth.ui.page.Base');
 goog.provide('firebaseui.auth.ui.page.CustomEvent');
 
+goog.require('firebaseui.Renderer');
+goog.require('firebaseui.acquireRenderer');
 goog.require('firebaseui.auth.EventRegister');
 goog.require('firebaseui.auth.soy2.element');
 goog.require('firebaseui.auth.ui.element');
@@ -115,8 +117,8 @@ goog.scope(function() {
   /**
    * Base UI component.
    *
-   * @param {function(ARG_TYPES, null=, !Object.<string, *>=):*} template The Soy
-   *     template for the component.
+   * @param {function(!firebaseui.Renderer, ARG_TYPES, ?goog.soy.IjData=):*} template The
+   *     Soy template for the component, via Incremental DOM.
    * @param {ARG_TYPES=} opt_templateData The data for the template.
    * @param {?goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
    * @param {string=} opt_pageId Optional page ID used to identify the page.
@@ -131,7 +133,7 @@ goog.scope(function() {
 
     /**
      * @private
-     * @type {?function(ARG_TYPES, null=, !Object.<string, *>=):*}
+     * @type {?function(!firebaseui.Renderer, ARG_TYPES, null=, !Object.<string, *>=):*}
      */
     this.template_ = template;
 
@@ -217,11 +219,8 @@ goog.scope(function() {
       target = this.getElementStrict();
     }
     IncrementalDOM.patch(/** @type {!Element|!DocumentFragment} */ (target), () => {
-      goog.soy.renderAsElement(
-        this.template_,
-        this.templateData_,
-        this.injectedData_,
-        this.getDomHelper());
+      this.template_(firebaseui.acquireRenderer(),
+        this.templateData_);
     });
 
     if (!this.rendered_) {
@@ -321,11 +320,10 @@ goog.scope(function() {
           .createDocumentFragment();
 
       IncrementalDOM.patch(indicatorFragment, () => {
-        goog.soy.renderAsElement(
-          elementTemplates.busyIndicator,
-          // Pass whether a spinner is to be used instead of a progress bar.
-          {useSpinner: useSpinner}, null,
-          self.getDomHelper());
+        elementTemplates.busyIndicator(
+          firebaseui.acquireRenderer(),
+          {useSpinner: useSpinner}
+        );
       });
       self.busyIndicator_ = indicatorFragment.firstElementChild;
       self.getElement().appendChild(self.busyIndicator_);

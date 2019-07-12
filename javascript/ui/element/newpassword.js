@@ -24,7 +24,8 @@ goog.require('goog.dom.classlist');
 
 
 goog.scope(function() {
-const element = firebaseui.auth.ui.element;
+const element = goog.module.get('firebaseui.auth.ui.element');
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 
 /**
@@ -132,7 +133,7 @@ element.newPassword.validate_ = function(newPasswordElement, errorElement) {
   if (!password) {
     element.setValid(newPasswordElement, false);
     element.show(errorElement,
-        firebaseui.auth.soy2.strings.errorMissingPassword().toString());
+        strings.errorMissingPassword().toString());
     return false;
   } else {
     element.setValid(newPasswordElement, true);

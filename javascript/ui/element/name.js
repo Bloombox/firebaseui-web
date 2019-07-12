@@ -26,8 +26,8 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-var element = firebaseui.auth.ui.element;
-
+const element = goog.module.get('firebaseui.auth.ui.element');
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 /**
  * @return {!Element} The name input.
@@ -65,7 +65,7 @@ element.name.validate_ = function(nameElement, errorElement) {
     return true;
   } else {
     element.show(errorElement,
-        firebaseui.auth.soy2.strings.errorMissingName().toString());
+        strings.errorMissingName().toString());
     return false;
   }
 };

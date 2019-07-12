@@ -49,6 +49,9 @@ goog.require('firebaseui.auth.widget.handler.handleEmailLinkNewDeviceLinking');
 goog.require('goog.Promise');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * Handles email link sign-in completion. Decides whether to allow sign-in
  * completion, ask the user for email, ask for consent when completing sign-in
@@ -255,7 +258,7 @@ firebaseui.auth.widget.handler.completeEmailLinkSignIn_ = function(
   // Display the progress dialog while the user is being signed in or upgraded.
   component.showProgressDialog(
       firebaseui.auth.ui.element.progressDialog.State.LOADING,
-      firebaseui.auth.soy2.strings.dialogEmailLinkProcessing().toString());
+      strings.dialogEmailLinkProcessing().toString());
   const signInPromise = user ?
       app.upgradeWithEmailLink(user, email, link, credential) :
       app.signInWithEmailLink(email, link, credential);
@@ -270,7 +273,7 @@ firebaseui.auth.widget.handler.completeEmailLinkSignIn_ = function(
         component.dismissDialog();
         component.showProgressDialog(
             firebaseui.auth.ui.element.progressDialog.State.DONE,
-            firebaseui.auth.soy2.strings.dialogEmailLinkVerified().toString());
+            strings.dialogEmailLinkVerified().toString());
         // Trigger completion callback after some delay showing the sign in
         // success dialog.
         timer = setTimeout(function() {
@@ -307,7 +310,7 @@ firebaseui.auth.widget.handler.completeEmailLinkSignIn_ = function(
           // On email confirmation, call this handler again with
           // skipCodeCheck set to true.
           errorMessage =
-              firebaseui.auth.soy2.strings.errorMismatchingEmail().toString();
+              strings.errorMismatchingEmail().toString();
           firebaseui.auth.widget.handler.handle(
               firebaseui.auth.widget.HandlerName.EMAIL_LINK_CONFIRMATION,
               app,
@@ -331,3 +334,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.EMAIL_LINK_SIGN_IN_CALLBACK,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleEmailLinkSignInCallback));
+});

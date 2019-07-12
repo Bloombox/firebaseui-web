@@ -21,6 +21,9 @@ goog.provide('firebaseui.auth.AuthUIError');
 goog.require('firebaseui.auth.soy2.strings');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * Error that can be returned to the developer.
  * @param {!firebaseui.auth.AuthUIError.Error} code The short error code.
@@ -83,5 +86,6 @@ firebaseui.auth.AuthUIError.Error = {
  * @private
  */
 firebaseui.auth.AuthUIError.getDefaultErrorMessage_ = function(code) {
-  return firebaseui.auth.soy2.strings.errorAuthUI({code: code}).toString();
+  return strings.errorAuthUI({code: code}).toString();
 };
+});

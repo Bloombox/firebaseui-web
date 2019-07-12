@@ -31,6 +31,9 @@ goog.require('firebaseui.auth.widget.handler');
 goog.require('firebaseui.auth.widget.handler.common');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * Handles the verification of the phone number the user is trying to
  * authenticate with. This handler takes in a confirmationResult, asks the user
@@ -126,14 +129,14 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
   // If missing, focus code element, show the relevant error and exit.
   if (!verificationCode) {
     showInvalidCode(
-        firebaseui.auth.soy2.strings.errorInvalidConfirmationCode().toString());
+        strings.errorInvalidConfirmationCode().toString());
     return;
   }
 
   // Display the progress dialog while the code is being sent.
   component.showProgressDialog(
       firebaseui.auth.ui.element.progressDialog.State.LOADING,
-      firebaseui.auth.soy2.strings.dialogVerifyingPhoneNumber().toString());
+      strings.dialogVerifyingPhoneNumber().toString());
   app.registerPending(component.executePromiseRequest(
       /** @type {function (): !goog.Promise} */ (
           goog.bind(phoneAuthResult.confirm, phoneAuthResult)),
@@ -144,7 +147,7 @@ firebaseui.auth.widget.handler.onPhoneSignInFinishSubmit_ = function(
         // Show code verified dialog.
         component.showProgressDialog(
             firebaseui.auth.ui.element.progressDialog.State.DONE,
-            firebaseui.auth.soy2.strings.dialogCodeVerified().toString());
+            strings.dialogCodeVerified().toString());
         // Keep on display for long enough to be seen.
         const codeVerifiedTimer = setTimeout(function() {
           // Dismiss dialog and dispose of component before completing sign-in.
@@ -224,3 +227,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PHONE_SIGN_IN_FINISH,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePhoneSignInFinish));
+});

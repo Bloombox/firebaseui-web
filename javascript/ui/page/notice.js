@@ -27,6 +27,7 @@ goog.provide('firebaseui.auth.ui.page.PasswordResetFailure');
 goog.provide('firebaseui.auth.ui.page.PasswordResetSuccess');
 goog.provide('firebaseui.auth.ui.page.UnrecoverableError');
 
+goog.require('firebaseui.Renderer');
 goog.require('firebaseui.auth.soy2.page');
 goog.require('firebaseui.auth.ui.element.form');
 goog.require('firebaseui.auth.ui.page.Base');
@@ -36,8 +37,8 @@ goog.scope(function() {
   const pageTemplates = goog.module.get('firebaseui.auth.soy2.page');
   /**
    * A UI component represnting a notice.
-   * @param {function(ARG_TYPES, null=, !Object.<string, *>=):*} template The Soy
-   *     template for the component.
+   * @param {function(!firebaseui.Renderer, ARG_TYPES, ?goog.soy.IjData=):*} template The
+   *     Soy template for the component.
    * @param {ARG_TYPES=} opt_templateData The data for the template.
    * @param {?function()=} opt_onContinueClick Callback to invoke when the
    *     continue button is clicked.

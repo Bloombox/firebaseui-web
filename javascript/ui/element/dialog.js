@@ -25,7 +25,7 @@ goog.require('goog.dom');
 
 
 goog.scope(function() {
-const element = firebaseui.auth.ui.element;
+const element = goog.module.get('firebaseui.auth.ui.element');
 
 
 /**

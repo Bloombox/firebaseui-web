@@ -16,6 +16,8 @@
  * @fileoverview Common utilities for UI element.
  */
 
+goog.provide('firebaseui.Renderer');
+goog.provide('firebaseui.acquireRenderer');
 goog.provide('firebaseui.auth.ui.element');
 
 goog.require('goog.dom');
@@ -32,6 +34,35 @@ goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
 goog.require('goog.ui.Component');
 
+goog.require('google3.javascript.template.soy.api_idom');
+
+goog.scope(function() {
+const idomApi = goog.module.get('google3.javascript.template.soy.api_idom');
+
+/**
+ * Alias for main renderer class.
+ *
+ * @public
+ * @typedef {!idomApi.IncrementalDomRenderer}
+ */
+firebaseui.Renderer;
+
+/**
+ * Base IDOM renderer.
+ *
+ * @private
+ * @type {!idomApi.IncrementalDomRenderer}
+ */
+const baseRenderer_ = new idomApi.IncrementalDomRenderer();
+
+/**
+ * Return the base renderer.
+ *
+ * @return {!firebaseui.Renderer} Base renderer.
+ */
+firebaseui.acquireRenderer = function() {
+  return baseRenderer_;
+};
 
 /**
  * Sets the valid state of the element.
@@ -229,3 +260,4 @@ firebaseui.auth.ui.element.isDeeplyHidden = function(e) {
   }
   return false;
 };
+});
