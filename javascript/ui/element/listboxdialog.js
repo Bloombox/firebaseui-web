@@ -35,8 +35,8 @@ goog.require('incrementaldom');
 goog.scope(function() {
 const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
 const IncrementalDOM = goog.module.get('incrementaldom');
-const listBoxDialog = firebaseui.auth.ui.element.listBoxDialog;
-const element = firebaseui.auth.ui.element;
+const listBoxDialog = goog.module.get('firebaseui.auth.ui.element.listBoxDialog');
+const element = goog.module.get('firebaseui.auth.ui.element');
 
 
 /**

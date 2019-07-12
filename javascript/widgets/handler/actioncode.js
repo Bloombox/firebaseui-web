@@ -35,6 +35,9 @@ goog.require('firebaseui.auth.widget.HandlerName');
 goog.require('firebaseui.auth.widget.handler.common');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * Handles password reset.
  *
@@ -210,7 +213,7 @@ firebaseui.auth.widget.handler.handleEmailChangeRevocationSuccess_ =
             }, function(error) {
               // Failed to send reset password code.
               component.showInfoBar(
-                  firebaseui.auth.soy2.strings.errorSendPasswordReset()
+                  strings.errorSendPasswordReset()
                   .toString());
             }));
       });
@@ -288,3 +291,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.EMAIL_VERIFICATION,
     /** @type {firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleEmailVerification));
+});

@@ -72,6 +72,10 @@ firebaseui.auth.AuthResult;
 const ACCOUNTCHOOSER_SRC = '//www.gstatic.com/accountchooser/client.js';
 
 
+
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * @private {boolean} Whether uiShown callback should be triggered on callback
  *     in accountchooser.com select or add account regardless of
@@ -458,7 +462,7 @@ firebaseui.auth.widget.handler.common.setLoggedInWithAuthResult =
           app,
           container,
           undefined,
-          firebaseui.auth.soy2.strings.errorExpiredCredential().toString());
+          strings.errorExpiredCredential().toString());
     } else {
       let errorMessage = (error && error['message']) || '';
       if (error['code']) {
@@ -723,7 +727,7 @@ firebaseui.auth.widget.handler.common.getErrorMessage = function(error) {
   // Try to get an error message from the strings file, or fall back to the
   // error message from the Firebase SDK if none is found.
   const message =
-      firebaseui.auth.soy2.strings.error({code: error['code']}).toString();
+      strings.error({code: error['code']}).toString();
   if (message) {
     return message;
   }
@@ -731,7 +735,7 @@ firebaseui.auth.widget.handler.common.getErrorMessage = function(error) {
   try {
     JSON.parse(error['message']);
     firebaseui.auth.log.error('Internal error: ' + error['message']);
-    return firebaseui.auth.soy2.strings.internalError().toString();
+    return strings.internalError().toString();
   } catch(e) {
     // Otherwise the message must contain some info.
     return error['message'];
@@ -1118,7 +1122,7 @@ firebaseui.auth.widget.handler.common.handleGoogleYoloCredential =
     // development. The developer is expected to only enable One-Tap providers
     // that are supported by FirebaseUI.
     component.showInfoBar(
-        firebaseui.auth.soy2.strings.errorUnsupportedCredential().toString());
+        strings.errorUnsupportedCredential().toString());
   }
   return goog.Promise.resolve(false);
 };
@@ -1604,3 +1608,4 @@ firebaseui.auth.widget.handler.common.handleSignInWithEmail =
         }, false);
   }
 };
+});

@@ -31,6 +31,8 @@ goog.require('firebaseui.auth.widget.handler');
 goog.require('firebaseui.auth.widget.handler.common');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 /**
  * Handles the start of the phone number authentication operation. The user
@@ -223,7 +225,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
     component.getPhoneNumberElement().focus();
     firebaseui.auth.ui.element.show(
         component.getPhoneNumberErrorElement(),
-        firebaseui.auth.soy2.strings.errorInvalidPhoneNumber().toString());
+        strings.errorInvalidPhoneNumber().toString());
     return;
   }
   if (!firebaseui.auth.widget.handler.recaptchaToken_) {
@@ -233,7 +235,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
       // solve the reCAPTCHA. and exist.
       firebaseui.auth.ui.element.show(
           component.getRecaptchaErrorElement(),
-          firebaseui.auth.soy2.strings.errorMissingRecaptchaResponse()
+          strings.errorMissingRecaptchaResponse()
               .toString());
     } else if (!firebaseui.auth.widget.handler.enableVisibleRecaptcha_ &&
                !!opt_isKeyCode) {
@@ -257,7 +259,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
   // Display the progress dialog while the code is being sent.
   component.showProgressDialog(
       firebaseui.auth.ui.element.progressDialog.State.LOADING,
-      firebaseui.auth.soy2.strings.dialogVerifyingPhoneNumber().toString());
+      strings.dialogVerifyingPhoneNumber().toString());
   // Call signInWithPhoneNumber with the provided phoneNumber and the reCAPTCHA
   // verifier.
   app.registerPending(component.executePromiseRequest(
@@ -271,7 +273,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
         const container = component.getContainer();
         component.showProgressDialog(
             firebaseui.auth.ui.element.progressDialog.State.DONE,
-            firebaseui.auth.soy2.strings.dialogCodeSent().toString());
+            strings.dialogCodeSent().toString());
         // Keep the dialog long enough to be seen before redirecting to code
         // entry page.
         const codeVerificationTimer = setTimeout(function() {
@@ -322,7 +324,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
           // Firebase auth error.
           switch (error['code']) {
             case 'auth/too-many-requests':
-              errorMessage = firebaseui.auth.soy2.strings
+              errorMessage = strings
                   .errorTooManyRequestsPhoneNumber().toString();
               break;
             // Invalid phone number.
@@ -333,7 +335,7 @@ firebaseui.auth.widget.handler.onPhoneSignInStartSubmit_ =
               component.getPhoneNumberElement().focus();
               firebaseui.auth.ui.element.show(
                   component.getPhoneNumberErrorElement(),
-                  firebaseui.auth.soy2.strings.errorInvalidPhoneNumber()
+                  strings.errorInvalidPhoneNumber()
                       .toString());
               return;
             default:
@@ -352,3 +354,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PHONE_SIGN_IN_START,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePhoneSignInStart));
+});

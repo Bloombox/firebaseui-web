@@ -30,6 +30,9 @@ goog.require('firebaseui.auth.widget.handler.common');
 goog.require('goog.array');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * Handles the IDP callback.
  *
@@ -275,7 +278,7 @@ firebaseui.auth.widget.handler.handleCallbackLinking_ =
               // Allow the user to cancel.
               false,
               // Display a message to explain to the user what happened.
-              firebaseui.auth.soy2.strings.errorAnonymousEmailBlockingSignIn()
+              strings.errorAnonymousEmailBlockingSignIn()
                 .toString());
         } else if (goog.array.contains(signInMethods,
             firebase.auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
@@ -386,3 +389,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.CALLBACK,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handleCallback));
+});

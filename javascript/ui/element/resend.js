@@ -27,7 +27,8 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-const element = firebaseui.auth.ui.element;
+const element = goog.module.get('firebaseui.auth.ui.element');
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 
 /**
@@ -81,7 +82,7 @@ element.resend.showResendLink = function() {
 element.resend.updateResendCountdown = function(secondsRemaining) {
   const countdown = element.resend.getResendCountdown.call(this);
   const prefix = secondsRemaining > 9 ? '0:' : '0:0';
-  const text = firebaseui.auth.soy2.strings
+  const text = strings
                  .resendCountdown({timeRemaining: prefix + secondsRemaining})
                  .toString();
   goog.dom.setTextContent(countdown, text);

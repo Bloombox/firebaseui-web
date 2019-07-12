@@ -31,6 +31,9 @@ goog.require('goog.asserts');
 goog.require('goog.uri.utils');
 
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
+
 /**
  * The description of the error message raised when the widget element is not
  * found during initialization.
@@ -173,7 +176,7 @@ firebaseui.auth.widget.dispatcher.dispatchOperation = function(app, e) {
     firebaseui.auth.widget.handler.common.handleUnrecoverableError(
         app,
         container,
-        firebaseui.auth.soy2.strings.errorNoWebStorage().toString());
+        strings.errorNoWebStorage().toString());
   }
 };
 
@@ -297,3 +300,4 @@ firebaseui.auth.widget.dispatcher.doDispatchOperation_ = function(app, e) {
     uiShownCallback();
   }
 };
+});

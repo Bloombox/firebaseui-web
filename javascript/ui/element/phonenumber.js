@@ -34,7 +34,8 @@ goog.require('goog.ui.Component');
 
 
 goog.scope(function() {
-const element = firebaseui.auth.ui.element;
+const element = goog.module.get('firebaseui.auth.ui.element');
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 
 /** @const {string} The ID of the default country (currently USA). */
@@ -370,7 +371,7 @@ element.phoneNumber.getPhoneNumberValue = function(opt_lookupTree) {
     element.phoneNumber.getPhoneNumberElement.call(this).focus();
     firebaseui.auth.ui.element.show(
         element.phoneNumber.getPhoneNumberErrorElement.call(this),
-        firebaseui.auth.soy2.strings.errorUnsupportedCountryCode().toString());
+        strings.errorUnsupportedCountryCode().toString());
     throw new Error('The country code provided is not supported.');
   }
   // Get selected active country.

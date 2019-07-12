@@ -29,6 +29,8 @@ goog.require('firebaseui.auth.widget.handler.common');
 goog.require('goog.json');
 goog.require('goog.string');
 
+goog.scope(function() {
+const strings = goog.module.get('firebaseui.auth.soy2.strings');
 
 /**
  * Handles password sign up.
@@ -153,7 +155,7 @@ firebaseui.auth.widget.handler.onSignUpSubmit_ = function(app, component) {
             break;
 
           case 'auth/too-many-requests':
-            errorMessage = firebaseui.auth.soy2.strings
+            errorMessage = strings
                 .errorTooManyRequestsCreateAccount().toString();
           case 'auth/operation-not-allowed':
           case 'auth/weak-password':
@@ -216,7 +218,7 @@ firebaseui.auth.widget.handler.onEmailExists_ =
               // Allow the user to cancel.
               false,
               // Display a message to explain to the user what happened.
-              firebaseui.auth.soy2.strings.errorAnonymousEmailBlockingSignIn()
+              strings.errorAnonymousEmailBlockingSignIn()
                 .toString());
         } else {
           // A sign in method already exists, just display the error.
@@ -237,3 +239,4 @@ firebaseui.auth.widget.handler.register(
     firebaseui.auth.widget.HandlerName.PASSWORD_SIGN_UP,
     /** @type {!firebaseui.auth.widget.Handler} */
     (firebaseui.auth.widget.handler.handlePasswordSignUp));
+});

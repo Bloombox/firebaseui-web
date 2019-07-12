@@ -18,14 +18,15 @@
 
 goog.provide('firebaseui.auth.ui.element.infoBar');
 
+goog.require('firebaseui.acquireRenderer');
 goog.require('firebaseui.auth.soy2.element');
 goog.require('firebaseui.auth.ui.element');
 goog.require('goog.dom');
-goog.require('goog.soy');
 goog.require('goog.ui.Component');
 goog.require('incrementaldom');
 
 goog.scope(function() {
+  const acquireRenderer = goog.module.get('firebaseui.acquireRenderer');
   const elementTemplates = goog.module.get('firebaseui.auth.soy2.element');
   const IncrementalDOM = goog.module.get('incrementaldom');
 
@@ -42,11 +43,8 @@ goog.scope(function() {
           .createDocumentFragment();
 
     IncrementalDOM.patch(infoBarFragment, () => {
-      goog.soy.renderAsElement(
-        elementTemplates.infoBar,
-        {message: message},
-        null,
-        this.getDomHelper());
+        elementTemplates.infoBar(acquireRenderer(),
+          {message: message});
     });
 
     const infoBar = infoBarFragment.firstElementChild;
