@@ -84,7 +84,7 @@ listBoxDialog.showListBoxDialog = function(items, onSelect, opt_selectedId) {
     const listBoxId = pressedButton &&
         listBoxDialog.getListBoxIdOfButton_(pressedButton);
     if (listBoxId) {
-      firebaseui.auth.ui.element.dialog.dismissDialog.call(self);
+      firebaseui.auth.ui.element.dialog.dismissDialog.call(this);
 
       // The callback should happen after the dialog is dismissed; otherwise
       // focus() within the callback does not work.
