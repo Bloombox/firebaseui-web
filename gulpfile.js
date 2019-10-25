@@ -37,17 +37,51 @@ const OPTIMIZATION_LEVEL = util.env.compilation_level ||
 
 // For minified builds, wrap the output so we avoid leaking global variables.
 const OUTPUT_WRAPPER = OPTIMIZATION_LEVEL === 'WHITESPACE_ONLY' ?
-    '%output%' : '(function() { %output% })();';
+    '%output%' : '(function() { %output% }).apply(' +
+    'typeof global !== \'undefined\' ? global : typeof self !== \'undefined\' ' +
+    '? self : window );';
 
-// Provides missing dialogPolyfill on window in npm environments.
+// Provides missing dialogPolyfill on window in cjs environments.
 const DIALOG_POLYFILL = 'if(typeof window!==\'undefined\')' +
     '{window.dialogPolyfill=require(\'dialog-polyfill\');}';
+
+// Provides missing dialogPolyfill on window for esm.
+const ESM_DIALOG_POLYFILL = 'if(typeof window!==\'undefined\')' +
+    '{window.dialogPolyfill=dialogPolyfill;}';
 
 // Using default import if available.
 const DEFAULT_IMPORT_FIX = 'if(typeof firebase.default!==\'undefined\')' +
     '{firebase=firebase.default;}';
 
-// Adds the module requirement and exports firebaseui.
+// The Material Design Lite components needed by FirebaseUI.
+const MDL_COMPONENTS = [
+  'mdlComponentHandler',
+  'button/button',
+  'progress/progress',
+  'spinner/spinner',
+  'textfield/textfield'
+]
+
+// The external dependencies needed by FirebaseUI as ES module imports.
+const ESM_DEPS = [
+  'import * as firebase from \'firebase/app\'',
+  'import \'firebase/auth\'',
+  'import dialogPolyfill from \'dialog-polyfill\'',
+].concat(MDL_COMPONENTS.map(component => `import \'material-design-lite/src/${component}\'`))
+
+// The external dependencies needed by FirebaseUI as CommonJS modules.
+const CJS_DEPS = [
+  'node_modules/dialog-polyfill/dialog-polyfill.js'
+].concat(MDL_COMPONENTS.map(component => `node_modules/material-design-lite/src/${component}.js`));
+
+// Import esm modules.
+const ESM_IMPORT = ESM_DEPS.join(';') + ';';
+
+// Export firebaseui.auth module.
+const ESM_EXPORT = 'const auth = firebaseui.auth;' +
+    'export { auth } ;';
+
+// Adds the cjs module requirement and exports firebaseui.
 const NPM_MODULE_WRAPPER = OPTIMIZATION_LEVEL === 'WHITESPACE_ONLY' ?
     'var firebase=require(\'firebase/app\');require(\'firebase/auth\');' +
     DEFAULT_IMPORT_FIX + '%output%' + DIALOG_POLYFILL +
@@ -55,6 +89,16 @@ const NPM_MODULE_WRAPPER = OPTIMIZATION_LEVEL === 'WHITESPACE_ONLY' ?
     '(function() { var firebase=require(\'firebase/app\');' +
     'require(\'firebase/auth\');' + DEFAULT_IMPORT_FIX + '%output% ' +
     DIALOG_POLYFILL + '})();' + 'module.exports=firebaseui;';
+
+// Adds the module requirement and exports firebaseui.
+const ESM_MODULE_WRAPPER = OPTIMIZATION_LEVEL === 'WHITESPACE_ONLY' ?
+    ESM_IMPORT + '%output%' +
+    ESM_DIALOG_POLYFILL + ESM_EXPORT :
+    ESM_IMPORT +
+    '(function() {' + '%output%' + '}).apply(' +
+    'typeof global !== \'undefined\' ? global : typeof self !== \'undefined\' ' +
+    '? self : window );' +
+    ESM_DIALOG_POLYFILL + ESM_EXPORT;
 
 // The path to Closure Compiler.
 const COMPILER_PATH = 'node_modules/google-closure-compiler-java/compiler.jar';
@@ -80,16 +124,6 @@ const COMPILER_DEFAULT_ARGS = {
   compilation_level: OPTIMIZATION_LEVEL,
   language_out: 'ES5'
 };
-
-// The external dependencies needed by FirebaseUI.
-const JS_DEPS = [
-  'node_modules/material-design-lite/src/mdlComponentHandler.js',
-  'node_modules/material-design-lite/src/button/button.js',
-  'node_modules/material-design-lite/src/progress/progress.js',
-  'node_modules/material-design-lite/src/spinner/spinner.js',
-  'node_modules/material-design-lite/src/textfield/textfield.js',
-  'node_modules/dialog-polyfill/dialog-polyfill.js'
-];
 
 // The typescript definitions file path.
 const TYPES_FILE = './types/index.d.ts';
@@ -216,12 +250,13 @@ function buildFirebaseUiJs(locale) {
  * @param {string} locale The desired FirebaseUI locale.
  * @param {string} outBaseName The prefix of the output file name.
  * @param {string} outputWrapper A wrapper with which to wrap the output JS.
+ * @param {string[]} dependencies The dependencies to concatenate.
  * @return {*} A stream that ends when compilation finishes.
  */
-function concatWithDeps(locale, outBaseName, outputWrapper) {
+function concatWithDeps(locale, outBaseName, outputWrapper, dependencies = []) {
   const localeForFileName = getLocaleForFileName(locale);
   // Get a list of the FirebaseUI JS and its dependencies.
-  const srcs = JS_DEPS.concat([getTmpJsPath(locale)]);
+  const srcs = dependencies.concat([getTmpJsPath(locale)]);
   const outputPath = `${DEST_DIR}/${outBaseName}__${localeForFileName}.js`;
   return compile(srcs, outputPath, {
     compilation_level: 'WHITESPACE_ONLY',
@@ -263,13 +298,19 @@ repeatTaskForAllLocales(
 // the NPM module for all languages.
 repeatTaskForAllLocales(
     'build-npm-$', ['build-firebaseui-js-$'],
-    (locale) => concatWithDeps(locale, 'npm', NPM_MODULE_WRAPPER));
+    (locale) => concatWithDeps(locale, 'npm', NPM_MODULE_WRAPPER, CJS_DEPS));
+
+// Bundles the FirebaseUI JS with its dependencies as a ESM module. This builds
+// the NPM module for all languages.
+repeatTaskForAllLocales(
+    'build-esm-$', ['build-firebaseui-js-$'],
+    (locale) => concatWithDeps(locale, 'esm', ESM_MODULE_WRAPPER));
 
 // Bundles the FirebaseUI JS with its dependencies for all locales.
 // Generates the gulp tasks build-js-de, build-js-fr, etc.
 const buildJsTasks = repeatTaskForAllLocales(
     'build-js-$', ['build-firebaseui-js-$'],
-    (locale) => concatWithDeps(locale, 'firebaseui', OUTPUT_WRAPPER));
+    (locale) => concatWithDeps(locale, 'firebaseui', OUTPUT_WRAPPER, CJS_DEPS));
 
 // Builds the final JS file for the default language.
 gulp.task('build-js', gulp.series(
@@ -287,6 +328,12 @@ gulp.task('build-all-js', gulp.series(
 gulp.task('build-npm', gulp.series(
     'build-npm-' + DEFAULT_LOCALE,
     () => makeDefaultFile('npm')
+));
+
+// Builds the ESM module for the default language.
+gulp.task('build-esm', gulp.series(
+    'build-esm-' + DEFAULT_LOCALE,
+    () => makeDefaultFile('esm')
 ));
 
 /**
@@ -336,13 +383,13 @@ gulp.task('clean', () => fse.remove(TMP_DIR));
 // Executes the basic tasks for the default language.
 gulp.task('default', gulp.series(
     'build-externs', 'build-ts', 'build-js',
-    'build-npm', 'build-css', 'build-css-rtl',
+    'build-npm', 'build-esm', 'build-css', 'build-css-rtl',
     'clean'
 ));
 
 // Builds everything (JS for all languages, both LTR and RTL CSS).
 gulp.task('build-all', gulp.series(
     'build-externs', 'build-ts', 'build-all-js',
-    'build-npm', 'build-css', 'build-css-rtl',
+    'build-npm', 'build-esm', 'build-css', 'build-css-rtl',
     'clean'
 ));

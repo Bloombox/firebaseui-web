@@ -574,6 +574,10 @@ firebaseui.auth.widget.Config.prototype.getProviderCustomParameters =
     if (providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID) {
       delete clonedCustomParameters['login_hint'];
     }
+    // Delete login from GitHub provider as it could break the flow.
+    if (providerId === firebase.auth.GithubAuthProvider.PROVIDER_ID) {
+      delete clonedCustomParameters['login'];
+    }
     return clonedCustomParameters;
   }
   return null;

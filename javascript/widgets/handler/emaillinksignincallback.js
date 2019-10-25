@@ -78,6 +78,8 @@ firebaseui.auth.widget.handler.handleEmailLinkSignInCallback = function(
   const forceSameDevice = urlBuilder.getForceSameDevice();
   const anonymousUid = urlBuilder.getAnonymousUid();
   const providerId = urlBuilder.getProviderId();
+  const tenantId = urlBuilder.getTenantId();
+  app.setTenantId(tenantId);
   const isNewDevice = !firebaseui.auth.storage.hasEmailForSignIn(app.getAppId());
   const email = opt_email || firebaseui.auth.storage.getEmailForSignIn(
       sessionId, app.getAppId());
